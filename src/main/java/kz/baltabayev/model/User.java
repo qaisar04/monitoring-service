@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -15,13 +14,13 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class User {
+    private Long id;
+    private String login;
     private String firstname;
     private String lastname;
     private String phoneNumber;
-    private BigDecimal balance;
     private LocalDate registrationDate;
     private String password;
     private String address;
-    private List<MeterReading> meterReadings;
     private Role role;
 }

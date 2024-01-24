@@ -6,16 +6,14 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class MeterReading {
+    private Long id;
     private Integer counterNumber;
     private MeterType meterType;
-    private LocalDate submissionDate;
-    private Integer consumptionAmount;
-    private User user;
+    private String readingDate;
+    private Long userId;
 }
