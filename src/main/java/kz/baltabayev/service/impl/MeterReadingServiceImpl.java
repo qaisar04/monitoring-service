@@ -37,7 +37,7 @@ public class MeterReadingServiceImpl implements MeterReadingService {
 
     @Override
     public List<MeterReading> getMeterReadingsByMonthAndYear(Integer year, Integer month, Long userId) {
-        List<MeterReading> allReadings = meterReadingDAO.findAll().stream().toList();
+        List<MeterReading> allReadings = meterReadingDAO.findAllByUserId(userId);
         List<MeterReading> currentReadings = new ArrayList<>();
         YearMonth filterFromUser = YearMonth.of(year, month);
 

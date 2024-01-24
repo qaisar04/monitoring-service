@@ -7,5 +7,5 @@ import java.util.Optional;
 public interface SecurityService {
     User register(String login, String password);
 
-    Optional<User> authorization(String login, String password);
+    User authorize(String login, String password);
 }

@@ -5,11 +5,12 @@ import kz.baltabayev.exception.AuthorizeException;
 import kz.baltabayev.exception.RegisterException;
 import kz.baltabayev.model.User;
 import kz.baltabayev.service.SecurityService;
+import lombok.extern.slf4j.Slf4j;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Optional;
 
+@Slf4j
 public class SecurityServiceImpl implements SecurityService {
 
     private final UserDAO userDao;
@@ -33,7 +34,7 @@ public class SecurityServiceImpl implements SecurityService {
     }
 
     @Override
-    public Optional<User> authorization(String login, String password) {
+    public User authorize(String login, String password) {
         Optional<User> optionalUser = userDao.findByLogin(login);
         if (optionalUser.isEmpty()) {
             throw new AuthorizeException("There is no user with this login in the database.");
@@ -43,6 +44,6 @@ public class SecurityServiceImpl implements SecurityService {
             throw new AuthorizeException("Incorrect password.");
         }
 
-        return optionalUser;
+        return optionalUser.get();
     }
 }
