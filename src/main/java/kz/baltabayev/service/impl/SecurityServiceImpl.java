@@ -9,7 +9,6 @@ import kz.baltabayev.model.types.Role;
 import kz.baltabayev.service.SecurityService;
 import kz.baltabayev.util.DateTimeUtils;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
