@@ -4,10 +4,8 @@ import kz.baltabayev.model.User;
 import kz.baltabayev.service.MeterReadingService;
 import kz.baltabayev.service.SecurityService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @RequiredArgsConstructor
-@Slf4j
 public class MainController {
 
     private final SecurityService securityService;

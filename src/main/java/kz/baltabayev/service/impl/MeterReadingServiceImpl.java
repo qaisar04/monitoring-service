@@ -1,6 +1,7 @@
 package kz.baltabayev.service.impl;
 
 import kz.baltabayev.dao.MeterReadingDAO;
+import kz.baltabayev.exception.NotValidArgumentException;
 import kz.baltabayev.model.MeterReading;
 import kz.baltabayev.model.types.MeterType;
 import kz.baltabayev.service.MeterReadingService;
@@ -25,6 +26,10 @@ public class MeterReadingServiceImpl implements MeterReadingService {
 
     @Override
     public void submitMeterReading(Integer counterNumber, MeterType meterType, Long userId) {
+        if (counterNumber == null || userId == null || meterType == null) {
+            throw new NotValidArgumentException("Пожалуйста, заполните все пустые поля.");
+        }
+
         MeterReading meterReading = MeterReading.builder()
                 .counterNumber(counterNumber)
                 .meterType(meterType)

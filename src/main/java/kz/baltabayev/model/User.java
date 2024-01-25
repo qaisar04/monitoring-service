@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -19,7 +20,7 @@ public class User {
     private String firstname;
     private String lastname;
     private String phoneNumber;
-    private LocalDate registrationDate;
+    private String registrationDate;
     private String password;
     private String address;
     private Role role;
