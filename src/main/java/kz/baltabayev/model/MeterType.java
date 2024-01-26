@@ -9,10 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class MeterReading {
+public class MeterType {
     private Long id;
-    private Integer counterNumber;
-    private String readingDate;
-    private Long typeId;
-    private Long userId;
+    private String typeName;
 }

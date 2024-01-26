@@ -29,6 +29,17 @@ public class UserDAOImpl implements UserDAO {
     }
 
     @Override
+    public User update(User user) {
+        Long userId = user.getId();
+        if (users.containsKey(userId)) {
+            users.put(userId, user);
+            return users.get(userId);
+        } else {
+            throw new IllegalArgumentException("User with id " + userId + " not found, cannot update.");
+        }
+    }
+
+    @Override
     public List<User> findAll() {
         return new ArrayList<>(users.values());
     }

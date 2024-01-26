@@ -7,8 +7,9 @@ import kz.baltabayev.exception.NotValidArgumentException;
 import kz.baltabayev.exception.RegisterException;
 import kz.baltabayev.in.InputData;
 import kz.baltabayev.model.MeterReading;
+import kz.baltabayev.model.MeterType;
 import kz.baltabayev.model.User;
-import kz.baltabayev.model.types.MeterType;
+import kz.baltabayev.model.types.Role;
 import kz.baltabayev.out.OutputData;
 import kz.baltabayev.wrapper.SecurityWrapper;
 import lombok.extern.slf4j.Slf4j;
@@ -34,6 +35,7 @@ public class ApplicationRunner {
                 switch (userStage) {
                     case SECURITY -> securityProcess(inputData, outputData);
                     case MAIN_MENU -> menuProcess(inputData, outputData);
+                    case ADMIN_MENU -> adminProcess(inputData, outputData);
                     case EXIT -> {
                         exitProcess(outputData);
                         processIsRun = false;
@@ -54,6 +56,48 @@ public class ApplicationRunner {
         inputData.closeInput();
     }
 
+    private static void adminProcess(InputData inputData, OutputData outputData) {
+        final String adminMessage = "Пожалуйста введите нужную вам команду.";
+        final String adminMenu = """
+                Введите одно число без пробелов и других символов:
+                1. Получить список зарегистрированных участников.
+                2. Получить весь список аудитов.
+                3. Получить весь список показания.
+                4. Добавить новый тип счетчика.
+                5. Выйти с аккаунта.
+                6. Завершить программу.
+                """;
+
+        outputData.output(adminMenu);
+        while (true) {
+            outputData.output(adminMessage);
+            Object input = inputData.input();
+
+            if (input.equals("1")) {
+                controller.showAllUser();
+            } else if (input.equals("2")) {
+                // todo
+                break;
+            } else if (input.equals("3")) {
+                break;
+            } else if (input.equals("4")) {
+                addNewTypeOfMeter(inputData, outputData);
+                break;
+            } else if (input.equals("5")) {
+                userStage = UserStage.SECURITY;
+                break;
+            } else if (input.equals("6")) {
+                userStage = UserStage.EXIT;
+                break;
+            } else {
+                outputData.output("Введите корректную команду!");
+            }
+
+
+        }
+
+    }
+
     private static void menuProcess(InputData inputData, OutputData outputData) {
         final String menuMessage = "Пожалуйста введите нужную вам команду.";
         final String menu = """
@@ -62,42 +106,44 @@ public class ApplicationRunner {
                 2. Подача показаний.
                 3. Просмотр показаний за конкретный месяц.
                 4. Просмотр истории подачи показаний.
-                5. Редактирование данных о пользователе.
-                6. Выйти с аккаунта.
-                7. Завершить программу.
+                5. Выйти с аккаунта.
+                6. Завершить программу.
                 """;
 
         outputData.output(menuMessage);
         while (true) {
             outputData.output(menu);
             Object input = inputData.input();
-            switch (input.toString()) {
-                case "1":
-                    currentMeterReagings(outputData);
-                    break;
-                case "2":
-                    submissionOfMeterReadings(inputData, outputData);
-                    break;
-                case "3":
-                    viewingReadingsForSpecificMonth(inputData, outputData);
-                    break;
-                case "4":
-                    viewingMeterReadingHistory(outputData);
-                    break;
-                case "5":
-
-                    break;
-                case "6":
-                    userStage = UserStage.SECURITY;
-                    break;
-                case "7":
-                    userStage = UserStage.EXIT;
-                    break;
-                default:
-                    outputData.output("Введите корректную команду!");
-                    break;
+            if (input.equals("1")) {
+                currentMeterReagings(outputData);
+            } else if (input.equals("2")) {
+                submissionOfMeterReadings(inputData, outputData);
+            } else if (input.equals("3")) {
+                viewingReadingsForSpecificMonth(inputData, outputData);
+            } else if (input.equals("4")) {
+                viewingMeterReadingHistory(outputData);
+            } else if (input.equals("5")) {
+                userStage = UserStage.SECURITY;
+                break;
+            } else if (input.equals("6")) {
+                userStage = UserStage.EXIT;
+                break;
+            } else {
+                outputData.output("Введите корректную команду!");
             }
         }
+    }
+
+    private static void addNewTypeOfMeter(InputData inputData, OutputData outputData) {
+        final String meterTypeMessage = "Введите тип счетчика:";
+        outputData.output(meterTypeMessage);
+        String meterType = inputData.input().toString();
+
+        controller.addNewMeterType(
+                MeterType.builder()
+                        .typeName(meterType)
+                        .build()
+        );
     }
 
     private static void viewingMeterReadingHistory(OutputData outputData) {
@@ -121,23 +167,14 @@ public class ApplicationRunner {
     }
 
     private static void submissionOfMeterReadings(InputData inputData, OutputData outputData) {
-        final String meterType = """
-                Выберите тип счетчика:
-                1. HEATING
-                2. COLD_WATER
-                3. HOT_WATER
-                4. ELECTRICITY
-                """;
-
         final String counterMess = "Введите номер счетчика:";
         outputData.output(counterMess);
         String countOutp = inputData.input().toString();
 
-        outputData.output(meterType);
-        String meterTypeString = inputData.input().toString();
-        int meterTypeIndex = Integer.parseInt(meterTypeString) - 1;
-        MeterType meterTypeOrig = MeterType.values()[meterTypeIndex];
-        controller.submitMeterReading(Integer.valueOf(countOutp), meterTypeOrig, ApplicationContext.getAuthorizePlayer().getId());
+        showAvailableMeterTypes(outputData);
+        String meterTypeId = inputData.input().toString();
+
+        controller.submitMeterReading(Integer.valueOf(countOutp), Long.valueOf(meterTypeId), ApplicationContext.getAuthorizePlayer().getId());
     }
 
     private static void currentMeterReagings(OutputData outputData) {
@@ -151,8 +188,11 @@ public class ApplicationRunner {
         }
     }
 
+    private static void getListOfRegisteredParticipants(InputData inputData, OutputData outputData) {
+
+    }
+
     private static void securityProcess(InputData inputData, OutputData outputData) {
-        final String firstMessage = "Пожалуйста, зарегистрируйтесь или войдите в приложение.";
         final String menu = """
                 Введите одно число без пробелов или других символов:
                 1. Регистрация.
@@ -160,33 +200,30 @@ public class ApplicationRunner {
                 3. Завершить программу.
                 """;
 
-        outputData.output(firstMessage);
         while (true) {
             outputData.output(menu);
-
             Object input = inputData.input();
-            switch (input.toString()) {
-                case "1":
-                    SecurityWrapper swRegister = askCredentials(inputData, outputData);
-                    User registeredUser = controller.register(swRegister.login(), swRegister.password());
-                    ApplicationContext.loadAuthorizePlayer(registeredUser);
-                    userStage = UserStage.MAIN_MENU;
-                    break;
-                case "2":
-                    SecurityWrapper swAuthorize = askCredentials(inputData, outputData);
-                    User authorizedUser = controller.authorize(swAuthorize.login(), swAuthorize.password());
-                    ApplicationContext.loadAuthorizePlayer(authorizedUser);
-                    userStage = UserStage.MAIN_MENU;
-                    break;
-                case "3":
-                    userStage = UserStage.EXIT;
-                    break;
-                default:
-                    outputData.output("Неизвестная команда, повторите попытку.");
-                    break;
+            if (input.toString().equals("1")) {
+                SecurityWrapper swRegister = askCredentials(inputData, outputData);
+                User registeredUser = controller.register(swRegister.getLogin(), swRegister.getPassword());
+                ApplicationContext.loadAuthorizePlayer(registeredUser);
+                userStage = UserStage.MAIN_MENU;
+                break;
+            } else if (input.toString().equals("2")) {
+                SecurityWrapper swAuthorize = askCredentials(inputData, outputData);
+                User authorizedUser = controller.authorize(swAuthorize.getLogin(), swAuthorize.getPassword());
+                ApplicationContext.loadAuthorizePlayer(authorizedUser);
+                userStage = isAdmin(authorizedUser) ? UserStage.ADMIN_MENU : UserStage.MAIN_MENU;
+                break;
+            } else if (input.toString().equals("3")) {
+                userStage = UserStage.EXIT;
+                break;
+            } else {
+                outputData.output("Неизвестная команда, повторите попытку.");
             }
         }
     }
+
 
     private static void exitProcess(OutputData outputData) {
         final String message = "До свидания!";
@@ -209,9 +246,25 @@ public class ApplicationRunner {
                 .build();
     }
 
+    private static void showAvailableMeterTypes(OutputData outputData) {
+        List<MeterType> allMeterTypes = controller.showAvailableMeterTypes();
+
+        StringBuilder meterTypeMenu = new StringBuilder("Выберите тип счетчика:\n");
+        for (int i = 0; i < allMeterTypes.size(); i++) {
+            meterTypeMenu.append(i + 1).append(". ").append(allMeterTypes.get(i).getTypeName()).append("\n");
+        }
+
+        outputData.output(meterTypeMenu.toString());
+    }
+
+    private static boolean isAdmin(User user) {
+        return user.getRole().equals(Role.ADMIN);
+    }
+
     enum UserStage {
         SECURITY,
         MAIN_MENU,
+        ADMIN_MENU,
         EXIT
     }
 }

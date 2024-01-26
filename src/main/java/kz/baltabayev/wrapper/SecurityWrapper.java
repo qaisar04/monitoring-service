@@ -5,6 +5,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public record SecurityWrapper(String login,
-                              String password) {
+public class SecurityWrapper {
+    private String login;
+    private String password;
 }

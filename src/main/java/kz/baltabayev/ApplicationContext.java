@@ -2,16 +2,22 @@ package kz.baltabayev;
 
 import kz.baltabayev.controller.MainController;
 import kz.baltabayev.dao.MeterReadingDAO;
+import kz.baltabayev.dao.MeterTypeDAO;
 import kz.baltabayev.dao.UserDAO;
 import kz.baltabayev.dao.impl.MeterReadingDAOImpl;
+import kz.baltabayev.dao.impl.MeterTypeDAOImpl;
 import kz.baltabayev.dao.impl.UserDAOImpl;
 import kz.baltabayev.in.ConsoleInputData;
 import kz.baltabayev.model.User;
 import kz.baltabayev.out.ConsoleOutputData;
 import kz.baltabayev.service.MeterReadingService;
+import kz.baltabayev.service.MeterTypeService;
 import kz.baltabayev.service.SecurityService;
+import kz.baltabayev.service.UserService;
 import kz.baltabayev.service.impl.MeterReadingServiceImpl;
+import kz.baltabayev.service.impl.MeterTypeServiceImpl;
 import kz.baltabayev.service.impl.SecurityServiceImpl;
+import kz.baltabayev.service.impl.UserServiceImpl;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -46,7 +52,9 @@ public class ApplicationContext {
     private static void loadControllers() {
         MainController controller = new MainController(
                 (SecurityService) CONTEXT.get("securityService"),
-                (MeterReadingService) CONTEXT.get("meterReadingService")
+                (MeterReadingService) CONTEXT.get("meterReadingService"),
+                (MeterTypeService) CONTEXT.get("meterTypeService"),
+                (UserService) CONTEXT.get("userService")
         );
         CONTEXT.put("controller", controller);
     }
@@ -59,12 +67,18 @@ public class ApplicationContext {
     private static void loadDAOLayer() {
         CONTEXT.put("userDAO", new UserDAOImpl());
         CONTEXT.put("meterReadingDAO", new MeterReadingDAOImpl());
+        CONTEXT.put("meterTypeDAO", new MeterTypeDAOImpl());
     }
 
     private static void loadServiceLayer() {
         SecurityService securityService = new SecurityServiceImpl((UserDAO) CONTEXT.get("userDAO"));
+        UserService userService = new UserServiceImpl((UserDAO) CONTEXT.get("userDAO"));
         MeterReadingService meterReadingService = new MeterReadingServiceImpl((MeterReadingDAO) CONTEXT.get("meterReadingDAO"));
+        MeterTypeService meterTypeService = new MeterTypeServiceImpl((MeterTypeDAO) CONTEXT.get("meterTypeDAO"));
+
         CONTEXT.put("securityService", securityService);
         CONTEXT.put("meterReadingService", meterReadingService);
+        CONTEXT.put("meterTypeService", meterTypeService);
+        CONTEXT.put("userService", userService);
     }
 }

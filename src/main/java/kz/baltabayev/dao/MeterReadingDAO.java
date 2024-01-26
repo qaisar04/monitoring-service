@@ -7,5 +7,4 @@ import java.util.List;
 public interface MeterReadingDAO extends BaseDAO<Long, MeterReading> {
 
     List<MeterReading> findAllByUserId(Long userId);
-
 }

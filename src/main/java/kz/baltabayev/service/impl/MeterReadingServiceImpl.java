@@ -4,7 +4,6 @@ import kz.baltabayev.dao.MeterReadingDAO;
 import kz.baltabayev.exception.DuplicateRecordException;
 import kz.baltabayev.exception.NotValidArgumentException;
 import kz.baltabayev.model.MeterReading;
-import kz.baltabayev.model.types.MeterType;
 import kz.baltabayev.service.MeterReadingService;
 import kz.baltabayev.util.DateTimeUtils;
 import lombok.RequiredArgsConstructor;
@@ -25,8 +24,8 @@ public class MeterReadingServiceImpl implements MeterReadingService {
     public List<MeterReading> getCurrentMeterReadings(Long userId) {
         List<MeterReading> meterReadings = meterReadingDAO.findAll();
 
-        Map<MeterType, List<MeterReading>> readingsByType = meterReadings.stream()
-                .collect(Collectors.groupingBy(MeterReading::getMeterType));
+        Map<Long, List<MeterReading>> readingsByType = meterReadings.stream()
+                .collect(Collectors.groupingBy(MeterReading::getTypeId));
 
         List<MeterReading> lastReadings = new ArrayList<>();
 
@@ -41,8 +40,8 @@ public class MeterReadingServiceImpl implements MeterReadingService {
     }
 
     @Override
-    public void submitMeterReading(Integer counterNumber, MeterType meterType, Long userId) {
-        if (counterNumber == null || userId == null || meterType == null) {
+    public void submitMeterReading(Integer counterNumber, Long meterTypeId, Long userId) {
+        if (counterNumber == null || userId == null || meterTypeId == null) {
             throw new NotValidArgumentException("Пожалуйста, заполните все пустые поля.");
         }
 
@@ -50,7 +49,7 @@ public class MeterReadingServiceImpl implements MeterReadingService {
         List<MeterReading> existingReadings = meterReadingDAO.findAllByUserId(userId);
 
         boolean alreadyExists = existingReadings.stream()
-                .anyMatch(reading -> reading.getMeterType().equals(meterType) &&
+                .anyMatch(reading -> reading.getTypeId().equals(meterTypeId) &&
                                      DateTimeUtils.isSameMonth(DateTimeUtils.parseDateTimeFromString(reading.getReadingDate()), now));
 
         if (alreadyExists) {
@@ -59,7 +58,7 @@ public class MeterReadingServiceImpl implements MeterReadingService {
 
         MeterReading meterReading = MeterReading.builder()
                 .counterNumber(counterNumber)
-                .meterType(meterType)
+                .typeId(meterTypeId)
                 .readingDate(DateTimeUtils.parseDateTime(now))
                 .userId(userId)
                 .build();
