@@ -1,6 +1,7 @@
 package kz.baltabayev.service.impl;
 
 import kz.baltabayev.dao.MeterReadingDAO;
+import kz.baltabayev.exception.DuplicateRecordException;
 import kz.baltabayev.exception.NotValidArgumentException;
 import kz.baltabayev.model.MeterReading;
 import kz.baltabayev.model.types.MeterType;
@@ -45,10 +46,21 @@ public class MeterReadingServiceImpl implements MeterReadingService {
             throw new NotValidArgumentException("Пожалуйста, заполните все пустые поля.");
         }
 
+        LocalDateTime now = LocalDateTime.now();
+        List<MeterReading> existingReadings = meterReadingDAO.findAllByUserId(userId);
+
+        boolean alreadyExists = existingReadings.stream()
+                .anyMatch(reading -> reading.getMeterType().equals(meterType) &&
+                                     DateTimeUtils.isSameMonth(DateTimeUtils.parseDateTimeFromString(reading.getReadingDate()), now));
+
+        if (alreadyExists) {
+            throw new DuplicateRecordException("Запись для данного типа счетчика уже существует в текущем месяце.");
+        }
+
         MeterReading meterReading = MeterReading.builder()
                 .counterNumber(counterNumber)
                 .meterType(meterType)
-                .readingDate(DateTimeUtils.parseDateTime(LocalDateTime.now()))
+                .readingDate(DateTimeUtils.parseDateTime(now))
                 .userId(userId)
                 .build();
 
@@ -75,7 +87,10 @@ public class MeterReadingServiceImpl implements MeterReadingService {
 
     @Override
     public List<MeterReading> getMeterReadingHistory(Long userId) {
-        //TODO change method for select all meter reading history where userROlE=ADMIN
         return meterReadingDAO.findAllByUserId(userId);
+    }
+
+    public List<MeterReading> getAllMeterReadingHistory() {
+        return meterReadingDAO.findAll();
     }
 }

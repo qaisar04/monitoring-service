@@ -1,14 +1,22 @@
 package kz.baltabayev;
 
 import kz.baltabayev.controller.MainController;
+import kz.baltabayev.exception.AuthorizeException;
+import kz.baltabayev.exception.DuplicateRecordException;
+import kz.baltabayev.exception.NotValidArgumentException;
+import kz.baltabayev.exception.RegisterException;
 import kz.baltabayev.in.InputData;
 import kz.baltabayev.model.MeterReading;
 import kz.baltabayev.model.User;
 import kz.baltabayev.model.types.MeterType;
 import kz.baltabayev.out.OutputData;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.logging.Logger;
 
+@Slf4j
 public class ApplicationRunner {
 
     private static MainController controller;
@@ -32,8 +40,16 @@ public class ApplicationRunner {
                         processIsRun = false;
                     }
                 }
+            } catch (AuthorizeException |
+                     DuplicateRecordException |
+                     NotValidArgumentException |
+                     RegisterException e) {
+                log.warn(e.getMessage());
+                outputData.errOutput(e.getMessage());
             } catch (RuntimeException e) {
-                //TODO
+                log.error(e.getMessage());
+                outputData.errOutput("Unknown error. More details " + e.getMessage());
+                processIsRun = false;
             }
         }
         inputData.closeInput();
@@ -99,7 +115,7 @@ public class ApplicationRunner {
                 3. HOT_WATER
                 """;
 
-        final String counterMess = "Enter counter:";
+        final String counterMess = "Введите номер счетчика:";
         outputData.output(counterMess);
         String countOutp = inputData.input().toString();
 
@@ -112,16 +128,22 @@ public class ApplicationRunner {
 
     private static void currentMeterReagings(OutputData outputData) {
         List<MeterReading> meterReadings = controller.showCurrentMeterReadings(ApplicationContext.getAuthorizePlayer().getId());
-        outputData.output(meterReadings);
+        if (meterReadings.isEmpty()) {
+            outputData.output("У вас нет актуальных показаний.");
+        } else {
+            for (MeterReading reading : meterReadings) {
+                outputData.output(reading);
+            }
+        }
     }
 
     private static void securityProcess(InputData inputData, OutputData outputData) {
-        final String firstMessage = "Please register or log in to the application.";
+        final String firstMessage = "Пожалуйста, зарегистрируйтесь или войдите в приложение.";
         final String menu = """
-                Enter one number without spaces or other symbols:
-                Register - 1
-                Login - 2
-                Exit the application - 3
+                Введите одно число без пробелов или других символов:
+                1. Регистрация.
+                2. Вход в систему.
+                3. Завершить программу.
                 """;
 
         outputData.output(firstMessage);
@@ -130,11 +152,11 @@ public class ApplicationRunner {
 
             Object input = inputData.input();
             if (input.toString().equals("1")) {
-                final String loginMsg = "Enter login:";
+                final String loginMsg = "Введите логин:";
                 outputData.output(loginMsg);
                 String login = inputData.input().toString();
 
-                final String passMsg = "Enter password:";
+                final String passMsg = "Введите пароль:";
                 outputData.output(passMsg);
                 String password = inputData.input().toString();
 
@@ -143,11 +165,11 @@ public class ApplicationRunner {
                 userStage = UserStage.MAIN_MENU;
                 break;
             } else if (input.toString().equals("2")) {
-                final String loginMsg = "Enter login:";
+                final String loginMsg = "Введите логин";
                 outputData.output(loginMsg);
                 String login = inputData.input().toString();
 
-                final String passMsg = "Enter password:";
+                final String passMsg = "Введите пароль:";
                 outputData.output(passMsg);
                 String password = inputData.input().toString();
 
@@ -159,13 +181,13 @@ public class ApplicationRunner {
                 userStage = UserStage.EXIT;
                 break;
             } else {
-                outputData.output("Unknown command, try again.");
+                outputData.output("Неизвестная команда, повторите попытку.");
             }
         }
     }
 
     private static void exitProcess(OutputData outputData) {
-        final String message = "Goodbye!";
+        final String message = "До свидания!";
         outputData.output(message);
         ApplicationContext.cleanAuthorizePlayer();
     }
