@@ -10,11 +10,10 @@ import kz.baltabayev.model.MeterReading;
 import kz.baltabayev.model.User;
 import kz.baltabayev.model.types.MeterType;
 import kz.baltabayev.out.OutputData;
+import kz.baltabayev.wrapper.SecurityWrapper;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
-import java.util.logging.Logger;
 
 @Slf4j
 public class ApplicationRunner {
@@ -113,6 +112,7 @@ public class ApplicationRunner {
                 1. HEATING
                 2. COLD_WATER
                 3. HOT_WATER
+                4. ELECTRICITY
                 """;
 
         final String counterMess = "Введите номер счетчика:";
@@ -151,37 +151,25 @@ public class ApplicationRunner {
             outputData.output(menu);
 
             Object input = inputData.input();
-            if (input.toString().equals("1")) {
-                final String loginMsg = "Введите логин:";
-                outputData.output(loginMsg);
-                String login = inputData.input().toString();
-
-                final String passMsg = "Введите пароль:";
-                outputData.output(passMsg);
-                String password = inputData.input().toString();
-
-                User registeredUser = controller.register(login, password);
-                ApplicationContext.loadAuthorizePlayer(registeredUser);
-                userStage = UserStage.MAIN_MENU;
-                break;
-            } else if (input.toString().equals("2")) {
-                final String loginMsg = "Введите логин";
-                outputData.output(loginMsg);
-                String login = inputData.input().toString();
-
-                final String passMsg = "Введите пароль:";
-                outputData.output(passMsg);
-                String password = inputData.input().toString();
-
-                User authorizedUser = controller.authorize(login, password);
-                ApplicationContext.loadAuthorizePlayer(authorizedUser);
-                userStage = UserStage.MAIN_MENU;
-                break;
-            } else if (input.toString().equals("3")) {
-                userStage = UserStage.EXIT;
-                break;
-            } else {
-                outputData.output("Неизвестная команда, повторите попытку.");
+            switch (input.toString()) {
+                case "1":
+                    SecurityWrapper swRegister = askCredentials(inputData, outputData);
+                    User registeredUser = controller.register(swRegister.login(), swRegister.password());
+                    ApplicationContext.loadAuthorizePlayer(registeredUser);
+                    userStage = UserStage.MAIN_MENU;
+                    break;
+                case "2":
+                    SecurityWrapper swAuthorize = askCredentials(inputData, outputData);
+                    User authorizedUser = controller.authorize(swAuthorize.login(), swAuthorize.password());
+                    ApplicationContext.loadAuthorizePlayer(authorizedUser);
+                    userStage = UserStage.MAIN_MENU;
+                    break;
+                case "3":
+                    userStage = UserStage.EXIT;
+                    break;
+                default:
+                    outputData.output("Неизвестная команда, повторите попытку.");
+                    break;
             }
         }
     }
@@ -190,6 +178,21 @@ public class ApplicationRunner {
         final String message = "До свидания!";
         outputData.output(message);
         ApplicationContext.cleanAuthorizePlayer();
+    }
+
+    private static SecurityWrapper askCredentials(InputData inputData, OutputData outputData) {
+        final String loginMsg = "Введите логин:";
+        outputData.output(loginMsg);
+        String login = inputData.input().toString();
+
+        final String passMsg = "Введите пароль:";
+        outputData.output(passMsg);
+        String password = inputData.input().toString();
+
+        return SecurityWrapper.builder()
+                .login(login)
+                .password(password)
+                .build();
     }
 
     enum UserStage {
