@@ -58,34 +58,44 @@ public class ApplicationRunner {
         final String menuMessage = "Пожалуйста введите нужную вам команду.";
         final String menu = """
                 Введите одно число без пробелов и других символов:
-                1. Получение актуальных показаний счетчиков
-                2. Подача показаний
-                3. Просмотр показаний за конкретный месяц
-                4. Просмотр истории подачи показаний
-                5. Выйти с аккаунта.
-                6. Завершить программу.
+                1. Получение актуальных показаний счетчиков.
+                2. Подача показаний.
+                3. Просмотр показаний за конкретный месяц.
+                4. Просмотр истории подачи показаний.
+                5. Редактирование данных о пользователе.
+                6. Выйти с аккаунта.
+                7. Завершить программу.
                 """;
 
         outputData.output(menuMessage);
         while (true) {
             outputData.output(menu);
             Object input = inputData.input();
-            if (input.equals("1")) {
-                currentMeterReagings(outputData);
-            } else if (input.equals("2")) {
-                submissionOfMeterReadings(inputData, outputData);
-            } else if (input.equals("3")) {
-                viewingReadingsForSpecificMonth(inputData, outputData);
-            } else if (input.equals("4")) {
-                viewingMeterReadingHistory(outputData);
-            } else if (input.equals("5")) {
-                userStage = UserStage.SECURITY;
-                break;
-            } else if (input.equals("6")) {
-                userStage = UserStage.EXIT;
-                break;
-            } else {
-                outputData.output("Введите корректную команду!");
+            switch (input.toString()) {
+                case "1":
+                    currentMeterReagings(outputData);
+                    break;
+                case "2":
+                    submissionOfMeterReadings(inputData, outputData);
+                    break;
+                case "3":
+                    viewingReadingsForSpecificMonth(inputData, outputData);
+                    break;
+                case "4":
+                    viewingMeterReadingHistory(outputData);
+                    break;
+                case "5":
+
+                    break;
+                case "6":
+                    userStage = UserStage.SECURITY;
+                    break;
+                case "7":
+                    userStage = UserStage.EXIT;
+                    break;
+                default:
+                    outputData.output("Введите корректную команду!");
+                    break;
             }
         }
     }
