@@ -12,6 +12,8 @@ import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 public class MeterReadingServiceImpl implements MeterReadingService {
@@ -20,8 +22,21 @@ public class MeterReadingServiceImpl implements MeterReadingService {
 
     @Override
     public List<MeterReading> getCurrentMeterReadings(Long userId) {
-        YearMonth currentYearMonth = YearMonth.now();
-        return getMeterReadingsByMonthAndYear(currentYearMonth.getYear(), currentYearMonth.getMonthValue(), userId);
+        List<MeterReading> meterReadings = meterReadingDAO.findAll();
+
+        Map<MeterType, List<MeterReading>> readingsByType = meterReadings.stream()
+                .collect(Collectors.groupingBy(MeterReading::getMeterType));
+
+        List<MeterReading> lastReadings = new ArrayList<>();
+
+        for (List<MeterReading> readings : readingsByType.values()) {
+            if (!readings.isEmpty()) {
+                MeterReading lastReading = readings.get(readings.size() - 1);
+                lastReadings.add(lastReading);
+            }
+        }
+
+        return lastReadings;
     }
 
     @Override
@@ -60,6 +75,7 @@ public class MeterReadingServiceImpl implements MeterReadingService {
 
     @Override
     public List<MeterReading> getMeterReadingHistory(Long userId) {
+        //TODO change method for select all meter reading history where userROlE=ADMIN
         return meterReadingDAO.findAllByUserId(userId);
     }
 }

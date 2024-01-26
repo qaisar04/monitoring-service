@@ -17,7 +17,7 @@ public class MeterReadingDAOImpl implements MeterReadingDAO {
     }
 
     @Override
-    public Collection<MeterReading> findAll() {
+    public List<MeterReading> findAll() {
         return new ArrayList<>(meterReadings.values());
     }
 

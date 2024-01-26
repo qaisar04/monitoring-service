@@ -31,7 +31,7 @@ public class MainController {
         meterReadingService.submitMeterReading(counterNumber, meterType, userId);
     }
 
-    List<MeterReading> showMeterReadingsByMonthAndYear(Integer year, Integer month, Long userId) {
+    public List<MeterReading> showMeterReadingsByMonthAndYear(Integer year, Integer month, Long userId) {
         return meterReadingService.getMeterReadingsByMonthAndYear(year, month, userId);
     }
 

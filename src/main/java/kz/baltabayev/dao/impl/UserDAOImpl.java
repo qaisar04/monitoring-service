@@ -17,7 +17,7 @@ public class UserDAOImpl implements UserDAO {
     }
 
     @Override
-    public Collection<User> findAll() {
+    public List<User> findAll() {
         return new ArrayList<>(users.values());
     }
 
