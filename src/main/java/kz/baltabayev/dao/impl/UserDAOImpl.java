@@ -2,13 +2,25 @@ package kz.baltabayev.dao.impl;
 
 import kz.baltabayev.dao.UserDAO;
 import kz.baltabayev.model.User;
+import kz.baltabayev.model.types.Role;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 public class UserDAOImpl implements UserDAO {
 
     private final Map<Long, User> users = new HashMap<>();
     private Long id = 1L;
+
+    public UserDAOImpl() {
+        save(
+                User.builder()
+                .login("admin")
+                .password("admin")
+                .role(Role.ADMIN)
+                .build()
+        );
+    }
 
     @Override
     public Optional<User> findById(Long id) {

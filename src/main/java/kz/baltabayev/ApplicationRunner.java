@@ -20,7 +20,6 @@ public class ApplicationRunner {
         OutputData outputData = (OutputData) ApplicationContext.getBean("output");
         controller = (MainController) ApplicationContext.getBean("controller");
         userStage = UserStage.SECURITY;
-        outputData.output("Welcome!");
 
         boolean processIsRun = true;
         while (processIsRun) {
@@ -38,7 +37,6 @@ public class ApplicationRunner {
             }
         }
         inputData.closeInput();
-
     }
 
     private static void menuProcess(InputData inputData, OutputData outputData) {
@@ -49,8 +47,51 @@ public class ApplicationRunner {
                 2. Подача показаний
                 3. Просмотр показаний за конкретный месяц
                 4. Просмотр истории подачи показаний
+                5. Выйти с аккаунта.
+                6. Завершить программу.
                 """;
 
+        outputData.output(menuMessage);
+        while (true) {
+            outputData.output(menu);
+            Object input = inputData.input();
+            if (input.equals("1")) {
+                currentMeterReagings(outputData);
+            } else if (input.equals("2")) {
+                submissionOfMeterReadings(inputData, outputData);
+            } else if (input.equals("3")) {
+                viewingReadingsForSpecificMonth(inputData, outputData);
+            } else if (input.equals("4")) {
+                viewingMeterReadingHistory(outputData);
+            } else if (input.equals("5")) {
+                userStage = UserStage.SECURITY;
+                break;
+            } else if (input.equals("6")) {
+                userStage = UserStage.EXIT;
+                break;
+            } else {
+                outputData.output("Введите корректную команду!");
+            }
+        }
+    }
+
+    private static void viewingMeterReadingHistory(OutputData outputData) {
+        List<MeterReading> meterReadings = controller.showMeterReadingHistory(ApplicationContext.getAuthorizePlayer().getId());
+        outputData.output(meterReadings);
+    }
+
+    private static void viewingReadingsForSpecificMonth(InputData inputData, OutputData outputData) {
+        final String yearMessage = "Введите год:";
+        outputData.output(yearMessage);
+        String yearOut = inputData.input().toString();
+        final String monthMessage = "Введите месяц:";
+        outputData.output(monthMessage);
+        String monthOut = inputData.input().toString();
+        List<MeterReading> meterReadings = controller.showMeterReadingsByMonthAndYear(Integer.valueOf(yearOut), Integer.valueOf(monthOut), ApplicationContext.getAuthorizePlayer().getId());
+        outputData.output(meterReadings);
+    }
+
+    private static void submissionOfMeterReadings(InputData inputData, OutputData outputData) {
         final String meterType = """
                 Выберите тип счетчика:
                 1. HEATING
@@ -58,39 +99,20 @@ public class ApplicationRunner {
                 3. HOT_WATER
                 """;
 
-        outputData.output(menuMessage);
-        while (true) {
-            outputData.output(menu);
+        final String counterMess = "Enter counter:";
+        outputData.output(counterMess);
+        String countOutp = inputData.input().toString();
 
-            Object input = inputData.input();
-            if (input.equals("1")) {
-                List<MeterReading> meterReadings = controller.showCurrentMeterReadings(ApplicationContext.getAuthorizePlayer().getId());
-                outputData.output(meterReadings);
-            } else if (input.equals("2")) {
-                final String counterMess = "Enter counter:";
-                outputData.output(counterMess);
-                String countOutp = inputData.input().toString();
-                outputData.output(meterType);
-                String meterTypeString = inputData.input().toString();
-                int meterTypeIndex = Integer.parseInt(meterTypeString) - 1;
-                MeterType meterTypeOrig = MeterType.values()[meterTypeIndex];
-                controller.submitMeterReading(Integer.valueOf(countOutp), meterTypeOrig, ApplicationContext.getAuthorizePlayer().getId());
-            } else if (input.equals("3")) {
-                final String yearMessage = "Enter year:";
-                outputData.output(yearMessage);
-                String yearOut = inputData.input().toString();
-                final String monthMessage = "Enter month:";
-                outputData.output(monthMessage);
-                String monthOut = inputData.input().toString();
-                List<MeterReading> meterReadings = controller.showMeterReadingsByMonthAndYear(Integer.valueOf(yearOut), Integer.valueOf(monthOut), ApplicationContext.getAuthorizePlayer().getId());
-                outputData.output(meterReadings);
-            } else if (input.equals("4")) {
-                List<MeterReading> meterReadings = controller.showMeterReadingHistory(ApplicationContext.getAuthorizePlayer().getId());
-                outputData.output(meterReadings);
-            } else {
-                outputData.output("Введите корректную команду!");
-            }
-        }
+        outputData.output(meterType);
+        String meterTypeString = inputData.input().toString();
+        int meterTypeIndex = Integer.parseInt(meterTypeString) - 1;
+        MeterType meterTypeOrig = MeterType.values()[meterTypeIndex];
+        controller.submitMeterReading(Integer.valueOf(countOutp), meterTypeOrig, ApplicationContext.getAuthorizePlayer().getId());
+    }
+
+    private static void currentMeterReagings(OutputData outputData) {
+        List<MeterReading> meterReadings = controller.showCurrentMeterReadings(ApplicationContext.getAuthorizePlayer().getId());
+        outputData.output(meterReadings);
     }
 
     private static void securityProcess(InputData inputData, OutputData outputData) {
