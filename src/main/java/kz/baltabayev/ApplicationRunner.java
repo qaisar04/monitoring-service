@@ -92,7 +92,9 @@ public class ApplicationRunner {
 
     private static void viewingMeterReadingHistory(OutputData outputData) {
         List<MeterReading> meterReadings = controller.showMeterReadingHistory(ApplicationContext.getAuthorizePlayer().getId());
-        outputData.output(meterReadings);
+        for (MeterReading reading : meterReadings) {
+            outputData.output(reading);
+        }
     }
 
     private static void viewingReadingsForSpecificMonth(InputData inputData, OutputData outputData) {
@@ -103,7 +105,9 @@ public class ApplicationRunner {
         outputData.output(monthMessage);
         String monthOut = inputData.input().toString();
         List<MeterReading> meterReadings = controller.showMeterReadingsByMonthAndYear(Integer.valueOf(yearOut), Integer.valueOf(monthOut), ApplicationContext.getAuthorizePlayer().getId());
-        outputData.output(meterReadings);
+        for (MeterReading reading : meterReadings) {
+            outputData.output(reading);
+        }
     }
 
     private static void submissionOfMeterReadings(InputData inputData, OutputData outputData) {
