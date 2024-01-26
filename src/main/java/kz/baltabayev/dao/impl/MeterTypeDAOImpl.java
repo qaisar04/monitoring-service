@@ -13,17 +13,17 @@ public class MeterTypeDAOImpl implements MeterTypeDAO {
     public MeterTypeDAOImpl() {
         save(
                 MeterType.builder()
-                        .typeName("ОТОПЛЕНИЕ")
+                        .typeName("HEATING")
                         .build()
         );
         save(
                 MeterType.builder()
-                        .typeName("ХОЛОДНАЯ ВОДА")
+                        .typeName("COLD_WATER")
                         .build()
         );
         save(
                 MeterType.builder()
-                        .typeName("ГОРЯЧАЯ ВОДА")
+                        .typeName("HOT_WATER")
                         .build()
         );
     }

@@ -15,10 +15,11 @@ public class UserDAOImpl implements UserDAO {
     public UserDAOImpl() {
         save(
                 User.builder()
-                .login("admin")
-                .password("admin")
-                .role(Role.ADMIN)
-                .build()
+                        .id(0L)
+                        .login("admin")
+                        .password("admin")
+                        .role(Role.ADMIN)
+                        .build()
         );
     }
 

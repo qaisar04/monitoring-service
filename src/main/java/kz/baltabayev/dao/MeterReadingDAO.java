@@ -4,7 +4,7 @@ import kz.baltabayev.model.MeterReading;
 
 import java.util.List;
 
-public interface MeterReadingDAO extends BaseDAO<Long, MeterReading> {
+public interface MeterReadingDAO extends MainDAO<Long, MeterReading> {
 
     List<MeterReading> findAllByUserId(Long userId);
 }

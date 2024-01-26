@@ -14,6 +14,7 @@ import kz.baltabayev.out.OutputData;
 import kz.baltabayev.wrapper.SecurityWrapper;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -74,7 +75,7 @@ public class ApplicationRunner {
             Object input = inputData.input();
 
             if (input.equals("1")) {
-                controller.showAllUser();
+                getListOfRegisteredParticipants(outputData);
             } else if (input.equals("2")) {
                 // todo
                 break;
@@ -188,8 +189,25 @@ public class ApplicationRunner {
         }
     }
 
-    private static void getListOfRegisteredParticipants(InputData inputData, OutputData outputData) {
+    private static void getListOfRegisteredParticipants(OutputData outputData) {
+        List<User> userList = controller.showAllUser();
+        List<User> adminList = new ArrayList<>();
 
+        for(User user : userList) {
+            if(isAdmin(user)) adminList.add(user);
+            else {
+                outputData.output(formatUser(user));
+            }
+        }
+
+        for (User admin : adminList) {
+            outputData.output(formatUser(admin));
+        }
+    }
+
+    private static String formatUser(User user) {
+        return String.format("%s, login - %s, registration date - %s}",
+                user.getId(), user.getLogin(), user.getRegistrationDate());
     }
 
     private static void securityProcess(InputData inputData, OutputData outputData) {
@@ -223,7 +241,6 @@ public class ApplicationRunner {
             }
         }
     }
-
 
     private static void exitProcess(OutputData outputData) {
         final String message = "До свидания!";
