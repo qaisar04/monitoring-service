@@ -16,5 +16,4 @@ public class Audit {
     private String login;
     private AuditType auditType;
     private ActionType actionType;
-    private String timeOfTheIncident;
 }

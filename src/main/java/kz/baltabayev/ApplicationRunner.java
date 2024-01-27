@@ -11,11 +11,15 @@ import kz.baltabayev.model.MeterType;
 import kz.baltabayev.model.User;
 import kz.baltabayev.model.types.Role;
 import kz.baltabayev.out.OutputData;
-import kz.baltabayev.wrapper.SecurityWrapper;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static kz.baltabayev.handler.AdminHandler.*;
+import static kz.baltabayev.handler.MainHandler.*;
+import static kz.baltabayev.handler.SecurityHandler.handleAuthorization;
+import static kz.baltabayev.handler.SecurityHandler.handleRegistration;
 
 @Slf4j
 public class ApplicationRunner {
@@ -34,9 +38,9 @@ public class ApplicationRunner {
         while (processIsRun) {
             try {
                 switch (userStage) {
-                    case SECURITY -> securityProcess(inputData, outputData);
-                    case MAIN_MENU -> menuProcess(inputData, outputData);
-                    case ADMIN_MENU -> adminProcess(inputData, outputData);
+                    case SECURITY -> handleSecurity(inputData, outputData);
+                    case MAIN_MENU -> handleMenu(inputData, outputData);
+                    case ADMIN_MENU -> handleAdmin(inputData, outputData);
                     case EXIT -> {
                         exitProcess(outputData);
                         processIsRun = false;
@@ -57,7 +61,33 @@ public class ApplicationRunner {
         inputData.closeInput();
     }
 
-    private static void adminProcess(InputData inputData, OutputData outputData) {
+    public static void handleSecurity(InputData inputData, OutputData outputData) {
+        final String menu = """
+                Введите одно число без пробелов или других символов:
+                1. Регистрация.
+                2. Вход в систему.
+                3. Завершить программу.
+                """;
+
+        while (true) {
+            outputData.output(menu);
+            Object input = inputData.input();
+            if (input.toString().equals("1")) {
+                userStage = handleRegistration(inputData, outputData, controller);
+                break;
+            } else if (input.toString().equals("2")) {
+                userStage = handleAuthorization(inputData, outputData, controller);
+                break;
+            } else if (input.toString().equals("3")) {
+                userStage = UserStage.EXIT;
+                break;
+            } else {
+                outputData.output("Неизвестная команда, повторите попытку.");
+            }
+        }
+    }
+
+    private static void handleAdmin(InputData inputData, OutputData outputData) {
         final String adminMessage = "Пожалуйста введите нужную вам команду.";
         final String adminMenu = """
                 Введите одно число без пробелов и других символов:
@@ -75,14 +105,14 @@ public class ApplicationRunner {
             Object input = inputData.input();
 
             if (input.equals("1")) {
-                getListOfRegisteredParticipants(outputData);
+                handleShowListOfRegisteredParticipants(outputData, controller);
             } else if (input.equals("2")) {
-                // todo
+                handleShowAllAudits(outputData, controller);
                 break;
             } else if (input.equals("3")) {
                 break;
             } else if (input.equals("4")) {
-                addNewTypeOfMeter(inputData, outputData);
+                addNewTypeOfMeter(inputData, outputData, controller);
                 break;
             } else if (input.equals("5")) {
                 userStage = UserStage.SECURITY;
@@ -93,13 +123,10 @@ public class ApplicationRunner {
             } else {
                 outputData.output("Введите корректную команду!");
             }
-
-
         }
-
     }
 
-    private static void menuProcess(InputData inputData, OutputData outputData) {
+    private static void handleMenu(InputData inputData, OutputData outputData) {
         final String menuMessage = "Пожалуйста введите нужную вам команду.";
         final String menu = """
                 Введите одно число без пробелов и других символов:
@@ -116,13 +143,13 @@ public class ApplicationRunner {
             outputData.output(menu);
             Object input = inputData.input();
             if (input.equals("1")) {
-                currentMeterReagings(outputData);
+                handleShowCurrentMeterReagings(outputData, controller);
             } else if (input.equals("2")) {
-                submissionOfMeterReadings(inputData, outputData);
+                handleSubmissionOfMeterReadings(inputData, outputData, controller);
             } else if (input.equals("3")) {
-                viewingReadingsForSpecificMonth(inputData, outputData);
+                handleViewingReadingsForSpecificMonth(inputData, outputData, controller);
             } else if (input.equals("4")) {
-                viewingMeterReadingHistory(outputData);
+                handleViewingMeterReadingHistory(outputData, controller);
             } else if (input.equals("5")) {
                 userStage = UserStage.SECURITY;
                 break;
@@ -135,132 +162,12 @@ public class ApplicationRunner {
         }
     }
 
-    private static void addNewTypeOfMeter(InputData inputData, OutputData outputData) {
-        final String meterTypeMessage = "Введите тип счетчика:";
-        outputData.output(meterTypeMessage);
-        String meterType = inputData.input().toString();
 
-        controller.addNewMeterType(
-                MeterType.builder()
-                        .typeName(meterType)
-                        .build()
-        );
-    }
-
-    private static void viewingMeterReadingHistory(OutputData outputData) {
-        List<MeterReading> meterReadings = controller.showMeterReadingHistory(ApplicationContext.getAuthorizePlayer().getId());
-        for (MeterReading reading : meterReadings) {
-            outputData.output(reading);
-        }
-    }
-
-    private static void viewingReadingsForSpecificMonth(InputData inputData, OutputData outputData) {
-        final String yearMessage = "Введите год:";
-        outputData.output(yearMessage);
-        String yearOut = inputData.input().toString();
-        final String monthMessage = "Введите месяц:";
-        outputData.output(monthMessage);
-        String monthOut = inputData.input().toString();
-        List<MeterReading> meterReadings = controller.showMeterReadingsByMonthAndYear(Integer.valueOf(yearOut), Integer.valueOf(monthOut), ApplicationContext.getAuthorizePlayer().getId());
-        for (MeterReading reading : meterReadings) {
-            outputData.output(reading);
-        }
-    }
-
-    private static void submissionOfMeterReadings(InputData inputData, OutputData outputData) {
-        final String counterMess = "Введите номер счетчика:";
-        outputData.output(counterMess);
-        String countOutp = inputData.input().toString();
-
-        showAvailableMeterTypes(outputData);
-        String meterTypeId = inputData.input().toString();
-
-        controller.submitMeterReading(Integer.valueOf(countOutp), Long.valueOf(meterTypeId), ApplicationContext.getAuthorizePlayer().getId());
-    }
-
-    private static void currentMeterReagings(OutputData outputData) {
-        List<MeterReading> meterReadings = controller.showCurrentMeterReadings(ApplicationContext.getAuthorizePlayer().getId());
-        if (meterReadings.isEmpty()) {
-            outputData.output("У вас нет актуальных показаний.");
-        } else {
-            for (MeterReading reading : meterReadings) {
-                outputData.output(reading);
-            }
-        }
-    }
-
-    private static void getListOfRegisteredParticipants(OutputData outputData) {
-        List<User> userList = controller.showAllUser();
-        List<User> adminList = new ArrayList<>();
-
-        for(User user : userList) {
-            if(isAdmin(user)) adminList.add(user);
-            else {
-                outputData.output(formatUser(user));
-            }
-        }
-
-        for (User admin : adminList) {
-            outputData.output(formatUser(admin));
-        }
-    }
-
-    private static String formatUser(User user) {
-        return String.format("%s, login - %s, registration date - %s}",
-                user.getId(), user.getLogin(), user.getRegistrationDate());
-    }
-
-    private static void securityProcess(InputData inputData, OutputData outputData) {
-        final String menu = """
-                Введите одно число без пробелов или других символов:
-                1. Регистрация.
-                2. Вход в систему.
-                3. Завершить программу.
-                """;
-
-        while (true) {
-            outputData.output(menu);
-            Object input = inputData.input();
-            if (input.toString().equals("1")) {
-                SecurityWrapper swRegister = askCredentials(inputData, outputData);
-                User registeredUser = controller.register(swRegister.getLogin(), swRegister.getPassword());
-                ApplicationContext.loadAuthorizePlayer(registeredUser);
-                userStage = UserStage.MAIN_MENU;
-                break;
-            } else if (input.toString().equals("2")) {
-                SecurityWrapper swAuthorize = askCredentials(inputData, outputData);
-                User authorizedUser = controller.authorize(swAuthorize.getLogin(), swAuthorize.getPassword());
-                ApplicationContext.loadAuthorizePlayer(authorizedUser);
-                userStage = isAdmin(authorizedUser) ? UserStage.ADMIN_MENU : UserStage.MAIN_MENU;
-                break;
-            } else if (input.toString().equals("3")) {
-                userStage = UserStage.EXIT;
-                break;
-            } else {
-                outputData.output("Неизвестная команда, повторите попытку.");
-            }
-        }
-    }
 
     private static void exitProcess(OutputData outputData) {
         final String message = "До свидания!";
         outputData.output(message);
         ApplicationContext.cleanAuthorizePlayer();
-    }
-
-    private static SecurityWrapper askCredentials(InputData inputData, OutputData outputData) {
-        final String loginMsg = "Введите логин:";
-        outputData.output(loginMsg);
-        String login = inputData.input().toString();
-
-        final String passMsg = "Введите пароль:";
-        outputData.output(passMsg);
-        String password = inputData.input().toString();
-
-        return SecurityWrapper.builder()
-                .login(login)
-                .password(password)
-                .build();
     }
 
     private static void showAvailableMeterTypes(OutputData outputData) {
@@ -274,14 +181,6 @@ public class ApplicationRunner {
         outputData.output(meterTypeMenu.toString());
     }
 
-    private static boolean isAdmin(User user) {
-        return user.getRole().equals(Role.ADMIN);
-    }
 
-    enum UserStage {
-        SECURITY,
-        MAIN_MENU,
-        ADMIN_MENU,
-        EXIT
-    }
+
 }

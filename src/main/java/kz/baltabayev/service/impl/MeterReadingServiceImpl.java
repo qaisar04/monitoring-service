@@ -4,7 +4,12 @@ import kz.baltabayev.dao.MeterReadingDAO;
 import kz.baltabayev.exception.DuplicateRecordException;
 import kz.baltabayev.exception.NotValidArgumentException;
 import kz.baltabayev.model.MeterReading;
+import kz.baltabayev.model.User;
+import kz.baltabayev.model.types.ActionType;
+import kz.baltabayev.model.types.AuditType;
+import kz.baltabayev.service.AuditService;
 import kz.baltabayev.service.MeterReadingService;
+import kz.baltabayev.service.UserService;
 import kz.baltabayev.util.DateTimeUtils;
 import lombok.RequiredArgsConstructor;
 
@@ -19,9 +24,13 @@ import java.util.stream.Collectors;
 public class MeterReadingServiceImpl implements MeterReadingService {
 
     private final MeterReadingDAO meterReadingDAO;
+    private final UserService userService;
+    private final AuditService auditService;
 
     @Override
     public List<MeterReading> getCurrentMeterReadings(Long userId) {
+        User user = getUserByUserId(userId);
+
         List<MeterReading> meterReadings = meterReadingDAO.findAll();
 
         Map<Long, List<MeterReading>> readingsByType = meterReadings.stream()
@@ -36,12 +45,21 @@ public class MeterReadingServiceImpl implements MeterReadingService {
             }
         }
 
+        auditService.audit(
+                user.getLogin(),
+                ActionType.GETTING_HISTORY_OF_METER_READINGS,
+                (lastReadings == null) ? AuditType.FAIL : AuditType.SUCCESS
+        );
+
         return lastReadings;
     }
 
     @Override
     public void submitMeterReading(Integer counterNumber, Long meterTypeId, Long userId) {
+        User user = getUserByUserId(userId);
+
         if (counterNumber == null || userId == null || meterTypeId == null) {
+            auditService.audit(user.getLogin(), ActionType.SUBMIT_METER, AuditType.FAIL);
             throw new NotValidArgumentException("Пожалуйста, заполните все пустые поля.");
         }
 
@@ -53,6 +71,7 @@ public class MeterReadingServiceImpl implements MeterReadingService {
                                      DateTimeUtils.isSameMonth(DateTimeUtils.parseDateTimeFromString(reading.getReadingDate()), now));
 
         if (alreadyExists) {
+            auditService.audit(user.getLogin(), ActionType.SUBMIT_METER, AuditType.FAIL);
             throw new DuplicateRecordException("Запись для данного типа счетчика уже существует в текущем месяце.");
         }
 
@@ -63,11 +82,14 @@ public class MeterReadingServiceImpl implements MeterReadingService {
                 .userId(userId)
                 .build();
 
+        auditService.audit(user.getLogin(), ActionType.SUBMIT_METER, AuditType.SUCCESS);
         meterReadingDAO.save(meterReading);
     }
 
     @Override
     public List<MeterReading> getMeterReadingsByMonthAndYear(Integer year, Integer month, Long userId) {
+        User user = getUserByUserId(userId);
+
         List<MeterReading> allReadings = meterReadingDAO.findAllByUserId(userId);
         List<MeterReading> currentReadings = new ArrayList<>();
         YearMonth filterFromUser = YearMonth.of(year, month);
@@ -81,15 +103,27 @@ public class MeterReadingServiceImpl implements MeterReadingService {
             }
         }
 
+        auditService.audit(
+                user.getLogin(),
+                ActionType.GETTING_HISTORY_OF_METER_READINGS,
+                (currentReadings == null) ? AuditType.FAIL : AuditType.SUCCESS
+        );
+
         return currentReadings;
     }
 
     @Override
     public List<MeterReading> getMeterReadingHistory(Long userId) {
+        User user = getUserByUserId(userId);
+        auditService.audit(user.getLogin(), ActionType.GETTING_HISTORY_OF_METER_READINGS, AuditType.SUCCESS);
         return meterReadingDAO.findAllByUserId(userId);
     }
 
     public List<MeterReading> getAllMeterReadingHistory() {
         return meterReadingDAO.findAll();
+    }
+
+    private User getUserByUserId(Long userId) {
+        return userService.getUserById(userId).get();
     }
 }

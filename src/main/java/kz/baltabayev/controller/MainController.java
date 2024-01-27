@@ -1,12 +1,10 @@
 package kz.baltabayev.controller;
 
+import kz.baltabayev.model.Audit;
 import kz.baltabayev.model.MeterReading;
 import kz.baltabayev.model.MeterType;
 import kz.baltabayev.model.User;
-import kz.baltabayev.service.MeterReadingService;
-import kz.baltabayev.service.MeterTypeService;
-import kz.baltabayev.service.SecurityService;
-import kz.baltabayev.service.UserService;
+import kz.baltabayev.service.*;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
@@ -18,6 +16,7 @@ public class MainController {
     private final MeterReadingService meterReadingService;
     private final MeterTypeService meterTypeService;
     private final UserService userService;
+    private final AuditService auditService;
 
     public User register(String login, String password) {
         return securityService.register(login, password);
@@ -55,6 +54,8 @@ public class MainController {
         return userService.showAllUsers();
     }
 
-
+    public List<Audit> showAllAudits() {
+        return auditService.showAllAudits();
+    }
 
 }

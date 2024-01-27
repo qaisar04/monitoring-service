@@ -68,9 +68,9 @@ public class ApplicationContext {
     }
 
     private static void loadServiceLayer() {
-        SecurityService securityService = new SecurityServiceImpl((UserDAO) CONTEXT.get("userDAO"));
+        SecurityService securityService = new SecurityServiceImpl((UserDAO) CONTEXT.get("userDAO"), (AuditService) CONTEXT.get("auditService"));
         UserService userService = new UserServiceImpl((UserDAO) CONTEXT.get("userDAO"));
-        MeterReadingService meterReadingService = new MeterReadingServiceImpl((MeterReadingDAO) CONTEXT.get("meterReadingDAO"));
+        MeterReadingService meterReadingService = new MeterReadingServiceImpl((MeterReadingDAO) CONTEXT.get("meterReadingDAO"), (UserService) CONTEXT.get("userService"), (AuditService) CONTEXT.get("auditService"));
         MeterTypeService meterTypeService = new MeterTypeServiceImpl((MeterTypeDAO) CONTEXT.get("meterTypeDAO"));
         AuditService auditService = new AuditServiceImpl((AuditDAO) CONTEXT.get("auditDAO"));
 

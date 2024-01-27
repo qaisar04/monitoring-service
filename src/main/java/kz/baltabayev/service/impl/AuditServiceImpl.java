@@ -14,7 +14,6 @@ public class AuditServiceImpl implements AuditService {
 
     private final AuditDAO auditDAO;
 
-    @Override
     public Audit save(Audit audit) {
         return auditDAO.save(audit);
     }
@@ -24,12 +23,13 @@ public class AuditServiceImpl implements AuditService {
         return auditDAO.findAll();
     }
 
-    public void audit(String username, ActionType actionType, AuditType auditType) {
+    @Override
+    public void audit(String login, ActionType actionType, AuditType auditType) {
         Audit audit = Audit.builder()
-                .login(username)
+                .login(login)
                 .actionType(actionType)
                 .auditType(auditType)
                 .build();
-        auditService.save(audit);
+        save(audit);
     }
 }
