@@ -18,10 +18,16 @@ import kz.baltabayev.service.impl.*;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Application context for managing beans and dependencies.
+ */
 public class ApplicationContext {
 
     private static final Map<String, Object> CONTEXT = new HashMap<>();
 
+    /**
+     * Loads the application context with DAO, Service, Controller, and Input/Output components.
+     */
     public static void loadContext() {
         loadDAOLayer();
         loadServiceLayer();
@@ -29,18 +35,37 @@ public class ApplicationContext {
         loadInputOutputLayer();
     }
 
+    /**
+     * Loads an authorized user into the context.
+     *
+     * @param user The authorized user.
+     */
     public static void loadAuthorizePlayer(User user) {
         CONTEXT.put("authorize", user);
     }
 
+    /**
+     * Removes the authorized user from the context.
+     */
     public static void cleanAuthorizePlayer() {
         CONTEXT.remove("authorize");
     }
 
+    /**
+     * Retrieves the authorized user from the context.
+     *
+     * @return The authorized user.
+     */
     public static User getAuthorizePlayer() {
         return (User) CONTEXT.get("authorize");
     }
 
+    /**
+     * Retrieves a bean from the context by its name.
+     *
+     * @param beanName The name of the bean.
+     * @return The bean object.
+     */
     public static Object getBean(String beanName) {
         return CONTEXT.get(beanName);
     }

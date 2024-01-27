@@ -3,7 +3,6 @@ package kz.baltabayev.handler;
 import kz.baltabayev.ApplicationContext;
 import kz.baltabayev.controller.MainController;
 import kz.baltabayev.in.InputData;
-import kz.baltabayev.model.Audit;
 import kz.baltabayev.model.MeterReading;
 import kz.baltabayev.model.MeterType;
 import kz.baltabayev.out.OutputData;
@@ -12,8 +11,17 @@ import java.util.List;
 
 import static kz.baltabayev.handler.AdminHandler.formatMeterType;
 
+/**
+ * Handler class for main user operations. Provides methods to handle tasks related to user functionalities.
+ */
 public class MainHandler {
 
+    /**
+     * Displays the current meter readings for the authenticated user.
+     *
+     * @param outputData The output data interface.
+     * @param controller The main controller for accessing business logic.
+     */
     public static void handleShowCurrentMeterReagings(OutputData outputData, MainController controller) {
         List<MeterReading> meterReadings = controller.showCurrentMeterReadings(ApplicationContext.getAuthorizePlayer().getId());
         List<MeterType> meterTypes = controller.showAvailableMeterTypes();
@@ -22,6 +30,13 @@ public class MainHandler {
             outputData.output(formatMeterReading(reading, meterTypes));
     }
 
+    /**
+     * Handles the submission of meter readings by the authenticated user.
+     *
+     * @param inputData  The input data interface.
+     * @param outputData The output data interface.
+     * @param controller The main controller for accessing business logic.
+     */
     public static void handleSubmissionOfMeterReadings(InputData inputData, OutputData outputData, MainController controller) {
         final String counterMess = "Введите номер счетчика:";
         outputData.output(counterMess);
@@ -35,6 +50,13 @@ public class MainHandler {
         controller.submitMeterReading(Integer.valueOf(countOutp), Long.valueOf(meterTypeId), ApplicationContext.getAuthorizePlayer().getId());
     }
 
+    /**
+     * Displays meter readings for a specific month and year for the authenticated user.
+     *
+     * @param inputData  The input data interface.
+     * @param outputData The output data interface.
+     * @param controller The main controller for accessing business logic.
+     */
     public static void handleViewingReadingsForSpecificMonth(InputData inputData, OutputData outputData, MainController controller) {
         final String yearMessage = "Введите год:";
         outputData.output(yearMessage);
@@ -50,6 +72,12 @@ public class MainHandler {
         }
     }
 
+    /**
+     * Displays the meter reading history for the authenticated user.
+     *
+     * @param outputData The output data interface.
+     * @param controller The main controller for accessing business logic.
+     */
     public static void handleViewingMeterReadingHistory(OutputData outputData, MainController controller) {
         List<MeterReading> meterReadings = controller.showMeterReadingHistory(ApplicationContext.getAuthorizePlayer().getId());
         for (MeterReading reading : meterReadings) {

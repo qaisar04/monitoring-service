@@ -8,12 +8,25 @@ import kz.baltabayev.util.DateTimeUtils;
 import java.time.LocalDateTime;
 import java.util.*;
 
+/**
+ * Implementation of the UserDAO interface using an in-memory map.
+ * Provides methods for CRUD operations on User entities and initializes
+ * the map with a predefined admin User entity during construction.
+ */
 public class UserDAOImpl implements UserDAO {
 
+    // In-memory storage for User entities
     private final Map<Long, User> users = new HashMap<>();
+
+    // Variable to generate unique IDs for User entities
     private Long id = 1L;
 
+    /**
+     * Constructs a new UserDAOImpl and initializes the in-memory storage
+     * with a predefined admin User entity.
+     */
     public UserDAOImpl() {
+        // Predefined admin User entity
         save(
                 User.builder()
                         .id(-1L)
@@ -25,12 +38,25 @@ public class UserDAOImpl implements UserDAO {
         );
     }
 
+    /**
+     * Retrieves a User entity by its ID.
+     *
+     * @param id The ID of the User entity to retrieve.
+     * @return An Optional containing the found User entity, or an empty Optional if not found.
+     */
     @Override
     public Optional<User> findById(Long id) {
         User user = users.get(id);
         return user == null ? Optional.empty() : Optional.of(user);
     }
 
+    /**
+     * Updates an existing User entity in the in-memory storage.
+     *
+     * @param user The User entity to update.
+     * @return The updated User entity.
+     * @throws IllegalArgumentException If the User with the given ID is not found.
+     */
     @Override
     public User update(User user) {
         Long userId = user.getId();
@@ -42,11 +68,22 @@ public class UserDAOImpl implements UserDAO {
         }
     }
 
+    /**
+     * Retrieves a list of all User entities.
+     *
+     * @return A list containing all User entities stored in the in-memory map.
+     */
     @Override
     public List<User> findAll() {
         return new ArrayList<>(users.values());
     }
 
+    /**
+     * Saves a User entity to the in-memory storage.
+     *
+     * @param user The User entity to save.
+     * @return The saved User entity with an assigned ID.
+     */
     @Override
     public User save(User user) {
         user.setId(id);
@@ -55,6 +92,12 @@ public class UserDAOImpl implements UserDAO {
         return users.get(user.getId());
     }
 
+    /**
+     * Retrieves a User entity by its login.
+     *
+     * @param login The login of the User entity to retrieve.
+     * @return An Optional containing the found User entity, or an empty Optional if not found.
+     */
     @Override
     public Optional<User> findByLogin(String login) {
         User user = null;

@@ -16,12 +16,24 @@ import lombok.RequiredArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+/**
+ * Implementation of the {@link SecurityService} interface.
+ */
 @RequiredArgsConstructor
 public class SecurityServiceImpl implements SecurityService {
 
     private final UserDAO userDao;
     private final AuditService auditService;
 
+    /**
+     * Registers a new user with the provided login and password.
+     *
+     * @param login    the user's login
+     * @param password the user's password
+     * @return the registered user
+     * @throws NotValidArgumentException if login or password is empty, blank, or does not meet length requirements
+     * @throws RegisterException         if a user with the same login already exists
+     */
     @Override
     public User register(String login, String password) {
         if (login == null || password == null || login.isEmpty() || password.isEmpty() || login.isBlank() || password.isBlank()) {
@@ -51,8 +63,16 @@ public class SecurityServiceImpl implements SecurityService {
         return userDao.save(newUser);
     }
 
+    /**
+     * Authorizes a user with the provided login and password.
+     *
+     * @param login    the user's login
+     * @param password the user's password
+     * @return an optional containing the authorized user, or empty if authorization fails
+     * @throws AuthorizeException if the user is not found or the password is incorrect
+     */
     @Override
-    public User authorize(String login, String password) {
+    public Optional<User> authorize(String login, String password) {
         Optional<User> optionalUser = userDao.findByLogin(login);
         if (optionalUser.isEmpty()) {
             auditService.audit(login, ActionType.AUTHORIZATION, AuditType.FAIL);
@@ -65,6 +85,6 @@ public class SecurityServiceImpl implements SecurityService {
         }
 
         auditService.audit(login, ActionType.AUTHORIZATION, AuditType.SUCCESS);
-        return optionalUser.get();
+        return optionalUser;
     }
 }

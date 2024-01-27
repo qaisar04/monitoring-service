@@ -67,9 +67,9 @@ public class SecurityServiceImplTest {
                 .build();
         Mockito.when(userDAO.findByLogin(login)).thenReturn(Optional.of(user));
 
-        User authorization = securityService.authorize(login, password);
-        assertEquals(login, authorization.getLogin());
-        assertEquals(password, authorization.getPassword());
+        Optional<User> authorization = securityService.authorize(login, password);
+        assertEquals(login, authorization.get().getLogin());
+        assertEquals(password, authorization.get().getPassword());
     }
 
     @Test

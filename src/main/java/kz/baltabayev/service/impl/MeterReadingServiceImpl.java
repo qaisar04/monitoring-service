@@ -24,6 +24,9 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
+/**
+ * Implementation of the {@link MeterReadingService} interface.
+ */
 @RequiredArgsConstructor
 public class MeterReadingServiceImpl implements MeterReadingService {
 
@@ -32,6 +35,12 @@ public class MeterReadingServiceImpl implements MeterReadingService {
     private final AuditService auditService;
     private final MeterTypeService meterTypeService;
 
+    /**
+     * Retrieves the current meter readings for a given user.
+     *
+     * @param userId the ID of the user
+     * @return a list of the current meter readings
+     */
     @Override
     public List<MeterReading> getCurrentMeterReadings(Long userId) {
         User user = getUserByUserId(userId);
@@ -59,6 +68,13 @@ public class MeterReadingServiceImpl implements MeterReadingService {
         return lastReadings;
     }
 
+    /**
+     * Submits a new meter reading for a user.
+     *
+     * @param counterNumber the counter number
+     * @param meterTypeId   the meter type ID
+     * @param userId        the user ID
+     */
     @Override
     public void submitMeterReading(Integer counterNumber, Long meterTypeId, Long userId) {
 
@@ -98,6 +114,14 @@ public class MeterReadingServiceImpl implements MeterReadingService {
         meterReadingDAO.save(meterReading);
     }
 
+    /**
+     * Retrieves meter readings for a specific month and year for a given user.
+     *
+     * @param year  the year
+     * @param month the month
+     * @param userId the user ID
+     * @return a list of meter readings for the specified month and year
+     */
     @Override
     public List<MeterReading> getMeterReadingsByMonthAndYear(Integer year, Integer month, Long userId) {
         User user = getUserByUserId(userId);
@@ -124,6 +148,12 @@ public class MeterReadingServiceImpl implements MeterReadingService {
         return currentReadings;
     }
 
+    /**
+     * Retrieves the entire history of meter readings for a given user.
+     *
+     * @param userId the user ID
+     * @return the list of all meter readings for the user
+     */
     @Override
     public List<MeterReading> getMeterReadingHistory(Long userId) {
         User user = getUserByUserId(userId);
@@ -131,6 +161,11 @@ public class MeterReadingServiceImpl implements MeterReadingService {
         return meterReadingDAO.findAllByUserId(userId);
     }
 
+    /**
+     * Retrieves the entire history of all meter readings.
+     *
+     * @return the list of all meter readings
+     */
     public List<MeterReading> getAllMeterReadingHistory() {
         return meterReadingDAO.findAll();
     }

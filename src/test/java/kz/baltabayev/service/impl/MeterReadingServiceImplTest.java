@@ -19,7 +19,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -126,7 +129,7 @@ class MeterReadingServiceImplTest {
                 new MeterReading(1L, 124812409, DateTimeUtils.parseDateTime(LocalDateTime.of(2024, 1, 20, 0, 0)), 1L, userId),
                 new MeterReading(2L, 824123414, DateTimeUtils.parseDateTime(LocalDateTime.of(2024, 1, 20, 0, 0)), 2L, userId),
                 new MeterReading(3L, 249901312, DateTimeUtils.parseDateTime(LocalDateTime.of(2023, 11, 18, 0, 0)), 2L, userId)
-                ));
+        ));
 
         List<MeterReading> result = meterReadingService.getMeterReadingsByMonthAndYear(2024, 1, userId);
 

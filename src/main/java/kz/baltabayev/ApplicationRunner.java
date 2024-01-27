@@ -14,12 +14,19 @@ import static kz.baltabayev.handler.MainHandler.*;
 import static kz.baltabayev.handler.SecurityHandler.handleAuthorization;
 import static kz.baltabayev.handler.SecurityHandler.handleRegistration;
 
+/**
+ * The main class responsible for running the console-based meter reading application.
+ * It handles user interactions, menu navigation, and exception handling.
+ */
 @Slf4j
 public class ApplicationRunner {
 
     private static MainController controller;
     private static UserStage userStage;
 
+    /**
+     * Runs the application, loading the necessary context and handling user interactions.
+     */
     public static void run() {
         ApplicationContext.loadContext();
         InputData inputData = (InputData) ApplicationContext.getBean("input");
@@ -54,6 +61,12 @@ public class ApplicationRunner {
         inputData.closeInput();
     }
 
+    /**
+     * Handles the security stage where users can register, log in, or exit the program.
+     *
+     * @param inputData  The input data provider.
+     * @param outputData The output data provider.
+     */
     public static void handleSecurity(InputData inputData, OutputData outputData) {
         final String menu = """
                 Введите одно число без пробелов или других символов:
@@ -80,6 +93,12 @@ public class ApplicationRunner {
         }
     }
 
+    /**
+     * Handles the admin stage where administrators can perform various actions.
+     *
+     * @param inputData  The input data provider.
+     * @param outputData The output data provider.
+     */
     private static void handleAdmin(InputData inputData, OutputData outputData) {
         final String adminMessage = "Пожалуйста введите нужную вам команду.";
         final String adminMenu = """
@@ -120,6 +139,12 @@ public class ApplicationRunner {
         }
     }
 
+    /**
+     * Handles the main menu where users can perform various actions.
+     *
+     * @param inputData  The input data provider.
+     * @param outputData The output data provider.
+     */
     private static void handleMenu(InputData inputData, OutputData outputData) {
         final String menuMessage = "Пожалуйста введите нужную вам команду.";
         final String menu = """
@@ -156,6 +181,11 @@ public class ApplicationRunner {
         }
     }
 
+    /**
+     * Exits the application, providing a farewell message.
+     *
+     * @param outputData The output data provider.
+     */
     private static void exitProcess(OutputData outputData) {
         final String message = "До свидания!";
         outputData.output(message);
