@@ -51,8 +51,8 @@ public class AdminHandler {
     }
 
     private static String formatUser(User user) {
-        return String.format("login - %s, registration date - %s",
-                user.getLogin(), user.getRegistrationDate());
+        return String.format("login - %s | registration date - %s | %s",
+                user.getLogin(), user.getRegistrationDate(), user.getRole());
     }
 
     private static String formatAudit(Audit audit) {
@@ -60,4 +60,8 @@ public class AdminHandler {
                 audit.getLogin(),audit.getAuditType(), audit.getActionType());
     }
 
+    public static String formatMeterType(MeterType type) {
+        return String.format("%s. %s",
+                type.getId(), type.getTypeName());
+    }
 }

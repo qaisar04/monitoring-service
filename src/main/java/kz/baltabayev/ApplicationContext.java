@@ -72,16 +72,24 @@ public class ApplicationContext {
         AuditService auditService = new AuditServiceImpl((AuditDAO) CONTEXT.get("auditDAO"));
         CONTEXT.put("auditService", auditService);
 
-        SecurityService securityService = new SecurityServiceImpl((UserDAO) CONTEXT.get("userDAO"), (AuditService) CONTEXT.get("auditService"));
+        SecurityService securityService = new SecurityServiceImpl(
+                (UserDAO) CONTEXT.get("userDAO"),
+                (AuditService) CONTEXT.get("auditService")
+        );
         CONTEXT.put("securityService", securityService);
 
         UserService userService = new UserServiceImpl((UserDAO) CONTEXT.get("userDAO"));
         CONTEXT.put("userService", userService);
 
-        MeterReadingService meterReadingService = new MeterReadingServiceImpl((MeterReadingDAO) CONTEXT.get("meterReadingDAO"), (UserService) CONTEXT.get("userService"), (AuditService) CONTEXT.get("auditService"));
-        CONTEXT.put("meterReadingService", meterReadingService);
-
         MeterTypeService meterTypeService = new MeterTypeServiceImpl((MeterTypeDAO) CONTEXT.get("meterTypeDAO"));
         CONTEXT.put("meterTypeService", meterTypeService);
+
+        MeterReadingService meterReadingService = new MeterReadingServiceImpl(
+                (MeterReadingDAO) CONTEXT.get("meterReadingDAO"),
+                (UserService) CONTEXT.get("userService"),
+                (AuditService) CONTEXT.get("auditService"),
+                (MeterTypeService) CONTEXT.get("meterTypeService")
+        );
+        CONTEXT.put("meterReadingService", meterReadingService);
     }
 }

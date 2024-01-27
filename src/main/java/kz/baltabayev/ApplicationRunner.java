@@ -6,11 +6,8 @@ import kz.baltabayev.exception.DuplicateRecordException;
 import kz.baltabayev.exception.NotValidArgumentException;
 import kz.baltabayev.exception.RegisterException;
 import kz.baltabayev.in.InputData;
-import kz.baltabayev.model.MeterType;
 import kz.baltabayev.out.OutputData;
 import lombok.extern.slf4j.Slf4j;
-
-import java.util.List;
 
 import static kz.baltabayev.handler.AdminHandler.*;
 import static kz.baltabayev.handler.MainHandler.*;
@@ -95,8 +92,8 @@ public class ApplicationRunner {
                 6. Завершить программу.
                 """;
 
-        outputData.output(adminMenu);
         while (true) {
+            outputData.output(adminMenu);
             outputData.output(adminMessage);
             Object input = inputData.input();
 
@@ -106,6 +103,7 @@ public class ApplicationRunner {
                 handleShowAllAudits(outputData, controller);
                 break;
             } else if (input.equals("3")) {
+                //TODO
                 break;
             } else if (input.equals("4")) {
                 addNewTypeOfMeter(inputData, outputData, controller);
@@ -162,16 +160,5 @@ public class ApplicationRunner {
         final String message = "До свидания!";
         outputData.output(message);
         ApplicationContext.cleanAuthorizePlayer();
-    }
-
-    private static void showAvailableMeterTypes(OutputData outputData) {
-        List<MeterType> allMeterTypes = controller.showAvailableMeterTypes();
-
-        StringBuilder meterTypeMenu = new StringBuilder("Выберите тип счетчика:\n");
-        for (int i = 0; i < allMeterTypes.size(); i++) {
-            meterTypeMenu.append(i + 1).append(". ").append(allMeterTypes.get(i).getTypeName()).append("\n");
-        }
-
-        outputData.output(meterTypeMenu.toString());
     }
 }

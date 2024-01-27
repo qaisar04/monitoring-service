@@ -3,6 +3,7 @@ package kz.baltabayev.dao.impl;
 import kz.baltabayev.dao.UserDAO;
 import kz.baltabayev.model.User;
 import kz.baltabayev.model.types.Role;
+import kz.baltabayev.util.DateTimeUtils;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -15,10 +16,11 @@ public class UserDAOImpl implements UserDAO {
     public UserDAOImpl() {
         save(
                 User.builder()
-                        .id(0L)
+                        .id(-1L)
                         .login("admin")
                         .password("admin")
                         .role(Role.ADMIN)
+                        .registrationDate(DateTimeUtils.parseDateTime(LocalDateTime.now()))
                         .build()
         );
     }

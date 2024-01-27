@@ -1,14 +1,17 @@
 package kz.baltabayev.service.impl;
 
 import kz.baltabayev.dao.MeterReadingDAO;
+import kz.baltabayev.dao.MeterTypeDAO;
 import kz.baltabayev.exception.DuplicateRecordException;
 import kz.baltabayev.exception.NotValidArgumentException;
 import kz.baltabayev.model.MeterReading;
+import kz.baltabayev.model.MeterType;
 import kz.baltabayev.model.User;
 import kz.baltabayev.model.types.ActionType;
 import kz.baltabayev.model.types.AuditType;
 import kz.baltabayev.service.AuditService;
 import kz.baltabayev.service.MeterReadingService;
+import kz.baltabayev.service.MeterTypeService;
 import kz.baltabayev.service.UserService;
 import kz.baltabayev.util.DateTimeUtils;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +21,7 @@ import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -26,6 +30,7 @@ public class MeterReadingServiceImpl implements MeterReadingService {
     private final MeterReadingDAO meterReadingDAO;
     private final UserService userService;
     private final AuditService auditService;
+    private final MeterTypeService meterTypeService;
 
     @Override
     public List<MeterReading> getCurrentMeterReadings(Long userId) {
@@ -56,11 +61,18 @@ public class MeterReadingServiceImpl implements MeterReadingService {
 
     @Override
     public void submitMeterReading(Integer counterNumber, Long meterTypeId, Long userId) {
+
         User user = getUserByUserId(userId);
 
         if (counterNumber == null || userId == null || meterTypeId == null) {
             auditService.audit(user.getLogin(), ActionType.SUBMIT_METER, AuditType.FAIL);
             throw new NotValidArgumentException("Пожалуйста, заполните все пустые поля.");
+        }
+
+        List<MeterType> allTypes = meterTypeService.showAvailableMeterTypes();
+        if (meterTypeId > allTypes.size() || meterTypeId <= 0) {
+            auditService.audit(user.getLogin(), ActionType.SUBMIT_METER, AuditType.FAIL);
+            throw new NotValidArgumentException("Пожалуйста, введите корректный тип показаний.");
         }
 
         LocalDateTime now = LocalDateTime.now();
@@ -124,6 +136,7 @@ public class MeterReadingServiceImpl implements MeterReadingService {
     }
 
     private User getUserByUserId(Long userId) {
-        return userService.getUserById(userId).get();
+        return userService.getUserById(userId)
+                .orElseThrow(() -> new NoSuchElementException("No user found with ID: " + userId));
     }
 }
