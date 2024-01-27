@@ -3,10 +3,7 @@ package kz.baltabayev.dao.impl;
 import kz.baltabayev.dao.AuditDAO;
 import kz.baltabayev.model.Audit;
 
-import java.time.LocalDateTime;
 import java.util.*;
-
-import static kz.baltabayev.util.DateTimeUtils.parseDateTime;
 
 public class AuditDAOImpl implements AuditDAO {
 
@@ -27,7 +24,6 @@ public class AuditDAOImpl implements AuditDAO {
     @Override
     public Audit save(Audit audit) {
         audit.setId(id);
-        audit.setTimeOfTheIncident(parseDateTime(LocalDateTime.now()));
         id++;
         audits.put(audit.getId(), audit);
         return audits.get(audit.getId());

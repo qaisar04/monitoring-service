@@ -4,6 +4,7 @@ import kz.baltabayev.ApplicationContext;
 import kz.baltabayev.controller.MainController;
 import kz.baltabayev.in.InputData;
 import kz.baltabayev.model.MeterReading;
+import kz.baltabayev.model.MeterType;
 import kz.baltabayev.out.OutputData;
 
 import java.util.List;
@@ -26,7 +27,9 @@ public class MainHandler {
         outputData.output(counterMess);
         String countOutp = inputData.input().toString();
 
-        controller.showAvailableMeterTypes();
+        final String type = "Введите тип счетчика:";
+        outputData.output(type);
+        showAvailableMeterTypes(outputData, controller);
         String meterTypeId = inputData.input().toString();
 
         controller.submitMeterReading(Integer.valueOf(countOutp), Long.valueOf(meterTypeId), ApplicationContext.getAuthorizePlayer().getId());
@@ -49,6 +52,13 @@ public class MainHandler {
         List<MeterReading> meterReadings = controller.showMeterReadingHistory(ApplicationContext.getAuthorizePlayer().getId());
         for (MeterReading reading : meterReadings) {
             outputData.output(reading);
+        }
+    }
+
+    private static void showAvailableMeterTypes(OutputData outputData, MainController controller) {
+        List<MeterType> meterTypes = controller.showAvailableMeterTypes();
+        for (MeterType type : meterTypes) {
+            outputData.output(String.format("%s. - %s", type.getId(), type.getTypeName()));
         }
     }
 }

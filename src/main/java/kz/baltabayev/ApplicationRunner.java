@@ -6,14 +6,10 @@ import kz.baltabayev.exception.DuplicateRecordException;
 import kz.baltabayev.exception.NotValidArgumentException;
 import kz.baltabayev.exception.RegisterException;
 import kz.baltabayev.in.InputData;
-import kz.baltabayev.model.MeterReading;
 import kz.baltabayev.model.MeterType;
-import kz.baltabayev.model.User;
-import kz.baltabayev.model.types.Role;
 import kz.baltabayev.out.OutputData;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static kz.baltabayev.handler.AdminHandler.*;
@@ -162,8 +158,6 @@ public class ApplicationRunner {
         }
     }
 
-
-
     private static void exitProcess(OutputData outputData) {
         final String message = "До свидания!";
         outputData.output(message);
@@ -180,7 +174,4 @@ public class ApplicationRunner {
 
         outputData.output(meterTypeMenu.toString());
     }
-
-
-
 }

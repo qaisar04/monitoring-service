@@ -2,6 +2,7 @@ package kz.baltabayev.handler;
 
 import kz.baltabayev.controller.MainController;
 import kz.baltabayev.in.InputData;
+import kz.baltabayev.model.Audit;
 import kz.baltabayev.model.MeterType;
 import kz.baltabayev.model.User;
 import kz.baltabayev.out.OutputData;
@@ -30,7 +31,11 @@ public class AdminHandler {
     }
 
     public static void handleShowAllAudits(OutputData outputData, MainController controller) {
-        controller.showAllAudits();
+        List<Audit> allAudits = controller.showAllAudits();
+
+        for(Audit audit : allAudits) {
+            outputData.output(formatAudit(audit));
+        }
     }
 
     public static void addNewTypeOfMeter(InputData inputData, OutputData outputData, MainController controller) {
@@ -46,8 +51,13 @@ public class AdminHandler {
     }
 
     private static String formatUser(User user) {
-        return String.format("%s, login - %s, registration date - %s}",
-                user.getId(), user.getLogin(), user.getRegistrationDate());
+        return String.format("login - %s, registration date - %s",
+                user.getLogin(), user.getRegistrationDate());
+    }
+
+    private static String formatAudit(Audit audit) {
+        return String.format("%s | %s | %s",
+                audit.getLogin(),audit.getAuditType(), audit.getActionType());
     }
 
 }

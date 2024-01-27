@@ -50,7 +50,8 @@ public class ApplicationContext {
                 (SecurityService) CONTEXT.get("securityService"),
                 (MeterReadingService) CONTEXT.get("meterReadingService"),
                 (MeterTypeService) CONTEXT.get("meterTypeService"),
-                (UserService) CONTEXT.get("userService")
+                (UserService) CONTEXT.get("userService"),
+                (AuditService) CONTEXT.get("auditService")
         );
         CONTEXT.put("controller", controller);
     }
@@ -68,16 +69,19 @@ public class ApplicationContext {
     }
 
     private static void loadServiceLayer() {
-        SecurityService securityService = new SecurityServiceImpl((UserDAO) CONTEXT.get("userDAO"), (AuditService) CONTEXT.get("auditService"));
-        UserService userService = new UserServiceImpl((UserDAO) CONTEXT.get("userDAO"));
-        MeterReadingService meterReadingService = new MeterReadingServiceImpl((MeterReadingDAO) CONTEXT.get("meterReadingDAO"), (UserService) CONTEXT.get("userService"), (AuditService) CONTEXT.get("auditService"));
-        MeterTypeService meterTypeService = new MeterTypeServiceImpl((MeterTypeDAO) CONTEXT.get("meterTypeDAO"));
         AuditService auditService = new AuditServiceImpl((AuditDAO) CONTEXT.get("auditDAO"));
-
-        CONTEXT.put("securityService", securityService);
-        CONTEXT.put("meterReadingService", meterReadingService);
-        CONTEXT.put("meterTypeService", meterTypeService);
-        CONTEXT.put("userService", userService);
         CONTEXT.put("auditService", auditService);
+
+        SecurityService securityService = new SecurityServiceImpl((UserDAO) CONTEXT.get("userDAO"), (AuditService) CONTEXT.get("auditService"));
+        CONTEXT.put("securityService", securityService);
+
+        UserService userService = new UserServiceImpl((UserDAO) CONTEXT.get("userDAO"));
+        CONTEXT.put("userService", userService);
+
+        MeterReadingService meterReadingService = new MeterReadingServiceImpl((MeterReadingDAO) CONTEXT.get("meterReadingDAO"), (UserService) CONTEXT.get("userService"), (AuditService) CONTEXT.get("auditService"));
+        CONTEXT.put("meterReadingService", meterReadingService);
+
+        MeterTypeService meterTypeService = new MeterTypeServiceImpl((MeterTypeDAO) CONTEXT.get("meterTypeDAO"));
+        CONTEXT.put("meterTypeService", meterTypeService);
     }
 }
