@@ -12,10 +12,7 @@ import java.util.*;
  */
 public class MeterTypeDAOImpl implements MeterTypeDAO {
 
-    // In-memory storage for MeterType entities
     private final Map<Long, MeterType> meterTypes = new HashMap<>();
-
-    // Variable to generate unique IDs for MeterType entities
     private Long id = 1L;
 
     /**
@@ -37,7 +34,7 @@ public class MeterTypeDAOImpl implements MeterTypeDAO {
     @Override
     public Optional<MeterType> findById(Long id) {
         MeterType meterType = meterTypes.get(id);
-        return meterType == null ? Optional.empty() : Optional.of(meterType);
+        return Optional.ofNullable(meterType);
     }
 
     /**
@@ -47,7 +44,7 @@ public class MeterTypeDAOImpl implements MeterTypeDAO {
      */
     @Override
     public List<MeterType> findAll() {
-        return new ArrayList<>(meterTypes.values());
+        return Collections.unmodifiableList(new ArrayList<>(meterTypes.values()));
     }
 
     /**
@@ -58,8 +55,7 @@ public class MeterTypeDAOImpl implements MeterTypeDAO {
      */
     @Override
     public MeterType save(MeterType type) {
-        type.setId(id);
-        id++;
+        type.setId(id++);
         meterTypes.put(type.getId(), type);
         return meterTypes.get(type.getId());
     }

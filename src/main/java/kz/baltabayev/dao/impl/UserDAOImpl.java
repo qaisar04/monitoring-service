@@ -15,10 +15,7 @@ import java.util.*;
  */
 public class UserDAOImpl implements UserDAO {
 
-    // In-memory storage for User entities
     private final Map<Long, User> users = new HashMap<>();
-
-    // Variable to generate unique IDs for User entities
     private Long id = 1L;
 
     /**
@@ -26,7 +23,6 @@ public class UserDAOImpl implements UserDAO {
      * with a predefined admin User entity.
      */
     public UserDAOImpl() {
-        // Predefined admin User entity
         save(
                 User.builder()
                         .id(-1L)
@@ -75,7 +71,7 @@ public class UserDAOImpl implements UserDAO {
      */
     @Override
     public List<User> findAll() {
-        return new ArrayList<>(users.values());
+        return Collections.unmodifiableList(new ArrayList<>(users.values()));
     }
 
     /**
@@ -86,8 +82,7 @@ public class UserDAOImpl implements UserDAO {
      */
     @Override
     public User save(User user) {
-        user.setId(id);
-        id++;
+        user.setId(id++);
         users.put(user.getId(), user);
         return users.get(user.getId());
     }
@@ -110,6 +105,6 @@ public class UserDAOImpl implements UserDAO {
             }
         }
 
-        return user == null ? Optional.empty() : Optional.of(user);
+        return Optional.ofNullable(user);
     }
 }

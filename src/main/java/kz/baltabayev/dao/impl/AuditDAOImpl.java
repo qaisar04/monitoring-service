@@ -11,10 +11,7 @@ import java.util.*;
  */
 public class AuditDAOImpl implements AuditDAO {
 
-    // In-memory storage for Audit entities
     private final Map<Long, Audit> audits = new HashMap<>();
-
-    // Variable to generate unique IDs for Audit entities
     private Long id = 1L;
 
     /**
@@ -26,7 +23,7 @@ public class AuditDAOImpl implements AuditDAO {
     @Override
     public Optional<Audit> findById(Long id) {
         Audit audit = audits.get(id);
-        return audit == null ? Optional.empty() : Optional.of(audit);
+        return Optional.ofNullable(audit);
     }
 
     /**
@@ -36,7 +33,7 @@ public class AuditDAOImpl implements AuditDAO {
      */
     @Override
     public List<Audit> findAll() {
-        return new ArrayList<>(audits.values());
+        return Collections.unmodifiableList(new ArrayList<>(audits.values()));
     }
 
     /**
@@ -47,8 +44,7 @@ public class AuditDAOImpl implements AuditDAO {
      */
     @Override
     public Audit save(Audit audit) {
-        audit.setId(id);
-        id++;
+        audit.setId(id++);
         audits.put(audit.getId(), audit);
         return audits.get(audit.getId());
     }

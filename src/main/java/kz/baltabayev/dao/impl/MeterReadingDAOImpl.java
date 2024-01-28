@@ -12,10 +12,7 @@ import java.util.*;
  */
 public class MeterReadingDAOImpl implements MeterReadingDAO {
 
-    // In-memory storage for MeterReading entities
     private final Map<Long, MeterReading> meterReadings = new HashMap<>();
-
-    // Variable to generate unique IDs for MeterReading entities
     private Long id = 1L;
 
     /**
@@ -27,7 +24,7 @@ public class MeterReadingDAOImpl implements MeterReadingDAO {
     @Override
     public Optional<MeterReading> findById(Long id) {
         MeterReading meterReading = meterReadings.get(id);
-        return meterReading == null ? Optional.empty() : Optional.of(meterReading);
+        return Optional.ofNullable(meterReading);
     }
 
     /**
@@ -37,7 +34,7 @@ public class MeterReadingDAOImpl implements MeterReadingDAO {
      */
     @Override
     public List<MeterReading> findAll() {
-        return new ArrayList<>(meterReadings.values());
+        return Collections.unmodifiableList(new ArrayList<>(meterReadings.values()));
     }
 
     /**
@@ -48,8 +45,7 @@ public class MeterReadingDAOImpl implements MeterReadingDAO {
      */
     @Override
     public MeterReading save(MeterReading meterReading) {
-        meterReading.setId(id);
-        id++;
+        meterReading.setId(id++);
         meterReadings.put(meterReading.getId(), meterReading);
         return meterReadings.get(meterReading.getId());
     }
