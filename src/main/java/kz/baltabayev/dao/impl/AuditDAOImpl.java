@@ -127,4 +127,53 @@ public class AuditDAOImpl implements AuditDAO {
         }
         return null;
     }
+
+    public void update(Audit audit) {
+        String sqlUpdate = """
+                UPDATE develop.audit
+                SET login = ?, audit_type = ?, action_type = ?
+                WHERE id = ?;
+                """;
+
+        try (Connection connection = ConnectionManager.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sqlUpdate)) {
+
+            preparedStatement.setObject(1, audit.getLogin());
+            preparedStatement.setObject(2, audit.getAuditType(), Types.OTHER);
+            preparedStatement.setObject(3, audit.getActionType(), Types.OTHER);
+            preparedStatement.setLong(4, audit.getId());
+
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            log.error("Ошибка при выполнении SQL-запроса: " + e.getMessage());
+        }
+    }
+
+    public boolean delete(Long id) {
+        String sqlDelete = """
+                DELETE FROM develop.audit WHERE id = ?;
+                """;
+
+        try (Connection connection = ConnectionManager.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sqlDelete)) {
+            preparedStatement.setLong(1, id);
+            return preparedStatement.executeUpdate() > 0;
+        } catch (SQLException e) {
+            log.error("Ошибка при выполнении SQL-запроса: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public void deleteAll() {
+        String sqlDeleteAll = """
+                DELETE FROM develop.audit;
+                """;
+
+        try (Connection connection = ConnectionManager.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sqlDeleteAll)) {
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            log.error("Ошибка при выполнении SQL-запроса: " + e.getMessage());
+        }
+    }
 }

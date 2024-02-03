@@ -18,6 +18,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
@@ -52,7 +53,7 @@ class MeterReadingServiceImplTest {
         User mockUser = User.builder().login("testUser").build();
         when(userService.getUserById(anyLong())).thenReturn(Optional.of(mockUser));
 
-        MeterReading meterReading = MeterReading.builder().typeId(1L).readingDate("2024-01-01").build();
+        MeterReading meterReading = MeterReading.builder().typeId(1L).readingDate(LocalDate.now()).build();
         List<MeterReading> meterReadings = Collections.singletonList(meterReading);
         when(meterReadingDAO.findAll()).thenReturn(meterReadings);
 
@@ -104,7 +105,7 @@ class MeterReadingServiceImplTest {
         when(meterTypeService.showAvailableMeterTypes()).thenReturn(allTypes);
 
         when(meterReadingDAO.findAllByUserId(anyLong())).thenReturn(Collections.singletonList(
-                MeterReading.builder().typeId(1L).readingDate(DateTimeUtils.parseDateTime(LocalDateTime.now())).build()
+                MeterReading.builder().typeId(1L).readingDate(LocalDate.now()).build()
         ));
 
         DuplicateRecordException exception = assertThrows(DuplicateRecordException.class,
@@ -126,9 +127,9 @@ class MeterReadingServiceImplTest {
 
         when(userService.getUserById(userId)).thenReturn(Optional.of(testUser));
         when(meterReadingDAO.findAllByUserId(userId)).thenReturn(Arrays.asList(
-                new MeterReading(1L, 124812409, DateTimeUtils.parseDateTime(LocalDateTime.of(2024, 1, 20, 0, 0)), 1L, userId),
-                new MeterReading(2L, 824123414, DateTimeUtils.parseDateTime(LocalDateTime.of(2024, 1, 20, 0, 0)), 2L, userId),
-                new MeterReading(3L, 249901312, DateTimeUtils.parseDateTime(LocalDateTime.of(2023, 11, 18, 0, 0)), 2L, userId)
+                new MeterReading(1L, 124812409, LocalDate.of(2024, 1, 20), 1L, userId),
+                new MeterReading(2L, 824123414, LocalDate.of(2024, 1, 20), 2L, userId),
+                new MeterReading(3L, 249901312, LocalDate.of(2023, 11, 18), 2L, userId)
         ));
 
         List<MeterReading> result = meterReadingService.getMeterReadingsByMonthAndYear(2024, 1, userId);
@@ -148,9 +149,9 @@ class MeterReadingServiceImplTest {
 
         when(userService.getUserById(userId)).thenReturn(Optional.of(testUser));
         when(meterReadingDAO.findAllByUserId(userId)).thenReturn(Arrays.asList(
-                new MeterReading(1L, 12924912, DateTimeUtils.parseDateTime(LocalDateTime.of(2024, 1, 20, 0, 0)), 1L, userId),
-                new MeterReading(2L, 93919112, DateTimeUtils.parseDateTime(LocalDateTime.of(2024, 1, 20, 0, 0)), 2L, userId),
-                new MeterReading(3L, 81238123, DateTimeUtils.parseDateTime(LocalDateTime.of(2024, 1, 20, 0, 0)), 3L, userId)
+                new MeterReading(1L, 12924912, LocalDate.of(2024, 1, 20), 1L, userId),
+                new MeterReading(2L, 93919112, LocalDate.of(2024, 1, 20), 2L, userId),
+                new MeterReading(3L, 81238123, LocalDate.of(2024, 1, 20), 3L, userId)
         ));
 
         List<MeterReading> result = meterReadingService.getMeterReadingHistory(userId);
