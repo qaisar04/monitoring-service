@@ -4,10 +4,7 @@ import kz.baltabayev.dao.MeterReadingDAO;
 import kz.baltabayev.model.MeterReading;
 import kz.baltabayev.util.ConnectionManager;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -50,7 +47,7 @@ public class MeterReadingDAOImpl implements MeterReadingDAO {
                 .userId(resultSet.getLong("user_id"))
                 .typeId(resultSet.getLong("type_id"))
                 .counterNumber(resultSet.getInt("counter_number"))
-                .readingDate(resultSet.getString("reading_date"))
+                .readingDate(resultSet.getDate("reading_date").toLocalDate())
                 .build();
     }
 
@@ -94,11 +91,16 @@ public class MeterReadingDAOImpl implements MeterReadingDAO {
             preparedStatement.setLong(1, meterReading.getUserId());
             preparedStatement.setLong(2, meterReading.getTypeId());
             preparedStatement.setDouble(3, meterReading.getCounterNumber());
-            preparedStatement.setString(4, meterReading.getReadingDate());
+            preparedStatement.setDate(4, Date.valueOf(meterReading.getReadingDate()));
             preparedStatement.executeUpdate();
             ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
             if (generatedKeys.next()) {
-                meterReading.setId(generatedKeys.getLong(1));
+                long id = generatedKeys.getLong(1);
+                if (id != 0) {
+                    meterReading.setId(id);
+                } else {
+                    throw new RuntimeException("Failed to generate ID for meter reading");
+                }
             }
             return meterReading;
         } catch (SQLException e) {

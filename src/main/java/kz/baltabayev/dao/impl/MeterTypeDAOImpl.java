@@ -20,16 +20,6 @@ import java.util.Optional;
 public class MeterTypeDAOImpl implements MeterTypeDAO {
 
     /**
-     * Constructs a new MeterTypeDAOImpl and initializes the in-memory storage
-     * with predefined MeterType entities.
-     */
-    public MeterTypeDAOImpl() {
-        save(MeterType.builder().typeName("HEATING").build());
-        save(MeterType.builder().typeName("COLD_WATER").build());
-        save(MeterType.builder().typeName("HOT_WATER").build());
-    }
-
-    /**
      * Retrieves a MeterType entity by its ID.
      *
      * @param id The ID of the MeterType entity to retrieve.
@@ -98,10 +88,17 @@ public class MeterTypeDAOImpl implements MeterTypeDAO {
         String sqlSave = """
                 INSERT INTO develop.meter_type (type_name) VALUES (?)
                 """;
+
         try (Connection connection = ConnectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sqlSave)) {
             preparedStatement.setString(1, type.getTypeName());
             preparedStatement.executeUpdate();
+
+            ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
+            if (generatedKeys.next()) {
+                type.setId(generatedKeys.getLong(1));
+            }
+
             return type;
         } catch (Exception e) {
             throw new RuntimeException("Failed to save meter type", e);

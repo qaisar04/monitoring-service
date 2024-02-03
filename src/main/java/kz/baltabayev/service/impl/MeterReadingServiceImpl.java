@@ -16,6 +16,7 @@ import kz.baltabayev.service.UserService;
 import kz.baltabayev.util.DateTimeUtils;
 import lombok.RequiredArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.util.ArrayList;
@@ -91,12 +92,12 @@ public class MeterReadingServiceImpl implements MeterReadingService {
             throw new NotValidArgumentException("Пожалуйста, введите корректный тип показаний.");
         }
 
-        LocalDateTime now = LocalDateTime.now();
+        LocalDate now = LocalDate.now();
         List<MeterReading> existingReadings = meterReadingDAO.findAllByUserId(userId);
 
         boolean alreadyExists = existingReadings.stream()
                 .anyMatch(reading -> reading.getTypeId().equals(meterTypeId) &&
-                                     DateTimeUtils.isSameMonth(DateTimeUtils.parseDateTimeFromString(reading.getReadingDate()), now));
+                                     DateTimeUtils.isSameMonth(reading.getReadingDate(), now));
 
         if (alreadyExists) {
             auditService.audit(user.getLogin(), ActionType.SUBMIT_METER, AuditType.FAIL);
@@ -106,7 +107,7 @@ public class MeterReadingServiceImpl implements MeterReadingService {
         MeterReading meterReading = MeterReading.builder()
                 .counterNumber(counterNumber)
                 .typeId(meterTypeId)
-                .readingDate(DateTimeUtils.parseDateTime(now))
+                .readingDate(LocalDate.now())
                 .userId(userId)
                 .build();
 
@@ -117,8 +118,8 @@ public class MeterReadingServiceImpl implements MeterReadingService {
     /**
      * Retrieves meter readings for a specific month and year for a given user.
      *
-     * @param year  the year
-     * @param month the month
+     * @param year   the year
+     * @param month  the month
      * @param userId the user ID
      * @return a list of meter readings for the specified month and year
      */
@@ -131,7 +132,7 @@ public class MeterReadingServiceImpl implements MeterReadingService {
         YearMonth filterFromUser = YearMonth.of(year, month);
 
         for (MeterReading meterReading : allReadings) {
-            LocalDateTime readingDate = DateTimeUtils.parseDateTimeFromString(meterReading.getReadingDate());
+            LocalDate readingDate = meterReading.getReadingDate();
             YearMonth readingYearMonth = YearMonth.of(readingDate.getYear(), readingDate.getMonth());
 
             if (readingYearMonth.equals(filterFromUser)) {

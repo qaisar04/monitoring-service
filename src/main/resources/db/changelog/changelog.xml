@@ -9,4 +9,5 @@
     <include file="001-create-schema.xml" relativeToChangelogFile="true"/>
     <include file="002-create-sequences.xml" relativeToChangelogFile="true"/>
     <include file="003-create-tables.xml" relativeToChangelogFile="true"/>
+    <include file="004-insert-data.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>

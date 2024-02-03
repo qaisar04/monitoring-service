@@ -55,8 +55,6 @@ public class SecurityServiceImpl implements SecurityService {
         User newUser = User.builder()
                 .login(login)
                 .password(password)
-                .registrationDate(DateTimeUtils.parseDateTime(LocalDateTime.now()))
-                .role(Role.USER)
                 .build();
 
         auditService.audit(login, ActionType.REGISTRATION, AuditType.SUCCESS);

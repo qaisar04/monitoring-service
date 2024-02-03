@@ -6,10 +6,7 @@ import kz.baltabayev.model.types.Role;
 import kz.baltabayev.util.ConnectionManager;
 import kz.baltabayev.util.DateTimeUtils;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,14 +18,6 @@ import java.util.Optional;
  * the map with a predefined admin User entity during construction.
  */
 public class UserDAOImpl implements UserDAO {
-
-    /**
-     * Constructs a new UserDAOImpl and initializes the in-memory storage
-     * with a predefined admin User entity.
-     */
-    public UserDAOImpl() {
-        save(User.builder().login("admin").password("admin").role(Role.ADMIN).registrationDate(DateTimeUtils.parseDateTime(LocalDateTime.now())).build());
-    }
 
     /**
      * Retrieves a User entity by its ID.
@@ -45,7 +34,9 @@ public class UserDAOImpl implements UserDAO {
             preparedStatement.setLong(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
 
-            return resultSet.next() ? Optional.of(buildUser(resultSet)) : Optional.empty();
+            return resultSet.next() ?
+                    Optional.of(buildUser(resultSet))
+                    : Optional.empty();
         } catch (SQLException e) {
             return Optional.empty();
         }
@@ -66,7 +57,7 @@ public class UserDAOImpl implements UserDAO {
         try (Connection connection = ConnectionManager.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(sqlUpdate)) {
             preparedStatement.setString(1, user.getLogin());
             preparedStatement.setString(2, user.getPassword());
-            preparedStatement.setString(3, user.getRegistrationDate());
+            preparedStatement.setTimestamp(3, Timestamp.valueOf(user.getRegistrationDate()));
             preparedStatement.setLong(4, user.getId());
             preparedStatement.executeUpdate();
             return user;
@@ -115,10 +106,11 @@ public class UserDAOImpl implements UserDAO {
         try (Connection connection = ConnectionManager.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(sqlSave)) {
             preparedStatement.setString(1, user.getLogin());
             preparedStatement.setString(2, user.getPassword());
-            preparedStatement.setString(3, user.getRegistrationDate());
+            preparedStatement.setTimestamp(3, Timestamp.valueOf(user.getRegistrationDate()));
             preparedStatement.setString(4, user.getRole().toString());
             preparedStatement.executeUpdate();
-            return user;
+
+            return findByLogin(user.getLogin()).orElse(user);
         } catch (SQLException e) {
             throw new RuntimeException("Failed to save user", e);
         }
@@ -139,13 +131,21 @@ public class UserDAOImpl implements UserDAO {
             preparedStatement.setString(1, login);
             ResultSet resultSet = preparedStatement.executeQuery();
 
-            return resultSet.next() ? Optional.of(buildUser(resultSet)) : Optional.empty();
+            return resultSet.next() ?
+                    Optional.of(buildUser(resultSet))
+                    : Optional.empty();
         } catch (SQLException e) {
             return Optional.empty();
         }
     }
 
     private User buildUser(ResultSet resultSet) throws SQLException {
-        return User.builder().id(resultSet.getLong("id")).login(resultSet.getString("login")).registrationDate(resultSet.getString("registration_date")).role(Role.valueOf(resultSet.getString("role"))).password(resultSet.getString("password")).build();
+        return User.builder()
+                .id(resultSet.getLong("id"))
+                .login(resultSet.getString("login"))
+                .registrationDate(resultSet.getTimestamp("registration_date").toLocalDateTime())
+                .role(Role.valueOf(resultSet.getString("role")))
+                .password(resultSet.getString("password"))
+                .build();
     }
 }

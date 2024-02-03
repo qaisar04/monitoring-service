@@ -2,10 +2,8 @@ package kz.baltabayev.model;
 
 import kz.baltabayev.model.types.ActionType;
 import kz.baltabayev.model.types.AuditType;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 /**
  * Represents an audit log entry capturing information about a user's actions.
@@ -17,21 +15,22 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class Audit {
     /**
      * The unique identifier for the audit entry.
      */
-    private Long id;
+    Long id;
     /**
      * The login of the user associated with the audit entry.
      */
-    private String login;
+    String login;
     /**
      * The type of audit, indicating the success or failure of an action.
      */
-    private AuditType auditType;
+    AuditType auditType;
     /**
      * The type of action performed by the user.
      */
-    private ActionType actionType;
+    ActionType actionType;
 }
