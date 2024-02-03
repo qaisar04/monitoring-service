@@ -1,10 +1,13 @@
 package kz.baltabayev.model;
 
 import kz.baltabayev.model.types.Role;
+import kz.baltabayev.util.DateTimeUtils;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
 
 /**
  * Represents a user with information such as a unique identifier, login, registration date, password, and role.
@@ -27,7 +30,8 @@ public class User {
     /**
      * The registration date of the user.
      */
-    private String registrationDate;
+    @Builder.Default
+    private String registrationDate = DateTimeUtils.parseDateTime(LocalDateTime.now());
     /**
      * The password associated with the user.
      */

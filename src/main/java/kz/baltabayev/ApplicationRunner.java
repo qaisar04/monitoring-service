@@ -6,6 +6,7 @@ import kz.baltabayev.exception.DuplicateRecordException;
 import kz.baltabayev.exception.NotValidArgumentException;
 import kz.baltabayev.exception.RegisterException;
 import kz.baltabayev.in.InputData;
+import kz.baltabayev.liquibase.LiquibaseDemo;
 import kz.baltabayev.out.OutputData;
 import lombok.extern.slf4j.Slf4j;
 
@@ -28,6 +29,8 @@ public class ApplicationRunner {
      * Runs the application, loading the necessary context and handling user interactions.
      */
     public static void run() {
+        LiquibaseDemo liquibaseDemo = LiquibaseDemo.getInstance();
+        liquibaseDemo.runMigrations();
         ApplicationContext.loadContext();
         InputData inputData = (InputData) ApplicationContext.getBean("input");
         OutputData outputData = (OutputData) ApplicationContext.getBean("output");

@@ -49,7 +49,7 @@ public class SecurityHandler {
             return isAdmin(authorizedUser) ? UserStage.ADMIN_MENU : UserStage.MAIN_MENU;
         }
 
-        return UserStage.MAIN_MENU;
+        return UserStage.SECURITY;
     }
 
     /**

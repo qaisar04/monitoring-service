@@ -2,8 +2,15 @@ package kz.baltabayev.dao.impl;
 
 import kz.baltabayev.dao.MeterTypeDAO;
 import kz.baltabayev.model.MeterType;
+import kz.baltabayev.util.ConnectionManager;
 
-import java.util.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Implementation of the MeterTypeDAO interface using an in-memory map.
@@ -11,9 +18,6 @@ import java.util.*;
  * the map with predefined MeterType entities during construction.
  */
 public class MeterTypeDAOImpl implements MeterTypeDAO {
-
-    private final Map<Long, MeterType> meterTypes = new HashMap<>();
-    private Long id = 1L;
 
     /**
      * Constructs a new MeterTypeDAOImpl and initializes the in-memory storage
@@ -33,8 +37,20 @@ public class MeterTypeDAOImpl implements MeterTypeDAO {
      */
     @Override
     public Optional<MeterType> findById(Long id) {
-        MeterType meterType = meterTypes.get(id);
-        return Optional.ofNullable(meterType);
+        String sqlFindById = """
+                SELECT * FROM develop.meter_type WHERE id = ?
+                """;
+        try (Connection connection = ConnectionManager.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sqlFindById)) {
+            preparedStatement.setLong(1, id);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            return resultSet.next() ?
+                    Optional.of(buildMeterType(resultSet))
+                    : Optional.empty();
+        } catch (Exception e) {
+            return Optional.empty();
+        }
     }
 
     /**
@@ -44,7 +60,31 @@ public class MeterTypeDAOImpl implements MeterTypeDAO {
      */
     @Override
     public List<MeterType> findAll() {
-        return Collections.unmodifiableList(new ArrayList<>(meterTypes.values()));
+        String sqlFindAll = """
+                SELECT * FROM develop.meter_type
+                """;
+        try (Connection connection = ConnectionManager.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sqlFindAll)) {
+            ResultSet resultSet = preparedStatement.executeQuery();
+            List<MeterType> meterTypes = new ArrayList<>();
+            while (resultSet.next()) {
+                meterTypes.add(buildMeterType(resultSet));
+            }
+            return meterTypes;
+        } catch (Exception e) {
+            return Collections.emptyList();
+        }
+    }
+
+    private MeterType buildMeterType(ResultSet resultSet) {
+        try {
+            return MeterType.builder()
+                    .id(resultSet.getLong("id"))
+                    .typeName(resultSet.getString("type_name"))
+                    .build();
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to build meter type", e);
+        }
     }
 
     /**
@@ -55,8 +95,16 @@ public class MeterTypeDAOImpl implements MeterTypeDAO {
      */
     @Override
     public MeterType save(MeterType type) {
-        type.setId(id++);
-        meterTypes.put(type.getId(), type);
-        return meterTypes.get(type.getId());
+        String sqlSave = """
+                INSERT INTO develop.meter_type (type_name) VALUES (?)
+                """;
+        try (Connection connection = ConnectionManager.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sqlSave)) {
+            preparedStatement.setString(1, type.getTypeName());
+            preparedStatement.executeUpdate();
+            return type;
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to save meter type", e);
+        }
     }
 }
