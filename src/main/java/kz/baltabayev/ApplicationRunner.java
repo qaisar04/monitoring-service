@@ -8,7 +8,10 @@ import kz.baltabayev.exception.RegisterException;
 import kz.baltabayev.in.InputData;
 import kz.baltabayev.liquibase.LiquibaseDemo;
 import kz.baltabayev.out.OutputData;
+import kz.baltabayev.util.ConnectionManager;
 import lombok.extern.slf4j.Slf4j;
+
+import java.sql.Connection;
 
 import static kz.baltabayev.handler.AdminHandler.*;
 import static kz.baltabayev.handler.MainHandler.*;
@@ -29,8 +32,6 @@ public class ApplicationRunner {
      * Runs the application, loading the necessary context and handling user interactions.
      */
     public static void run() {
-        LiquibaseDemo liquibaseDemo = LiquibaseDemo.getInstance();
-        liquibaseDemo.runMigrations();
         ApplicationContext.loadContext();
         InputData inputData = (InputData) ApplicationContext.getBean("input");
         OutputData outputData = (OutputData) ApplicationContext.getBean("output");

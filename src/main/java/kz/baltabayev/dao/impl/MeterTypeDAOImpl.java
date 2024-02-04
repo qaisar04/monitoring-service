@@ -3,10 +3,12 @@ package kz.baltabayev.dao.impl;
 import kz.baltabayev.dao.MeterTypeDAO;
 import kz.baltabayev.model.MeterType;
 import kz.baltabayev.util.ConnectionManager;
+import lombok.RequiredArgsConstructor;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -17,7 +19,10 @@ import java.util.Optional;
  * Provides methods for CRUD operations on MeterType entities and initializes
  * the map with predefined MeterType entities during construction.
  */
+@RequiredArgsConstructor
 public class MeterTypeDAOImpl implements MeterTypeDAO {
+
+    private final ConnectionManager connectionProvider;
 
     /**
      * Retrieves a MeterType entity by its ID.
@@ -30,7 +35,7 @@ public class MeterTypeDAOImpl implements MeterTypeDAO {
         String sqlFindById = """
                 SELECT * FROM develop.meter_type WHERE id = ?
                 """;
-        try (Connection connection = ConnectionManager.getConnection();
+        try (Connection connection = connectionProvider.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sqlFindById)) {
             preparedStatement.setLong(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -53,7 +58,7 @@ public class MeterTypeDAOImpl implements MeterTypeDAO {
         String sqlFindAll = """
                 SELECT * FROM develop.meter_type
                 """;
-        try (Connection connection = ConnectionManager.getConnection();
+        try (Connection connection = connectionProvider.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sqlFindAll)) {
             ResultSet resultSet = preparedStatement.executeQuery();
             List<MeterType> meterTypes = new ArrayList<>();
@@ -89,14 +94,20 @@ public class MeterTypeDAOImpl implements MeterTypeDAO {
                 INSERT INTO develop.meter_type (type_name) VALUES (?)
                 """;
 
-        try (Connection connection = ConnectionManager.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(sqlSave)) {
+        try (Connection connection = connectionProvider.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sqlSave, Statement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setString(1, type.getTypeName());
-            preparedStatement.executeUpdate();
+            int affectedRows = preparedStatement.executeUpdate();
 
-            ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
-            if (generatedKeys.next()) {
-                type.setId(generatedKeys.getLong(1));
+            if (affectedRows == 0) {
+                throw new RuntimeException("Failed to save meter type");
+            }
+
+            ResultSet keys = preparedStatement.getGeneratedKeys();
+            if (keys.next()) {
+                type.setId(keys.getLong(1));
+            } else {
+                throw new RuntimeException("Failed to save meter type");
             }
 
             return type;

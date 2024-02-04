@@ -1,35 +1,22 @@
 package kz.baltabayev.containers;
 
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.testcontainers.containers.PostgreSQLContainer;
 
-public class PostgresTestContainer extends PostgreSQLContainer<PostgresTestContainer> {
+public abstract class PostgresTestContainer {
 
     public static final String IMAGE_VERSION = "postgres:14";
-    public static final String DATABASE_NAME = "wallet_service_db";
 
-    public static PostgreSQLContainer container;
+    public static PostgreSQLContainer<?> container = new PostgreSQLContainer<>(IMAGE_VERSION);
 
-    public PostgresTestContainer() {
-        super(IMAGE_VERSION);
+    @BeforeAll
+    static void start() {
+        container.start();
     }
 
-    public static PostgreSQLContainer getInstance() {
-        if (container == null) {
-            container = new PostgresTestContainer().withDatabaseName(DATABASE_NAME);
-        }
-        return container;
+    @AfterAll
+    static void stop() {
+        container.stop();
     }
-
-    @Override
-    public void start() {
-        super.start();
-        System.setProperty("DB_URL", container.getJdbcUrl());
-        System.setProperty("DB_USERNAME", container.getUsername());
-        System.setProperty("DB_PASSWORD", container.getPassword());
-    }
-
-    @Override
-    public void stop() { }
-
-
 }

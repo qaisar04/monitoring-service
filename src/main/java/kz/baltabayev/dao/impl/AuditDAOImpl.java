@@ -5,6 +5,7 @@ import kz.baltabayev.model.Audit;
 import kz.baltabayev.model.types.ActionType;
 import kz.baltabayev.model.types.AuditType;
 import kz.baltabayev.util.ConnectionManager;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.sql.*;
@@ -17,7 +18,10 @@ import java.util.Optional;
  * Provides methods for CRUD operations on Audit entities.
  */
 @Slf4j
+@RequiredArgsConstructor
 public class AuditDAOImpl implements AuditDAO {
+
+    private final ConnectionManager connectionProvider;
 
     /**
      * Retrieves an Audit entity by its ID.
@@ -31,7 +35,7 @@ public class AuditDAOImpl implements AuditDAO {
                 SELECT * FROM develop.audit WHERE id = ?
                 """;
 
-        try (Connection connection = ConnectionManager.getConnection();
+        try (Connection connection = connectionProvider.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sqlFindById)) {
             preparedStatement.setLong(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -42,21 +46,6 @@ public class AuditDAOImpl implements AuditDAO {
         } catch (SQLException e) {
             return Optional.empty();
         }
-    }
-
-    private Audit buildAudit(ResultSet resultSet) throws SQLException {
-        String auditTypeString = resultSet.getString("audit_type");
-        AuditType auditType = AuditType.valueOf(auditTypeString);
-
-        String actionTypeString = resultSet.getString("action_type");
-        ActionType actionType = ActionType.valueOf(actionTypeString);
-
-        return Audit.builder()
-                .id(resultSet.getLong("id"))
-                .auditType(auditType)
-                .actionType(actionType)
-                .login(resultSet.getString("login"))
-                .build();
     }
 
     /**
@@ -70,7 +59,7 @@ public class AuditDAOImpl implements AuditDAO {
                 SELECT * FROM develop.audit;
                 """;
 
-        try (Connection connection = ConnectionManager.getConnection();
+        try (Connection connection = connectionProvider.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sqlFindAll)) {
 
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -100,7 +89,7 @@ public class AuditDAOImpl implements AuditDAO {
                 VALUES (?,?,?);
                 """;
 
-        try (Connection connection = ConnectionManager.getConnection();
+        try (Connection connection = connectionProvider.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sqlSave, Statement.RETURN_GENERATED_KEYS)) {
 
             preparedStatement.setObject(1, audit.getLogin());
@@ -135,7 +124,7 @@ public class AuditDAOImpl implements AuditDAO {
                 WHERE id = ?;
                 """;
 
-        try (Connection connection = ConnectionManager.getConnection();
+        try (Connection connection = connectionProvider.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sqlUpdate)) {
 
             preparedStatement.setObject(1, audit.getLogin());
@@ -154,7 +143,7 @@ public class AuditDAOImpl implements AuditDAO {
                 DELETE FROM develop.audit WHERE id = ?;
                 """;
 
-        try (Connection connection = ConnectionManager.getConnection();
+        try (Connection connection = connectionProvider.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sqlDelete)) {
             preparedStatement.setLong(1, id);
             return preparedStatement.executeUpdate() > 0;
@@ -169,11 +158,26 @@ public class AuditDAOImpl implements AuditDAO {
                 DELETE FROM develop.audit;
                 """;
 
-        try (Connection connection = ConnectionManager.getConnection();
+        try (Connection connection = connectionProvider.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sqlDeleteAll)) {
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             log.error("Ошибка при выполнении SQL-запроса: " + e.getMessage());
         }
+    }
+
+    private Audit buildAudit(ResultSet resultSet) throws SQLException {
+        String auditTypeString = resultSet.getString("audit_type");
+        AuditType auditType = AuditType.valueOf(auditTypeString);
+
+        String actionTypeString = resultSet.getString("action_type");
+        ActionType actionType = ActionType.valueOf(actionTypeString);
+
+        return Audit.builder()
+                .id(resultSet.getLong("id"))
+                .auditType(auditType)
+                .actionType(actionType)
+                .login(resultSet.getString("login"))
+                .build();
     }
 }

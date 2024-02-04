@@ -10,10 +10,13 @@ import kz.baltabayev.dao.impl.MeterReadingDAOImpl;
 import kz.baltabayev.dao.impl.MeterTypeDAOImpl;
 import kz.baltabayev.dao.impl.UserDAOImpl;
 import kz.baltabayev.in.ConsoleInputData;
+import kz.baltabayev.liquibase.LiquibaseDemo;
 import kz.baltabayev.model.User;
 import kz.baltabayev.out.ConsoleOutputData;
 import kz.baltabayev.service.*;
 import kz.baltabayev.service.impl.*;
+import kz.baltabayev.util.ConnectionManager;
+import kz.baltabayev.util.PropertiesUtil;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,14 +28,32 @@ public class ApplicationContext {
 
     private static final Map<String, Object> CONTEXT = new HashMap<>();
 
+    private static final String URL_KEY = "db.url";
+    private static final String USERNAME_KEY = "db.username";
+    private static final String PASSWORD_KEY = "db.password";
+
     /**
      * Loads the application context with DAO, Service, Controller, and Input/Output components.
      */
     public static void loadContext() {
+        loadProperties();
         loadDAOLayer();
         loadServiceLayer();
         loadControllers();
         loadInputOutputLayer();
+    }
+
+    private static void loadProperties() {
+        ConnectionManager connectionManager = new ConnectionManager(
+                PropertiesUtil.get(URL_KEY),
+                PropertiesUtil.get(USERNAME_KEY),
+                PropertiesUtil.get(PASSWORD_KEY)
+        );
+
+        LiquibaseDemo liquibaseDemo = LiquibaseDemo.getInstance();
+        liquibaseDemo.runMigrations(connectionManager.getConnection());
+
+        CONTEXT.put("connectionManager", connectionManager);
     }
 
     /**
@@ -87,10 +108,18 @@ public class ApplicationContext {
     }
 
     private static void loadDAOLayer() {
-        CONTEXT.put("userDAO", new UserDAOImpl());
-        CONTEXT.put("meterReadingDAO", new MeterReadingDAOImpl());
-        CONTEXT.put("meterTypeDAO", new MeterTypeDAOImpl());
-        CONTEXT.put("auditDAO", new AuditDAOImpl());
+        CONTEXT.put("userDAO", new UserDAOImpl(
+                (ConnectionManager) CONTEXT.get("connectionManager")
+        ));
+        CONTEXT.put("meterReadingDAO", new MeterReadingDAOImpl(
+                (ConnectionManager) CONTEXT.get("connectionManager")
+        ));
+        CONTEXT.put("meterTypeDAO", new MeterTypeDAOImpl(
+                (ConnectionManager) CONTEXT.get("connectionManager")
+        ));
+        CONTEXT.put("auditDAO", new AuditDAOImpl(
+                (ConnectionManager) CONTEXT.get("connectionManager")
+        ));
     }
 
     private static void loadServiceLayer() {

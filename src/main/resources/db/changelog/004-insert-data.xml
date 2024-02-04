@@ -5,6 +5,7 @@
 
     <changeSet id="004-insert-data" author="qaisar">
         <insert tableName="users" schemaName="develop">
+            <column name="id" value="-1"/>
             <column name="login" value="admin"/>
             <column name="password" value="admin"/>
             <column name="role" value="ADMIN"/>

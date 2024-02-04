@@ -5,6 +5,7 @@ import kz.baltabayev.model.User;
 import kz.baltabayev.model.types.Role;
 import kz.baltabayev.util.ConnectionManager;
 import kz.baltabayev.util.DateTimeUtils;
+import lombok.RequiredArgsConstructor;
 
 import java.sql.*;
 import java.time.LocalDateTime;
@@ -17,7 +18,10 @@ import java.util.Optional;
  * Provides methods for CRUD operations on User entities and initializes
  * the map with a predefined admin User entity during construction.
  */
+@RequiredArgsConstructor
 public class UserDAOImpl implements UserDAO {
+
+    private final ConnectionManager connectionProvider;
 
     /**
      * Retrieves a User entity by its ID.
@@ -30,7 +34,8 @@ public class UserDAOImpl implements UserDAO {
         String sqlFindById = """
                 SELECT * FROM develop.users WHERE id = ?
                 """;
-        try (Connection connection = ConnectionManager.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(sqlFindById)) {
+        try (Connection connection = connectionProvider.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sqlFindById)) {
             preparedStatement.setLong(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
 
@@ -54,7 +59,8 @@ public class UserDAOImpl implements UserDAO {
         String sqlUpdate = """
                 UPDATE develop.users SET login = ?, password = ?, registration_date = ? WHERE id = ?
                 """;
-        try (Connection connection = ConnectionManager.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(sqlUpdate)) {
+        try (Connection connection = connectionProvider.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sqlUpdate)) {
             preparedStatement.setString(1, user.getLogin());
             preparedStatement.setString(2, user.getPassword());
             preparedStatement.setTimestamp(3, Timestamp.valueOf(user.getRegistrationDate()));
@@ -76,7 +82,8 @@ public class UserDAOImpl implements UserDAO {
         String sqlFindAll = """
                 SELECT * FROM develop.users;
                 """;
-        try (Connection connection = ConnectionManager.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(sqlFindAll)) {
+        try (Connection connection = connectionProvider.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sqlFindAll)) {
 
             ResultSet resultSet = preparedStatement.executeQuery();
             List<User> users = new ArrayList<>();
@@ -103,7 +110,8 @@ public class UserDAOImpl implements UserDAO {
                 INSERT INTO develop.users (login, password, registration_date, role) VALUES (?, ?, ?, ?)
                 """;
 
-        try (Connection connection = ConnectionManager.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(sqlSave)) {
+        try (Connection connection = connectionProvider.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sqlSave)) {
             preparedStatement.setString(1, user.getLogin());
             preparedStatement.setString(2, user.getPassword());
             preparedStatement.setTimestamp(3, Timestamp.valueOf(user.getRegistrationDate()));
@@ -127,7 +135,8 @@ public class UserDAOImpl implements UserDAO {
         String sqlFindByLogin = """
                 SELECT * FROM develop.users WHERE login = ?
                 """;
-        try (Connection connection = ConnectionManager.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(sqlFindByLogin)) {
+        try (Connection connection = connectionProvider.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sqlFindByLogin)) {
             preparedStatement.setString(1, login);
             ResultSet resultSet = preparedStatement.executeQuery();
 
