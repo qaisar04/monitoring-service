@@ -23,6 +23,11 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
+        <sql>COMMENT ON COLUMN develop.users.id IS 'this is user id';</sql>
+        <sql>COMMENT ON COLUMN develop.users.login IS 'this is user login';</sql>
+        <sql>COMMENT ON COLUMN develop.users.registration_date IS 'this is date of user registration';</sql>
+        <sql>COMMENT ON COLUMN develop.users.password IS 'this is user password';</sql>
+        <sql>COMMENT ON COLUMN develop.users.role IS 'this is user role';</sql>
     </changeSet>
 
     <changeSet id="2" author="qaisar">
@@ -34,6 +39,8 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
+        <sql>COMMENT ON COLUMN develop.meter_type.id IS 'this is meter type id';</sql>
+        <sql>COMMENT ON COLUMN develop.meter_type.type_name IS 'this is meter type name';</sql>
     </changeSet>
 
     <changeSet id="3" author="qaisar">
@@ -54,6 +61,11 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
+        <sql>COMMENT ON COLUMN develop.meter_reading.id IS 'this is meter reading id';</sql>
+        <sql>COMMENT ON COLUMN develop.meter_reading.counter_number IS 'this is counter number';</sql>
+        <sql>COMMENT ON COLUMN develop.meter_reading.reading_date IS 'this is reading date';</sql>
+        <sql>COMMENT ON COLUMN develop.meter_reading.type_id IS 'this is type id';</sql>
+        <sql>COMMENT ON COLUMN develop.meter_reading.user_id IS 'this is user id';</sql>
     </changeSet>
 
     <changeSet id="4" author="qaisar">
@@ -71,6 +83,10 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
+        <sql>COMMENT ON COLUMN develop.audit.id IS 'this is audit id';</sql>
+        <sql>COMMENT ON COLUMN develop.audit.login IS 'this is login';</sql>
+        <sql>COMMENT ON COLUMN develop.audit.audit_type IS 'this is audit type';</sql>
+        <sql>COMMENT ON COLUMN develop.audit.action_type IS 'this is action type';</sql>
     </changeSet>
 
 </databaseChangeLog>
