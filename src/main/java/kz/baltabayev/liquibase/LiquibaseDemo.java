@@ -28,8 +28,7 @@ public class LiquibaseDemo {
      * Runs database migrations using Liquibase.
      */
     public void runMigrations(Connection connection) {
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement(SQL_CREATE_SCHEMA);
+        try(PreparedStatement preparedStatement = connection.prepareStatement(SQL_CREATE_SCHEMA)) {
             preparedStatement.execute();
             Database database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(connection));
             database.setLiquibaseSchemaName("migration");
