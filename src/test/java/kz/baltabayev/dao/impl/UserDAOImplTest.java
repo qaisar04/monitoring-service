@@ -23,12 +23,11 @@ public class UserDAOImplTest extends PostgresTestContainer{
     @BeforeEach
     public void setUp() {
         ConnectionManager connectionManager = new ConnectionManager(
-                container.getJdbcUrl(),
-                container.getUsername(),
-                container.getPassword()
-        );
-        LiquibaseDemo liquibaseTest = LiquibaseDemo.getInstance();
-        liquibaseTest.runMigrations(connectionManager.getConnection());
+                container.getJdbcUrl(), container.getUsername(), container.getPassword(),
+                "org.postgresql.Driver");
+
+        LiquibaseDemo liquibaseTest = new LiquibaseDemo(connectionManager.getConnection(), "migration", "db.changelog/changelog.xml");
+        liquibaseTest.runMigrations();
 
         userDao = new UserDAOImpl(connectionManager);
     }
