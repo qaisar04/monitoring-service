@@ -5,6 +5,7 @@ import kz.baltabayev.liquibase.LiquibaseDemo;
 import kz.baltabayev.model.MeterReading;
 import kz.baltabayev.util.ConnectionManager;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
@@ -13,6 +14,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@DisplayName("meter reading dao implementation test")
 public class MeterReadingDAOImplTest extends PostgresTestContainer{
 
     private MeterReadingDAOImpl meterReadingDao;
@@ -31,6 +33,7 @@ public class MeterReadingDAOImplTest extends PostgresTestContainer{
     }
 
     @Test
+    @DisplayName("find by id method verification test")
     public void testFindById() {
         MeterReading meterReading = MeterReading.builder()
                 .userId(1L)
@@ -49,6 +52,7 @@ public class MeterReadingDAOImplTest extends PostgresTestContainer{
     }
 
     @Test
+    @DisplayName("find all method verification test")
     public void testFindAll() {
         MeterReading meterReading1 = MeterReading.builder()
                 .userId(1L)
@@ -72,6 +76,7 @@ public class MeterReadingDAOImplTest extends PostgresTestContainer{
     }
 
     @Test
+    @DisplayName("save method verification test")
     public void testSave() {
         MeterReading meterReadingToSave = MeterReading.builder()
                 .userId(1L)
@@ -89,6 +94,7 @@ public class MeterReadingDAOImplTest extends PostgresTestContainer{
     }
 
     @Test
+    @DisplayName("find all by user id method verification test")
     public void testFindAllByUserId() {
         MeterReading meterReading1 = MeterReading.builder()
                 .userId(1L)
@@ -111,6 +117,7 @@ public class MeterReadingDAOImplTest extends PostgresTestContainer{
     }
 
     @Test
+    @DisplayName("save null meter reading method verification test")
     public void testSave_NullMeterReading() {
         assertThrows(NullPointerException.class, () -> meterReadingDao.save(null));
     }

@@ -5,6 +5,7 @@ import kz.baltabayev.liquibase.LiquibaseDemo;
 import kz.baltabayev.model.MeterType;
 import kz.baltabayev.util.ConnectionManager;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -12,6 +13,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@DisplayName("meter type dao implementation test")
 public class MeterTypeDAOImplTest extends PostgresTestContainer{
 
     private MeterTypeDAOImpl meterTypeDao;
@@ -30,6 +32,7 @@ public class MeterTypeDAOImplTest extends PostgresTestContainer{
     }
 
     @Test
+    @DisplayName("find by id method verification test")
     public void testFindById() {
         MeterType meterType = MeterType.builder()
                 .typeName("TestType")
@@ -44,6 +47,7 @@ public class MeterTypeDAOImplTest extends PostgresTestContainer{
     }
 
     @Test
+    @DisplayName("find all method verification test")
     public void testFindAll() {
         MeterType meterType1 = MeterType.builder()
                 .typeName("TestType1")
@@ -61,6 +65,7 @@ public class MeterTypeDAOImplTest extends PostgresTestContainer{
     }
 
     @Test
+    @DisplayName("save method verification test")
     public void testSave() {
         MeterType meterTypeToSave = MeterType.builder()
                 .typeName("TestType")

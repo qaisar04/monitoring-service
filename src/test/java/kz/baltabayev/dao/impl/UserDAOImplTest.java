@@ -6,6 +6,7 @@ import kz.baltabayev.model.User;
 import kz.baltabayev.model.types.Role;
 import kz.baltabayev.util.ConnectionManager;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
@@ -14,6 +15,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@DisplayName("user dao implementation test")
 public class UserDAOImplTest extends PostgresTestContainer{
 
     private UserDAOImpl userDao;
@@ -32,6 +34,7 @@ public class UserDAOImplTest extends PostgresTestContainer{
     }
 
     @Test
+    @DisplayName("find by id method verification test")
     public void testFindById() {
         User user = User.builder()
                 .login("Bob")
@@ -50,6 +53,7 @@ public class UserDAOImplTest extends PostgresTestContainer{
     }
 
     @Test
+    @DisplayName("find all method verification test")
     public void testFindAll() {
         User user1 = User.builder()
                 .login("Bob")
@@ -73,6 +77,7 @@ public class UserDAOImplTest extends PostgresTestContainer{
     }
 
     @Test
+    @DisplayName("save method verification test")
     public void testSave() {
         User userToSave = User.builder()
                 .login("Alice")
@@ -89,6 +94,7 @@ public class UserDAOImplTest extends PostgresTestContainer{
     }
 
     @Test
+    @DisplayName("find by login method verification test")
     public void testFindByLogin() {
         User user = User.builder()
                 .login("Bob")
@@ -107,6 +113,7 @@ public class UserDAOImplTest extends PostgresTestContainer{
     }
 
     @Test
+    @DisplayName("save null user method verification test")
     public void testSave_NullUser() {
         assertThrows(NullPointerException.class, () -> userDao.save(null));
     }

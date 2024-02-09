@@ -7,6 +7,7 @@ import kz.baltabayev.model.types.ActionType;
 import kz.baltabayev.model.types.AuditType;
 import kz.baltabayev.util.ConnectionManager;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@DisplayName("audit dao implementation test")
 public class AuditDAOImplTest extends PostgresTestContainer{
 
     private AuditDAOImpl auditDao;
@@ -32,6 +34,7 @@ public class AuditDAOImplTest extends PostgresTestContainer{
     }
 
     @Test
+    @DisplayName("findById method verification test")
     public void testFindById() {
         Audit audit = Audit.builder()
                 .login("Bob")
@@ -49,6 +52,7 @@ public class AuditDAOImplTest extends PostgresTestContainer{
     }
 
     @Test
+    @DisplayName("findAll method verification test")
     public void testFindAll() {
         Audit audit1 = Audit.builder()
                 .login("Bob")
@@ -71,6 +75,7 @@ public class AuditDAOImplTest extends PostgresTestContainer{
     }
 
     @Test
+    @DisplayName("save method verification test")
     public void testSave() {
         Audit auditToSave = Audit.builder()
                 .login("Alice")
@@ -86,6 +91,7 @@ public class AuditDAOImplTest extends PostgresTestContainer{
     }
 
     @Test
+    @DisplayName("delete method verification test")
     public void testDelete() {
         Audit audit = Audit.builder()
                 .login("Bob")
@@ -103,6 +109,7 @@ public class AuditDAOImplTest extends PostgresTestContainer{
     }
 
     @Test
+    @DisplayName("deleteAll method verification test")
     public void testDeleteAll() {
         Audit audit = Audit.builder()
                 .login("Bob")
@@ -121,17 +128,20 @@ public class AuditDAOImplTest extends PostgresTestContainer{
     }
 
     @Test
+    @DisplayName("findById method verification test")
     public void testFindById_NotFound() {
         Optional<Audit> notFoundAudit = auditDao.findById(999L);
         assertFalse(notFoundAudit.isPresent());
     }
 
     @Test
+    @DisplayName("save method verification test")
     public void testSave_NullAudit() {
         assertThrows(NullPointerException.class, () -> auditDao.save(null));
     }
 
     @Test
+    @DisplayName("delete method verification test")
     public void testDelete_NonExistentId() {
         boolean deleted = auditDao.delete(999L);
         assertFalse(deleted);
