@@ -42,7 +42,7 @@ public class DateTimeUtils {
      * @param date2 the second LocalDateTime object
      * @return true if both dates are in the same month, false otherwise
      */
-    public static boolean isSameMonth(LocalDateTime date1, LocalDateTime date2) {
+    public static boolean isSameMonth(LocalDate date1, LocalDate date2) {
         return date1.getYear() == date2.getYear() &&
                date1.getMonth() == date2.getMonth();
     }

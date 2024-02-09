@@ -1,9 +1,7 @@
 package kz.baltabayev.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 /**
  * Represents a meter type with information such as a unique identifier and the type name.
@@ -14,13 +12,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class MeterType {
     /**
      * The unique identifier for the meter type.
      */
-    private Long id;
+    Long id;
     /**
      * The name associated with the meter type.
      */
-    private String typeName;
+    String typeName;
 }

@@ -1,9 +1,9 @@
 package kz.baltabayev.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
+
+import java.time.LocalDate;
 
 /**
  * Represents a meter reading entry capturing information about a user's recorded meter readings.
@@ -15,25 +15,26 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class MeterReading {
     /**
      * The unique identifier for the meter reading entry.
      */
-    private Long id;
+    Long id;
     /**
      * The counter number associated with the meter reading.
      */
-    private Integer counterNumber;
+    Integer counterNumber;
     /**
      * The date when the meter reading was recorded.
      */
-    private String readingDate;
+    LocalDate readingDate;
     /**
      * The unique identifier for the meter type associated with the reading.
      */
-    private Long typeId;
+    Long typeId;
     /**
      * The user ID associated with the meter reading.
      */
-    private Long userId;
+    Long userId;
 }
