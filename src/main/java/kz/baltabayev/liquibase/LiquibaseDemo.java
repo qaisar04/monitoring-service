@@ -1,6 +1,5 @@
 package kz.baltabayev.liquibase;
 
-import kz.baltabayev.util.ConnectionManager;
 import liquibase.Liquibase;
 import liquibase.database.Database;
 import liquibase.database.DatabaseFactory;

@@ -63,7 +63,7 @@ public class ApplicationContextListener implements ServletContextListener {
         String dbPassword = properties.getProperty("db.password");
         String dbDriver = properties.getProperty("db.driver");
 
-        connectionManager = new ConnectionManager(dbUrl, dbUser, dbPassword);
+        connectionManager = new ConnectionManager(dbUrl, dbUser, dbPassword, dbDriver);
         servletContext.setAttribute("connectionManager", connectionManager);
 
         String changeLogFile = properties.getProperty("liquibase.changeLogFile");
