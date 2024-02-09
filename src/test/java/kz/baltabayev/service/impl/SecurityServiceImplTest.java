@@ -5,6 +5,7 @@ import kz.baltabayev.exception.AuthorizeException;
 import kz.baltabayev.exception.RegisterException;
 import kz.baltabayev.model.User;
 import kz.baltabayev.service.AuditService;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -19,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 
 @ExtendWith(MockitoExtension.class)
+@DisplayName("security service implementation test")
 public class SecurityServiceImplTest {
 
     @InjectMocks
@@ -29,6 +31,7 @@ public class SecurityServiceImplTest {
     private AuditService auditService;
 
     @Test
+    @DisplayName("register success scenario test")
     void testRegister_Success() {
         String login = "login";
         String password = "password";
@@ -45,6 +48,7 @@ public class SecurityServiceImplTest {
     }
 
     @Test
+    @DisplayName("register throw exception scenario test")
     void testRegister_ThrowException() {
         String login = "login";
         String password = "password";
@@ -58,6 +62,7 @@ public class SecurityServiceImplTest {
     }
 
     @Test
+    @DisplayName("authorization success scenario test")
     void testAuthorization_Success() {
         String login = "login";
         String password = "password";
@@ -73,6 +78,7 @@ public class SecurityServiceImplTest {
     }
 
     @Test
+    @DisplayName("authorization throw exception scenario test")
     void testAuthorization_ThrowException() {
         String login = "login";
         String password = "password";
