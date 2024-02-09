@@ -58,16 +58,16 @@ public class ApplicationContextListener implements ServletContextListener {
     }
 
     private void databaseConfiguration(ServletContext servletContext) {
-        String dbUrl = properties.getProperty("db.url");
-        String dbUser = properties.getProperty("db.user");
-        String dbPassword = properties.getProperty("db.password");
-        String dbDriver = properties.getProperty("db.driver");
+        String url = properties.getProperty("datasource.url");
+        String username = properties.getProperty("datasource.username");
+        String password = properties.getProperty("datasource.password");
+        String driver = properties.getProperty("datasource.driver-class-name");
 
-        connectionManager = new ConnectionManager(dbUrl, dbUser, dbPassword, dbDriver);
+        connectionManager = new ConnectionManager(url, username, password, driver);
         servletContext.setAttribute("connectionManager", connectionManager);
 
-        String changeLogFile = properties.getProperty("liquibase.changeLogFile");
-        String schemaName = properties.getProperty("liquibase.schemaName");
+        String changeLogFile = properties.getProperty("liquibase.change-log");
+        String schemaName = properties.getProperty("liquibase.liquibase-schema");
 
         LiquibaseDemo liquibaseDemo = new LiquibaseDemo(connectionManager.getConnection(), changeLogFile, schemaName);
         liquibaseDemo.runMigrations();
