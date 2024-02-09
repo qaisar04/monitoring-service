@@ -1,6 +1,5 @@
 package kz.baltabayev.servlets;
 
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
@@ -10,16 +9,14 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import kz.baltabayev.dto.ExceptionResponse;
 import kz.baltabayev.dto.SecurityRequest;
-import kz.baltabayev.dto.SuccessResponse;
-import kz.baltabayev.exception.NotValidArgumentException;
-import kz.baltabayev.exception.RegisterException;
-import kz.baltabayev.model.User;
+import kz.baltabayev.dto.TokenResponse;
+import kz.baltabayev.exception.AuthorizeException;
 import kz.baltabayev.service.SecurityService;
 
 import java.io.IOException;
 
-@WebServlet("/auth/registration")
-public class RegistrationServlet extends HttpServlet {
+@WebServlet("/auth")
+public class AuthenticationServlet extends HttpServlet {
 
     private SecurityService securityService;
     private ObjectMapper objectMapper;
@@ -37,18 +34,16 @@ public class RegistrationServlet extends HttpServlet {
 
         try {
             SecurityRequest request = objectMapper.readValue(req.getInputStream(), SecurityRequest.class);
-            User registeredUser = securityService.register(request.login(), request.password());
+            TokenResponse token = securityService.authorize(request.login(), request.password());
 
-            resp.setStatus(HttpServletResponse.SC_CREATED);
-            objectMapper.writeValue(resp.getWriter(), new SuccessResponse("Player with login " + registeredUser.getLogin() + " successfully created."));
-        } catch (NotValidArgumentException | JsonParseException | RegisterException e) {
+            resp.setStatus(HttpServletResponse.SC_ACCEPTED);
+            objectMapper.writeValue(resp.getWriter(), token);
+        } catch (AuthorizeException e) {
             resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             objectMapper.writeValue(resp.getWriter(), new ExceptionResponse(e.getMessage()));
         } catch (RuntimeException e) {
             resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             objectMapper.writeValue(resp.getWriter(), new ExceptionResponse(e.getMessage()));
         }
-
-        super.doPost(req, resp);
     }
 }

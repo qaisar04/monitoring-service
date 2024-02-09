@@ -12,6 +12,7 @@ import kz.baltabayev.dao.impl.AuditDAOImpl;
 import kz.baltabayev.dao.impl.MeterReadingDAOImpl;
 import kz.baltabayev.dao.impl.MeterTypeDAOImpl;
 import kz.baltabayev.dao.impl.UserDAOImpl;
+import kz.baltabayev.jwt.JwtTokenUtils;
 import kz.baltabayev.liquibase.LiquibaseDemo;
 import kz.baltabayev.service.*;
 import kz.baltabayev.service.impl.*;
@@ -19,6 +20,7 @@ import kz.baltabayev.util.ConnectionManager;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.time.Duration;
 import java.util.Properties;
 
 /**
@@ -39,8 +41,8 @@ public class ApplicationContextListener implements ServletContextListener {
         databaseConfiguration(servletContext);
         serviceContextInit(servletContext);
 
-        ObjectMapper jacksonMapper = new ObjectMapper();
-        servletContext.setAttribute("jacksonMapper", jacksonMapper);
+        ObjectMapper objectMapper = new ObjectMapper();
+        servletContext.setAttribute("objectMapper", objectMapper);
     }
 
     private void loadProperties(ServletContext servletContext) {
@@ -69,9 +71,11 @@ public class ApplicationContextListener implements ServletContextListener {
         String changeLogFile = properties.getProperty("liquibase.change-log");
         String schemaName = properties.getProperty("liquibase.liquibase-schema");
 
-        LiquibaseDemo liquibaseDemo = new LiquibaseDemo(connectionManager.getConnection(), changeLogFile, schemaName);
-        liquibaseDemo.runMigrations();
-        servletContext.setAttribute("liquibaseDemo", liquibaseDemo);
+        if (Boolean.parseBoolean(properties.getProperty("liquibase.enabled"))) {
+            LiquibaseDemo liquibaseDemo = new LiquibaseDemo(connectionManager.getConnection(), changeLogFile, schemaName);
+            liquibaseDemo.runMigrations();
+            servletContext.setAttribute("liquibaseDemo", liquibaseDemo);
+        }
     }
 
     private void serviceContextInit(ServletContext servletContext) {
@@ -82,7 +86,13 @@ public class ApplicationContextListener implements ServletContextListener {
 
         AuditService auditService = new AuditServiceImpl(auditDAO);
         UserService userService = new UserServiceImpl(userDAO);
-        SecurityService securityService = new SecurityServiceImpl(userDAO, auditService);
+
+        JwtTokenUtils jwtTokenUtils = new JwtTokenUtils(
+                properties.getProperty("jwt.secret"),
+                Duration.parse(properties.getProperty("jwt.lifetime"))
+        );
+
+        SecurityService securityService = new SecurityServiceImpl(userDAO, auditService, jwtTokenUtils);
         MeterTypeService meterTypeService = new MeterTypeServiceImpl(meterTypeDAO);
         MeterReadingService meterReadingService = new MeterReadingServiceImpl(meterReadingDAO, userService, auditService, meterTypeService);
 

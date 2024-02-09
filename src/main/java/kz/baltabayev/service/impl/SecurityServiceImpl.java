@@ -1,9 +1,11 @@
 package kz.baltabayev.service.impl;
 
 import kz.baltabayev.dao.UserDAO;
+import kz.baltabayev.dto.TokenResponse;
 import kz.baltabayev.exception.AuthorizeException;
 import kz.baltabayev.exception.NotValidArgumentException;
 import kz.baltabayev.exception.RegisterException;
+import kz.baltabayev.jwt.JwtTokenUtils;
 import kz.baltabayev.model.User;
 import kz.baltabayev.model.types.ActionType;
 import kz.baltabayev.model.types.AuditType;
@@ -24,6 +26,7 @@ public class SecurityServiceImpl implements SecurityService {
 
     private final UserDAO userDao;
     private final AuditService auditService;
+    private final JwtTokenUtils jwtTokenUtils;
 
     /**
      * Registers a new user with the provided login and password.
@@ -70,7 +73,7 @@ public class SecurityServiceImpl implements SecurityService {
      * @throws AuthorizeException if the user is not found or the password is incorrect
      */
     @Override
-    public Optional<User> authorize(String login, String password) {
+    public TokenResponse authorize(String login, String password) {
         Optional<User> optionalUser = userDao.findByLogin(login);
         if (optionalUser.isEmpty()) {
             auditService.audit(login, ActionType.AUTHORIZATION, AuditType.FAIL);
@@ -82,7 +85,8 @@ public class SecurityServiceImpl implements SecurityService {
             throw new AuthorizeException("Неверный пароль.");
         }
 
+        String token = jwtTokenUtils.generateToken(login);
         auditService.audit(login, ActionType.AUTHORIZATION, AuditType.SUCCESS);
-        return optionalUser;
+        return new TokenResponse(token);
     }
 }
