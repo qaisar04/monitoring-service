@@ -12,7 +12,9 @@ import kz.baltabayev.dao.impl.AuditDAOImpl;
 import kz.baltabayev.dao.impl.MeterReadingDAOImpl;
 import kz.baltabayev.dao.impl.MeterTypeDAOImpl;
 import kz.baltabayev.dao.impl.UserDAOImpl;
-import kz.baltabayev.jwt.JwtTokenUtils;
+import kz.baltabayev.mapper.MeterReadingMapper;
+import kz.baltabayev.mapper.UserMapper;
+import kz.baltabayev.security.JwtTokenUtils;
 import kz.baltabayev.liquibase.LiquibaseDemo;
 import kz.baltabayev.service.*;
 import kz.baltabayev.service.impl.*;
@@ -43,6 +45,8 @@ public class ApplicationContextListener implements ServletContextListener {
 
         ObjectMapper objectMapper = new ObjectMapper();
         servletContext.setAttribute("objectMapper", objectMapper);
+        servletContext.setAttribute("userMapper", UserMapper.INSTANCE);
+        servletContext.setAttribute("meterReadingMapper", MeterReadingMapper.INSTANCE);
     }
 
     private void loadProperties(ServletContext servletContext) {
@@ -89,13 +93,15 @@ public class ApplicationContextListener implements ServletContextListener {
 
         JwtTokenUtils jwtTokenUtils = new JwtTokenUtils(
                 properties.getProperty("jwt.secret"),
-                Duration.parse(properties.getProperty("jwt.lifetime"))
+                Duration.parse(properties.getProperty("jwt.lifetime")),
+                userService
         );
 
         SecurityService securityService = new SecurityServiceImpl(userDAO, auditService, jwtTokenUtils);
         MeterTypeService meterTypeService = new MeterTypeServiceImpl(meterTypeDAO);
         MeterReadingService meterReadingService = new MeterReadingServiceImpl(meterReadingDAO, userService, auditService, meterTypeService);
 
+        servletContext.setAttribute("jwtTokenUtils", jwtTokenUtils);
         servletContext.setAttribute("auditService", auditService);
         servletContext.setAttribute("userService", userService);
         servletContext.setAttribute("securityService", securityService);

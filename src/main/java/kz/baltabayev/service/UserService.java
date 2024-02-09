@@ -24,4 +24,6 @@ public interface UserService {
      * @return an Optional containing the user if found, otherwise empty Optional
      */
     Optional<User> getUserById(Long id);
+
+    Optional<User> getUserByLogin(String login);
 }

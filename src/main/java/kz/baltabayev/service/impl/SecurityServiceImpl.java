@@ -5,17 +5,14 @@ import kz.baltabayev.dto.TokenResponse;
 import kz.baltabayev.exception.AuthorizeException;
 import kz.baltabayev.exception.NotValidArgumentException;
 import kz.baltabayev.exception.RegisterException;
-import kz.baltabayev.jwt.JwtTokenUtils;
+import kz.baltabayev.security.JwtTokenUtils;
 import kz.baltabayev.model.User;
 import kz.baltabayev.model.types.ActionType;
 import kz.baltabayev.model.types.AuditType;
-import kz.baltabayev.model.types.Role;
 import kz.baltabayev.service.AuditService;
 import kz.baltabayev.service.SecurityService;
-import kz.baltabayev.util.DateTimeUtils;
 import lombok.RequiredArgsConstructor;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 /**
