@@ -1,9 +1,10 @@
 package kz.baltabayev.dto;
 
-import java.time.LocalDate;
+import lombok.Data;
 
+@Data
 public class MeterReadingDto {
     Integer counterNumber;
-    LocalDate readingDate;
+    String readingDate;
     Long typeId;
 }

@@ -1,7 +1,6 @@
 package kz.baltabayev;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
@@ -48,6 +47,11 @@ public class ApplicationContextListener implements ServletContextListener {
         servletContext.setAttribute("objectMapper", objectMapper);
         servletContext.setAttribute("userMapper", UserMapper.INSTANCE);
         servletContext.setAttribute("meterReadingMapper", MeterReadingMapper.INSTANCE);
+    }
+
+    @Override
+    public void contextDestroyed(ServletContextEvent sce) {
+        ServletContextListener.super.contextDestroyed(sce);
     }
 
     private void loadProperties(ServletContext servletContext) {

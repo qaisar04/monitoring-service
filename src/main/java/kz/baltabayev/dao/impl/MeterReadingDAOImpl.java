@@ -51,7 +51,7 @@ public class MeterReadingDAOImpl implements MeterReadingDAO {
                 .userId(resultSet.getLong("user_id"))
                 .typeId(resultSet.getLong("type_id"))
                 .counterNumber(resultSet.getInt("counter_number"))
-                .readingDate(resultSet.getDate("reading_date").toLocalDate())
+                .readingDate(resultSet.getString("reading_date"))
                 .build();
     }
 

@@ -3,6 +3,7 @@ package kz.baltabayev.mapper;
 import kz.baltabayev.dto.MeterReadingDto;
 import kz.baltabayev.model.MeterReading;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
 @Mapper

@@ -97,7 +97,7 @@ public class MeterReadingServiceImpl implements MeterReadingService {
 
         boolean alreadyExists = existingReadings.stream()
                 .anyMatch(reading -> reading.getTypeId().equals(meterTypeId) &&
-                                     DateTimeUtils.isSameMonth(reading.getReadingDate(), now));
+                                     DateTimeUtils.isSameMonth(DateTimeUtils.parseDateFromString(reading.getReadingDate()), now));
 
         if (alreadyExists) {
             auditService.audit(user.getLogin(), ActionType.SUBMIT_METER, AuditType.FAIL);
@@ -107,7 +107,7 @@ public class MeterReadingServiceImpl implements MeterReadingService {
         MeterReading meterReading = MeterReading.builder()
                 .counterNumber(counterNumber)
                 .typeId(meterTypeId)
-                .readingDate(LocalDate.now())
+                .readingDate(DateTimeUtils.parseDate(LocalDate.now()))
                 .userId(userId)
                 .build();
 
@@ -132,7 +132,7 @@ public class MeterReadingServiceImpl implements MeterReadingService {
         YearMonth filterFromUser = YearMonth.of(year, month);
 
         for (MeterReading meterReading : allReadings) {
-            LocalDate readingDate = meterReading.getReadingDate();
+            LocalDate readingDate = DateTimeUtils.parseDateFromString(meterReading.getReadingDate());
             YearMonth readingYearMonth = YearMonth.of(readingDate.getYear(), readingDate.getMonth());
 
             if (readingYearMonth.equals(filterFromUser)) {

@@ -11,6 +11,7 @@ import kz.baltabayev.model.types.AuditType;
 import kz.baltabayev.service.AuditService;
 import kz.baltabayev.service.MeterTypeService;
 import kz.baltabayev.service.UserService;
+import kz.baltabayev.util.DateTimeUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,6 +25,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import static kz.baltabayev.util.DateTimeUtils.parseDate;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -54,7 +56,11 @@ class MeterReadingServiceImplTest {
         User mockUser = User.builder().login("testUser").build();
         when(userService.getUserById(anyLong())).thenReturn(Optional.of(mockUser));
 
-        MeterReading meterReading = MeterReading.builder().typeId(1L).readingDate(LocalDate.now()).build();
+        MeterReading meterReading = MeterReading.builder()
+                .typeId(1L)
+                .readingDate(parseDate(LocalDate.now()))
+                .build();
+
         List<MeterReading> meterReadings = Collections.singletonList(meterReading);
         when(meterReadingDAO.findAll()).thenReturn(meterReadings);
 
@@ -109,7 +115,10 @@ class MeterReadingServiceImplTest {
         when(meterTypeService.showAvailableMeterTypes()).thenReturn(allTypes);
 
         when(meterReadingDAO.findAllByUserId(anyLong())).thenReturn(Collections.singletonList(
-                MeterReading.builder().typeId(1L).readingDate(LocalDate.now()).build()
+                MeterReading.builder()
+                        .typeId(1L)
+                        .readingDate(parseDate(LocalDate.now()))
+                        .build()
         ));
 
         DuplicateRecordException exception = assertThrows(DuplicateRecordException.class,
@@ -132,9 +141,9 @@ class MeterReadingServiceImplTest {
 
         when(userService.getUserById(userId)).thenReturn(Optional.of(testUser));
         when(meterReadingDAO.findAllByUserId(userId)).thenReturn(Arrays.asList(
-                new MeterReading(1L, 124812409, LocalDate.of(2024, 1, 20), 1L, userId),
-                new MeterReading(2L, 824123414, LocalDate.of(2024, 1, 20), 2L, userId),
-                new MeterReading(3L, 249901312, LocalDate.of(2023, 11, 18), 2L, userId)
+                new MeterReading(1L, 124812409, DateTimeUtils.parseDate(LocalDate.of(2024, 1, 20)), 1L, userId),
+                new MeterReading(2L, 824123414, DateTimeUtils.parseDate(LocalDate.of(2024, 1, 20)), 2L, userId),
+                new MeterReading(3L, 249901312, DateTimeUtils.parseDate(LocalDate.of(2023, 11, 18)), 2L, userId)
         ));
 
         List<MeterReading> result = meterReadingService.getMeterReadingsByMonthAndYear(2024, 1, userId);
@@ -155,9 +164,9 @@ class MeterReadingServiceImplTest {
 
         when(userService.getUserById(userId)).thenReturn(Optional.of(testUser));
         when(meterReadingDAO.findAllByUserId(userId)).thenReturn(Arrays.asList(
-                new MeterReading(1L, 12924912, LocalDate.of(2024, 1, 20), 1L, userId),
-                new MeterReading(2L, 93919112, LocalDate.of(2024, 1, 20), 2L, userId),
-                new MeterReading(3L, 81238123, LocalDate.of(2024, 1, 20), 3L, userId)
+                new MeterReading(1L, 12924912, DateTimeUtils.parseDate(LocalDate.of(2024, 1, 20)), 1L, userId),
+                new MeterReading(2L, 93919112, DateTimeUtils.parseDate(LocalDate.of(2024, 1, 20)), 2L, userId),
+                new MeterReading(3L, 81238123, DateTimeUtils.parseDate(LocalDate.of(2024, 1, 20)), 3L, userId)
         ));
 
         List<MeterReading> result = meterReadingService.getMeterReadingHistory(userId);
