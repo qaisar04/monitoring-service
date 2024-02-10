@@ -23,6 +23,7 @@ public interface AuditService {
      * @param login      the login associated with the action
      * @param actionType the type of action being audited
      * @param auditType  the result of the audit (SUCCESS or FAIL)
+     * @return
      */
-    void audit(String login, ActionType actionType, AuditType auditType);
+    kz.baltabayev.annotations.Audit audit(String login, ActionType actionType, AuditType auditType);
 }

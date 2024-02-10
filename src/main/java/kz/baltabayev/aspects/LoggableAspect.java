@@ -11,6 +11,7 @@ import org.aspectj.lang.reflect.MethodSignature;
 @Aspect
 @Slf4j
 public class LoggableAspect {
+
     @Pointcut("within(@kz.baltabayev.annotations.Loggable *) && execution(* *(..))")
     public void annotatedByLoggable() { }
 

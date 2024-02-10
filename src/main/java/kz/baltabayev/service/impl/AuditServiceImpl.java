@@ -40,17 +40,19 @@ public class AuditServiceImpl implements AuditService {
     /**
      * Performs an audit for a specific action.
      *
-     * @param login     the login associated with the action
+     * @param login      the login associated with the action
      * @param actionType the type of action
      * @param auditType  the type of audit (SUCCESS or FAIL)
+     * @return
      */
     @Override
-    public void audit(String login, ActionType actionType, AuditType auditType) {
+    public kz.baltabayev.annotations.Audit audit(String login, ActionType actionType, AuditType auditType) {
         Audit audit = Audit.builder()
                 .login(login)
                 .actionType(actionType)
                 .auditType(auditType)
                 .build();
         save(audit);
+        return null;
     }
 }

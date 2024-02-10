@@ -1,6 +1,7 @@
 package kz.baltabayev.service.impl;
 
 import kz.baltabayev.annotations.Audit;
+import kz.baltabayev.annotations.Loggable;
 import kz.baltabayev.dao.UserDAO;
 import kz.baltabayev.dto.TokenResponse;
 import kz.baltabayev.exception.AuthorizeException;
@@ -35,6 +36,7 @@ public class SecurityServiceImpl implements SecurityService {
      * @throws RegisterException         if a user with the same login already exists
      */
     @Override
+    @Loggable
     @Audit(actionType = ActionType.REGISTRATION, login = "@login")
     public User register(String login, String password) {
         if (login == null || password == null || login.isEmpty() || password.isEmpty() || login.isBlank() || password.isBlank()) {
