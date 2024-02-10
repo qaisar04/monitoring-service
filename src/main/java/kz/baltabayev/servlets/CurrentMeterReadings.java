@@ -8,22 +8,17 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import kz.baltabayev.dto.ExceptionResponse;
 import kz.baltabayev.dto.MeterReadingDto;
-import kz.baltabayev.dto.UserMeterReadingsDto;
 import kz.baltabayev.exception.AuthorizeException;
 import kz.baltabayev.exception.ValidationParametersException;
 import kz.baltabayev.mapper.MeterReadingMapper;
-import kz.baltabayev.mapper.UserMapper;
 import kz.baltabayev.model.MeterReading;
 import kz.baltabayev.model.User;
 import kz.baltabayev.security.Authentication;
 import kz.baltabayev.service.MeterReadingService;
 import kz.baltabayev.service.UserService;
-import org.mapstruct.Mapper;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @WebServlet("/reading/current")
 public class CurrentMeterReadings extends HttpServlet {
@@ -63,20 +58,17 @@ public class CurrentMeterReadings extends HttpServlet {
     private void showCurrentReadings(HttpServletResponse resp, Authentication authentication) throws IOException {
         String login = authentication.getLogin();
         if (login == null) throw new ValidationParametersException("Login parameter is null!");
-        Optional<User> optionalUser = userService.getUserByLogin(login);
-        if (optionalUser.isPresent()) {
-            if (!authentication.getLogin().equals(optionalUser.get().getLogin()))
-                throw new AuthorizeException("Incorrect credentials.");
-            List<MeterReading> currentMeterReadings = meterReadingService.getCurrentMeterReadings(optionalUser.get().getId());
-
-            List<MeterReadingDto> meterReadingDtos = currentMeterReadings.stream()
-                    .map(meterReadingMapper::toDto)
-                    .toList();
-
-            resp.setStatus(HttpServletResponse.SC_OK);
-            objectMapper.writeValue(resp.getWriter(), meterReadingDtos);
-        } else {
+        User user = userService.getUserByLogin(login);
+        if (!authentication.getLogin().equals(user.getLogin()))
             throw new AuthorizeException("Incorrect credentials.");
-        }
+        List<MeterReading> currentMeterReadings = meterReadingService.getCurrentMeterReadings(user.getId());
+
+        List<MeterReadingDto> meterReadingDtos = currentMeterReadings.stream()
+                .map(meterReadingMapper::toDto)
+                .toList();
+
+        resp.setStatus(HttpServletResponse.SC_OK);
+        objectMapper.writeValue(resp.getWriter(), meterReadingDtos);
+
     }
 }

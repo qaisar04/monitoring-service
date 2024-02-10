@@ -8,18 +8,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import kz.baltabayev.dto.MeterTypeRequest;
 import kz.baltabayev.dto.SuccessResponse;
-import kz.baltabayev.dto.UserDto;
 import kz.baltabayev.exception.ValidationParametersException;
-import kz.baltabayev.mapper.UserMapper;
-import kz.baltabayev.model.MeterType;
-import kz.baltabayev.model.User;
 import kz.baltabayev.model.types.Role;
 import kz.baltabayev.security.Authentication;
 import kz.baltabayev.service.MeterTypeService;
-import kz.baltabayev.service.UserService;
 
 import java.io.IOException;
-import java.util.List;
 
 @WebServlet("/meter-type/add")
 public class AddMeterTypeServlet extends HttpServlet {

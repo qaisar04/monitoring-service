@@ -59,18 +59,15 @@ public class ShowMeterReadings extends HttpServlet {
     private void showReadingsByDate(HttpServletRequest req, HttpServletResponse resp, Authentication authentication) throws IOException {
         String login = authentication.getLogin();
         if (login == null) throw new ValidationParametersException("Login parameter is null!");
-        Optional<User> optionalUser = userService.getUserByLogin(login);
-        if (optionalUser.isPresent()) {
-            if (!authentication.getLogin().equals(optionalUser.get().getLogin()))
-                throw new AuthorizeException("Incorrect credentials.");
+        User user = userService.getUserByLogin(login);
 
-            MeterReadingDateRequest request = objectMapper.readValue(req.getInputStream(), MeterReadingDateRequest.class);
-            List<MeterReading> meterReadings = meterReadingService.getMeterReadingsByMonthAndYear(request.month(), request.year(), optionalUser.get().getId());
-
-            resp.setStatus(HttpServletResponse.SC_OK);
-            objectMapper.writeValue(resp.getWriter(), meterReadings);
-        } else {
+        if (!authentication.getLogin().equals(user.getLogin()))
             throw new AuthorizeException("Incorrect credentials.");
-        }
+
+        MeterReadingDateRequest request = objectMapper.readValue(req.getInputStream(), MeterReadingDateRequest.class);
+        List<MeterReading> meterReadings = meterReadingService.getMeterReadingsByMonthAndYear(request.month(), request.year(), user.getId());
+
+        resp.setStatus(HttpServletResponse.SC_OK);
+        objectMapper.writeValue(resp.getWriter(), meterReadings);
     }
 }

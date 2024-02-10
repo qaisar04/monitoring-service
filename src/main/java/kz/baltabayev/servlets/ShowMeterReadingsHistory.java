@@ -19,7 +19,6 @@ import kz.baltabayev.service.UserService;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 
 
 @WebServlet("/reading/history")
@@ -60,14 +59,13 @@ public class ShowMeterReadingsHistory extends HttpServlet {
     }
 
     private void showAllReadings(HttpServletResponse resp, Authentication authentication) throws IOException {
-    String login = authentication.getLogin();
-    if (login == null) throw new ValidationParametersException("Login parameter is null!");
-    Optional<User> optionalUser = userService.getUserByLogin(login);
-    if (optionalUser.isPresent()) {
-        if (!authentication.getLogin().equals(optionalUser.get().getLogin()))
+        String login = authentication.getLogin();
+        if (login == null) throw new ValidationParametersException("Login parameter is null!");
+        User user = userService.getUserByLogin(login);
+        if (!authentication.getLogin().equals(user.getLogin()))
             throw new AuthorizeException("Incorrect credentials.");
 
-        List<MeterReading> meterReadings = meterReadingService.getMeterReadingHistory(optionalUser.get().getId());
+        List<MeterReading> meterReadings = meterReadingService.getMeterReadingHistory(user.getId());
 
         List<MeterReadingDto> meterReadingDtos = meterReadings.stream()
                 .map(meterReadingMapper::toDto)
@@ -75,8 +73,6 @@ public class ShowMeterReadingsHistory extends HttpServlet {
 
         resp.setStatus(HttpServletResponse.SC_OK);
         objectMapper.writeValue(resp.getWriter(), meterReadingDtos);
-    } else {
-        throw new AuthorizeException("Incorrect credentials.");
+
     }
-}
 }

@@ -6,6 +6,7 @@ import kz.baltabayev.service.UserService;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 /**
@@ -33,12 +34,14 @@ public class UserServiceImpl implements UserService {
      * @return an optional containing the user if found, or empty if not found
      */
     @Override
-    public Optional<User> getUserById(Long id) {
-        return userDAO.findById(id);
+    public User getUserById(Long id) {
+        return userDAO.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("No user found with ID: " + id));
     }
 
     @Override
-    public Optional<User> getUserByLogin(String login) {
-        return userDAO.findByLogin(login);
+    public User getUserByLogin(String login) {
+        return userDAO.findByLogin(login)
+                .orElseThrow(() -> new NoSuchElementException("No user found with login: " + login));
     }
 }

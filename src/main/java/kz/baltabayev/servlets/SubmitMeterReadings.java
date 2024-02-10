@@ -19,7 +19,6 @@ import kz.baltabayev.service.MeterReadingService;
 import kz.baltabayev.service.UserService;
 
 import java.io.IOException;
-import java.util.Optional;
 
 @WebServlet("/reading/submit")
 public class SubmitMeterReadings extends HttpServlet {
@@ -44,15 +43,12 @@ public class SubmitMeterReadings extends HttpServlet {
             try {
                 String login = authentication.getLogin();
                 if (login == null) throw new ValidationParametersException("Login parameter is null!");
-                Optional<User> optionalUser = userService.getUserByLogin(login);
-                if (optionalUser.isPresent()) {
-                    MeterReadingRequest readingRequest = objectMapper.readValue(req.getInputStream(), MeterReadingRequest.class);
-                    meterReadingService.submitMeterReading(readingRequest.counterNumber(), readingRequest.meterTypeId(), optionalUser.get().getId());
-                    resp.setStatus(HttpServletResponse.SC_ACCEPTED);
-                    objectMapper.writeValue(resp.getWriter(), new ResponseMessage("The reading was successfully saved!"));
-                } else {
-                    throw new AuthorizeException("Incorrect credentials.");
-                }
+                User user = userService.getUserByLogin(login);
+                MeterReadingRequest readingRequest = objectMapper.readValue(req.getInputStream(), MeterReadingRequest.class);
+                meterReadingService.submitMeterReading(readingRequest.counterNumber(), readingRequest.meterTypeId(), user.getId());
+                resp.setStatus(HttpServletResponse.SC_ACCEPTED);
+                objectMapper.writeValue(resp.getWriter(), new ResponseMessage("The reading was successfully saved!"));
+
             } catch (NotValidArgumentException | AuthorizeException | DuplicateRecordException e) {
                 resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 objectMapper.writeValue(resp.getWriter(), new ExceptionResponse(e.getMessage()));
