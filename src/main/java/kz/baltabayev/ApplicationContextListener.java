@@ -102,9 +102,9 @@ public class ApplicationContextListener implements ServletContextListener {
                 userService
         );
 
-        SecurityService securityService = new SecurityServiceImpl(userDAO, auditService, jwtTokenUtils);
+        SecurityService securityService = new SecurityServiceImpl(userDAO, jwtTokenUtils);
         MeterTypeService meterTypeService = new MeterTypeServiceImpl(meterTypeDAO);
-        MeterReadingService meterReadingService = new MeterReadingServiceImpl(meterReadingDAO, userService, auditService, meterTypeService);
+        MeterReadingService meterReadingService = new MeterReadingServiceImpl(meterReadingDAO, userService, meterTypeService);
 
         servletContext.setAttribute("jwtTokenUtils", jwtTokenUtils);
         servletContext.setAttribute("auditService", auditService);
