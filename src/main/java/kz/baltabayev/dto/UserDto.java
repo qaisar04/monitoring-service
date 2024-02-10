@@ -1,11 +1,12 @@
 package kz.baltabayev.dto;
 
 import kz.baltabayev.model.types.Role;
+import lombok.Getter;
+import lombok.Setter;
 
-import java.time.LocalDateTime;
-
+@Getter
+@Setter
 public class UserDto {
     String login;
-    LocalDateTime registrationDate;
     Role role;
 }
