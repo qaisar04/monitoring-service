@@ -7,7 +7,6 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import kz.baltabayev.dto.ExceptionResponse;
-import kz.baltabayev.dto.MeterReadingDateRequest;
 import kz.baltabayev.dto.MeterReadingDto;
 import kz.baltabayev.exception.AuthorizeException;
 import kz.baltabayev.exception.ValidationParametersException;
@@ -21,7 +20,6 @@ import kz.baltabayev.service.UserService;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 
 @WebServlet("/reading/history")

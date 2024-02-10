@@ -68,15 +68,13 @@ public class CurrentMeterReadings extends HttpServlet {
             if (!authentication.getLogin().equals(optionalUser.get().getLogin()))
                 throw new AuthorizeException("Incorrect credentials.");
             List<MeterReading> currentMeterReadings = meterReadingService.getCurrentMeterReadings(optionalUser.get().getId());
-            List<MeterReadingDto> currentMeterReadingsDto = new ArrayList<>();
-            for (MeterReading meterReading : currentMeterReadings) {
-                currentMeterReadingsDto.add(meterReadingMapper.toDto(meterReading));
-            }
-            UserMeterReadingsDto userMeterReadingsDto = new UserMeterReadingsDto();
-            userMeterReadingsDto.setUserDto(UserMapper.INSTANCE.toDto(optionalUser.get()));
-            userMeterReadingsDto.setMeterReadings(currentMeterReadingsDto);
+
+            List<MeterReadingDto> meterReadingDtos = currentMeterReadings.stream()
+                    .map(meterReadingMapper::toDto)
+                    .toList();
+
             resp.setStatus(HttpServletResponse.SC_OK);
-            objectMapper.writeValue(resp.getWriter(), userMeterReadingsDto);
+            objectMapper.writeValue(resp.getWriter(), meterReadingDtos);
         } else {
             throw new AuthorizeException("Incorrect credentials.");
         }
