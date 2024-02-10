@@ -8,14 +8,17 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import kz.baltabayev.dto.ExceptionResponse;
 import kz.baltabayev.dto.MeterReadingDto;
+import kz.baltabayev.dto.UserMeterReadingsDto;
 import kz.baltabayev.exception.AuthorizeException;
 import kz.baltabayev.exception.ValidationParametersException;
 import kz.baltabayev.mapper.MeterReadingMapper;
+import kz.baltabayev.mapper.UserMapper;
 import kz.baltabayev.model.MeterReading;
 import kz.baltabayev.model.User;
 import kz.baltabayev.security.Authentication;
 import kz.baltabayev.service.MeterReadingService;
 import kz.baltabayev.service.UserService;
+import org.mapstruct.Mapper;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -41,11 +44,12 @@ public class CurrentMeterReadings extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        resp.setContentType("application/json");
         Authentication authentication = (Authentication) getServletContext().getAttribute("authentication");
 
-        if(authentication.isAuth()) {
+        if (authentication.isAuth()) {
             try {
-                showCurrentReadings(req, resp, authentication);
+                showCurrentReadings(resp, authentication);
             } catch (ValidationParametersException e) {
                 resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 objectMapper.writeValue(resp.getWriter(), new ExceptionResponse(e.getMessage()));
@@ -56,11 +60,11 @@ public class CurrentMeterReadings extends HttpServlet {
         }
     }
 
-    private void showCurrentReadings(HttpServletRequest req, HttpServletResponse resp, Authentication authentication) throws IOException {
-        String login = req.getParameter("login");
+    private void showCurrentReadings(HttpServletResponse resp, Authentication authentication) throws IOException {
+        String login = authentication.getLogin();
         if (login == null) throw new ValidationParametersException("Login parameter is null!");
         Optional<User> optionalUser = userService.getUserByLogin(login);
-        if(optionalUser.isPresent()) {
+        if (optionalUser.isPresent()) {
             if (!authentication.getLogin().equals(optionalUser.get().getLogin()))
                 throw new AuthorizeException("Incorrect credentials.");
             List<MeterReading> currentMeterReadings = meterReadingService.getCurrentMeterReadings(optionalUser.get().getId());
@@ -68,8 +72,11 @@ public class CurrentMeterReadings extends HttpServlet {
             for (MeterReading meterReading : currentMeterReadings) {
                 currentMeterReadingsDto.add(meterReadingMapper.toDto(meterReading));
             }
+            UserMeterReadingsDto userMeterReadingsDto = new UserMeterReadingsDto();
+            userMeterReadingsDto.setUserDto(UserMapper.INSTANCE.toDto(optionalUser.get()));
+            userMeterReadingsDto.setMeterReadings(currentMeterReadingsDto);
             resp.setStatus(HttpServletResponse.SC_OK);
-            objectMapper.writeValue(resp.getWriter(), currentMeterReadingsDto);
+            objectMapper.writeValue(resp.getWriter(), userMeterReadingsDto);
         } else {
             throw new AuthorizeException("Incorrect credentials.");
         }

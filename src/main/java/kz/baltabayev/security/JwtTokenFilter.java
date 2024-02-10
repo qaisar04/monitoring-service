@@ -2,11 +2,12 @@ package kz.baltabayev.security;
 
 import jakarta.servlet.*;
 import jakarta.servlet.annotation.WebFilter;
+import jakarta.servlet.annotation.WebInitParam;
 import jakarta.servlet.http.HttpServletRequest;
 
 import java.io.IOException;
 
-@WebFilter
+@WebFilter(urlPatterns = "/*", initParams = @WebInitParam(name = "order", value = "1"))
 public class JwtTokenFilter implements Filter {
 
     private JwtTokenUtils jwtTokenUtils;
