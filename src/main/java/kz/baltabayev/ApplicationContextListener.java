@@ -5,6 +5,7 @@ import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
 import jakarta.servlet.annotation.WebListener;
+import kz.baltabayev.aspects.AuditAspect;
 import kz.baltabayev.dao.MeterReadingDAO;
 import kz.baltabayev.dao.MeterTypeDAO;
 import kz.baltabayev.dao.UserDAO;
@@ -95,6 +96,8 @@ public class ApplicationContextListener implements ServletContextListener {
 
         AuditService auditService = new AuditServiceImpl(auditDAO);
         UserService userService = new UserServiceImpl(userDAO);
+
+        AuditAspect auditAspect = new AuditAspect(auditService);
 
         JwtTokenUtils jwtTokenUtils = new JwtTokenUtils(
                 properties.getProperty("jwt.secret"),

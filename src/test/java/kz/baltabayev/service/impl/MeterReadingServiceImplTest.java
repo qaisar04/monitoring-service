@@ -54,7 +54,7 @@ class MeterReadingServiceImplTest {
     @DisplayName("get current meter readings method verification test")
     void getCurrentMeterReadings() {
         User mockUser = User.builder().login("testUser").build();
-        when(userService.getUserById(anyLong())).thenReturn(Optional.of(mockUser));
+        when(userService.getUserById(anyLong())).thenReturn(mockUser);
 
         MeterReading meterReading = MeterReading.builder()
                 .typeId(1L)
@@ -75,7 +75,7 @@ class MeterReadingServiceImplTest {
     @DisplayName("submit meter reading success scenario test")
     void submitMeterReading_Success() {
         User mockUser = User.builder().login("testUser").build();
-        when(userService.getUserById(anyLong())).thenReturn(Optional.of(mockUser));
+        when(userService.getUserById(anyLong())).thenReturn(mockUser);
 
         List<MeterType> allTypes = Collections.singletonList(MeterType.builder().id(1L).typeName("Electricity").build());
         when(meterTypeService.showAvailableMeterTypes()).thenReturn(allTypes);
@@ -92,7 +92,7 @@ class MeterReadingServiceImplTest {
     @DisplayName("submit meter reading invalid meter type scenario test")
     void submitMeterReading_InvalidMeterType() {
         User mockUser = User.builder().login("testUser").build();
-        when(userService.getUserById(anyLong())).thenReturn(Optional.of(mockUser));
+        when(userService.getUserById(anyLong())).thenReturn(mockUser);
 
         List<MeterType> allTypes = Collections.singletonList(MeterType.builder().id(1L).typeName("Electricity").build());
         when(meterTypeService.showAvailableMeterTypes()).thenReturn(allTypes);
@@ -109,7 +109,7 @@ class MeterReadingServiceImplTest {
     @DisplayName("submit meter reading duplicate record scenario test")
     void submitMeterReading_DuplicateRecord() {
         User mockUser = User.builder().login("testUser").build();
-        when(userService.getUserById(anyLong())).thenReturn(Optional.of(mockUser));
+        when(userService.getUserById(anyLong())).thenReturn(mockUser);
 
         List<MeterType> allTypes = Collections.singletonList(MeterType.builder().id(1L).typeName("Electricity").build());
         when(meterTypeService.showAvailableMeterTypes()).thenReturn(allTypes);
@@ -139,7 +139,7 @@ class MeterReadingServiceImplTest {
                 .login("test")
                 .build();
 
-        when(userService.getUserById(userId)).thenReturn(Optional.of(testUser));
+        when(userService.getUserById(userId)).thenReturn(testUser);
         when(meterReadingDAO.findAllByUserId(userId)).thenReturn(Arrays.asList(
                 new MeterReading(1L, 124812409, DateTimeUtils.parseDate(LocalDate.of(2024, 1, 20)), 1L, userId),
                 new MeterReading(2L, 824123414, DateTimeUtils.parseDate(LocalDate.of(2024, 1, 20)), 2L, userId),
@@ -162,7 +162,7 @@ class MeterReadingServiceImplTest {
                 .login("test")
                 .build();
 
-        when(userService.getUserById(userId)).thenReturn(Optional.of(testUser));
+        when(userService.getUserById(userId)).thenReturn(testUser);
         when(meterReadingDAO.findAllByUserId(userId)).thenReturn(Arrays.asList(
                 new MeterReading(1L, 12924912, DateTimeUtils.parseDate(LocalDate.of(2024, 1, 20)), 1L, userId),
                 new MeterReading(2L, 93919112, DateTimeUtils.parseDate(LocalDate.of(2024, 1, 20)), 2L, userId),

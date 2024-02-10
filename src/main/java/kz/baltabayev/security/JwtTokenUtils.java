@@ -69,8 +69,7 @@ public class JwtTokenUtils {
         }
 
         String login = extractLogin(token);
-        User user = userService.getUserByLogin(login)
-                .orElseThrow(() -> new AccessDeniedException("Access denied: User not found"));
+        User user = userService.getUserByLogin(login);
 
         return new Authentication(login, user.getRole(), true, "Successful login");
     }
