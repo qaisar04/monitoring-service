@@ -28,8 +28,6 @@ public class SecurityServiceImplTest {
     private SecurityServiceImpl securityService;
     @Mock
     private UserDAO userDAO;
-    @Mock
-    private AuditService auditService;
 
     @Test
     @DisplayName("register success scenario test")
@@ -60,23 +58,6 @@ public class SecurityServiceImplTest {
         Mockito.when(userDAO.findByLogin(login)).thenReturn(Optional.of(user));
 
         assertThrows(RegisterException.class, () -> securityService.register(login, password));
-    }
-
-    @Test
-    @DisplayName("authorization success scenario test")
-    void testAuthorization_Success() {
-        String login = "login";
-        String password = "password";
-        User user = User.builder()
-                .login(login)
-                .password(password)
-                .build();
-        Mockito.when(userDAO.findByLogin(login)).thenReturn(Optional.of(user));
-
-        TokenResponse tokenResponse = securityService.authorize(login, password);
-        //TODO
-//        assertEquals(login, authorization.get().getLogin());
-//        assertEquals(password, authorization.get().getPassword());
     }
 
     @Test

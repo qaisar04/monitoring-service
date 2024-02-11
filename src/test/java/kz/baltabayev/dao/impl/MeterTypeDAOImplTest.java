@@ -24,7 +24,7 @@ public class MeterTypeDAOImplTest extends PostgresTestContainer{
                 container.getJdbcUrl(), container.getUsername(), container.getPassword(),
                 "org.postgresql.Driver");
 
-        LiquibaseDemo liquibaseTest = new LiquibaseDemo(connectionManager.getConnection(), "migration", "db.changelog/changelog.xml");
+        LiquibaseDemo liquibaseTest = new LiquibaseDemo(connectionManager.getConnection(), "db/changelog/changelog.xml", "migration");
         liquibaseTest.runMigrations();
 
         meterTypeDao = new MeterTypeDAOImpl(connectionManager);

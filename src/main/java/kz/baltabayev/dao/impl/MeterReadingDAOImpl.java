@@ -95,7 +95,7 @@ public class MeterReadingDAOImpl implements MeterReadingDAO {
             preparedStatement.setLong(1, meterReading.getUserId());
             preparedStatement.setLong(2, meterReading.getTypeId());
             preparedStatement.setDouble(3, meterReading.getCounterNumber());
-            preparedStatement.setDate(4, Date.valueOf(meterReading.getReadingDate()));
+            preparedStatement.setString(4, meterReading.getReadingDate());
             preparedStatement.executeUpdate();
             ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
             if (generatedKeys.next()) {

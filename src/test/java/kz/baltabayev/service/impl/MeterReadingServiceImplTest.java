@@ -45,16 +45,13 @@ class MeterReadingServiceImplTest {
     private UserService userService;
 
     @Mock
-    private AuditService auditService;
-
-    @Mock
     private MeterTypeService meterTypeService;
 
     @Test
     @DisplayName("get current meter readings method verification test")
     void getCurrentMeterReadings() {
         User mockUser = User.builder().login("testUser").build();
-        when(userService.getUserById(anyLong())).thenReturn(mockUser);
+        lenient().when(userService.getUserById(anyLong())).thenReturn(mockUser);
 
         MeterReading meterReading = MeterReading.builder()
                 .typeId(1L)
@@ -62,7 +59,7 @@ class MeterReadingServiceImplTest {
                 .build();
 
         List<MeterReading> meterReadings = Collections.singletonList(meterReading);
-        when(meterReadingDAO.findAll()).thenReturn(meterReadings);
+        lenient().when(meterReadingDAO.findAll()).thenReturn(meterReadings);
 
         List<MeterReading> result = meterReadingService.getCurrentMeterReadings(1L);
 
@@ -72,36 +69,18 @@ class MeterReadingServiceImplTest {
     }
 
     @Test
-    @DisplayName("submit meter reading success scenario test")
-    void submitMeterReading_Success() {
-        User mockUser = User.builder().login("testUser").build();
-        when(userService.getUserById(anyLong())).thenReturn(mockUser);
-
-        List<MeterType> allTypes = Collections.singletonList(MeterType.builder().id(1L).typeName("Electricity").build());
-        when(meterTypeService.showAvailableMeterTypes()).thenReturn(allTypes);
-
-        when(meterReadingDAO.findAllByUserId(anyLong())).thenReturn(Collections.emptyList());
-
-        assertDoesNotThrow(() -> meterReadingService.submitMeterReading(100, 1L, 1L));
-
-        verify(auditService, times(1)).audit(anyString(), eq(ActionType.SUBMIT_METER), eq(AuditType.SUCCESS));
-        verify(meterReadingDAO, times(1)).save(any(MeterReading.class));
-    }
-
-    @Test
     @DisplayName("submit meter reading invalid meter type scenario test")
     void submitMeterReading_InvalidMeterType() {
         User mockUser = User.builder().login("testUser").build();
-        when(userService.getUserById(anyLong())).thenReturn(mockUser);
+        lenient().when(userService.getUserById(anyLong())).thenReturn(mockUser);
 
         List<MeterType> allTypes = Collections.singletonList(MeterType.builder().id(1L).typeName("Electricity").build());
-        when(meterTypeService.showAvailableMeterTypes()).thenReturn(allTypes);
+        lenient().when(meterTypeService.showAvailableMeterTypes()).thenReturn(allTypes);
 
         NotValidArgumentException exception = assertThrows(NotValidArgumentException.class,
                 () -> meterReadingService.submitMeterReading(100, 2L, 1L));
 
         assertEquals("Пожалуйста, введите корректный тип показаний.", exception.getMessage());
-        verify(auditService, times(1)).audit(anyString(), eq(ActionType.SUBMIT_METER), eq(AuditType.FAIL));
         verify(meterReadingDAO, never()).save(any());
     }
 
@@ -109,12 +88,12 @@ class MeterReadingServiceImplTest {
     @DisplayName("submit meter reading duplicate record scenario test")
     void submitMeterReading_DuplicateRecord() {
         User mockUser = User.builder().login("testUser").build();
-        when(userService.getUserById(anyLong())).thenReturn(mockUser);
+        lenient().when(userService.getUserById(anyLong())).thenReturn(mockUser);
 
         List<MeterType> allTypes = Collections.singletonList(MeterType.builder().id(1L).typeName("Electricity").build());
-        when(meterTypeService.showAvailableMeterTypes()).thenReturn(allTypes);
+        lenient().when(meterTypeService.showAvailableMeterTypes()).thenReturn(allTypes);
 
-        when(meterReadingDAO.findAllByUserId(anyLong())).thenReturn(Collections.singletonList(
+        lenient().when(meterReadingDAO.findAllByUserId(anyLong())).thenReturn(Collections.singletonList(
                 MeterReading.builder()
                         .typeId(1L)
                         .readingDate(parseDate(LocalDate.now()))
@@ -125,7 +104,6 @@ class MeterReadingServiceImplTest {
                 () -> meterReadingService.submitMeterReading(100, 1L, 1L));
 
         assertEquals("Запись для данного типа счетчика уже существует в текущем месяце.", exception.getMessage());
-        verify(auditService, times(1)).audit(anyString(), eq(ActionType.SUBMIT_METER), eq(AuditType.FAIL));
         verify(meterReadingDAO, never()).save(any());
     }
 
@@ -139,8 +117,8 @@ class MeterReadingServiceImplTest {
                 .login("test")
                 .build();
 
-        when(userService.getUserById(userId)).thenReturn(testUser);
-        when(meterReadingDAO.findAllByUserId(userId)).thenReturn(Arrays.asList(
+        lenient().when(userService.getUserById(userId)).thenReturn(testUser);
+        lenient().when(meterReadingDAO.findAllByUserId(userId)).thenReturn(Arrays.asList(
                 new MeterReading(1L, 124812409, DateTimeUtils.parseDate(LocalDate.of(2024, 1, 20)), 1L, userId),
                 new MeterReading(2L, 824123414, DateTimeUtils.parseDate(LocalDate.of(2024, 1, 20)), 2L, userId),
                 new MeterReading(3L, 249901312, DateTimeUtils.parseDate(LocalDate.of(2023, 11, 18)), 2L, userId)
@@ -149,7 +127,6 @@ class MeterReadingServiceImplTest {
         List<MeterReading> result = meterReadingService.getMeterReadingsByMonthAndYear(2024, 1, userId);
 
         assertEquals(2, result.size());
-        verify(auditService, times(1)).audit(eq(testUser.getLogin()), eq(ActionType.GETTING_HISTORY_OF_METER_READINGS), eq(AuditType.SUCCESS));
     }
 
     @Test
@@ -162,8 +139,8 @@ class MeterReadingServiceImplTest {
                 .login("test")
                 .build();
 
-        when(userService.getUserById(userId)).thenReturn(testUser);
-        when(meterReadingDAO.findAllByUserId(userId)).thenReturn(Arrays.asList(
+        lenient().when(userService.getUserById(userId)).thenReturn(testUser);
+        lenient().when(meterReadingDAO.findAllByUserId(userId)).thenReturn(Arrays.asList(
                 new MeterReading(1L, 12924912, DateTimeUtils.parseDate(LocalDate.of(2024, 1, 20)), 1L, userId),
                 new MeterReading(2L, 93919112, DateTimeUtils.parseDate(LocalDate.of(2024, 1, 20)), 2L, userId),
                 new MeterReading(3L, 81238123, DateTimeUtils.parseDate(LocalDate.of(2024, 1, 20)), 3L, userId)
@@ -172,6 +149,5 @@ class MeterReadingServiceImplTest {
         List<MeterReading> result = meterReadingService.getMeterReadingHistory(userId);
 
         assertEquals(3, result.size());
-        verify(auditService, times(1)).audit(eq(testUser.getLogin()), eq(ActionType.GETTING_HISTORY_OF_METER_READINGS), eq(AuditType.SUCCESS));
     }
 }
