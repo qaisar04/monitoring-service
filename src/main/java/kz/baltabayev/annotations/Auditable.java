@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})
-public @interface Audit {
+public @interface Auditable {
     String login() default "";
     String userId() default "";
     ActionType actionType();

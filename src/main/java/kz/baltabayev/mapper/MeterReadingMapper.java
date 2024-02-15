@@ -9,10 +9,10 @@ import org.mapstruct.factory.Mappers;
 @Mapper
 public interface MeterReadingMapper {
 
-    MeterReadingMapper INSTANCE = Mappers.getMapper(MeterReadingMapper.class);
-
     MeterReadingDto toDto(MeterReading meterReading);
 
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "userId", ignore = true)
     MeterReading toEntity(MeterReadingDto dto);
 
 }

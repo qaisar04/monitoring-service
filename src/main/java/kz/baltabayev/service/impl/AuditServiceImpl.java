@@ -46,13 +46,13 @@ public class AuditServiceImpl implements AuditService {
      * @return
      */
     @Override
-    public kz.baltabayev.annotations.Audit audit(String login, ActionType actionType, AuditType auditType) {
+    public Audit audit(String login, ActionType actionType, AuditType auditType) {
         Audit audit = Audit.builder()
                 .login(login)
                 .actionType(actionType)
                 .auditType(auditType)
                 .build();
-        save(audit);
-        return null;
+
+        return save(audit);
     }
 }

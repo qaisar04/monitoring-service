@@ -1,5 +1,6 @@
 package kz.baltabayev.service;
 
+import kz.baltabayev.annotations.Auditable;
 import kz.baltabayev.model.Audit;
 import kz.baltabayev.model.types.ActionType;
 import kz.baltabayev.model.types.AuditType;
@@ -25,5 +26,5 @@ public interface AuditService {
      * @param auditType  the result of the audit (SUCCESS or FAIL)
      * @return
      */
-    kz.baltabayev.annotations.Audit audit(String login, ActionType actionType, AuditType auditType);
+    Audit audit(String login, ActionType actionType, AuditType auditType);
 }

@@ -1,14 +1,12 @@
 package kz.baltabayev.service.impl;
 
-import kz.baltabayev.annotations.Audit;
+import kz.baltabayev.annotations.Auditable;
 import kz.baltabayev.dao.MeterReadingDAO;
 import kz.baltabayev.exception.DuplicateRecordException;
 import kz.baltabayev.exception.NotValidArgumentException;
 import kz.baltabayev.model.MeterReading;
 import kz.baltabayev.model.MeterType;
-import kz.baltabayev.model.User;
 import kz.baltabayev.model.types.ActionType;
-import kz.baltabayev.model.types.AuditType;
 import kz.baltabayev.service.MeterReadingService;
 import kz.baltabayev.service.MeterTypeService;
 import kz.baltabayev.service.UserService;
@@ -20,7 +18,6 @@ import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 /**
@@ -40,7 +37,7 @@ public class MeterReadingServiceImpl implements MeterReadingService {
      * @return a list of the current meter readings
      */
     @Override
-    @Audit(actionType = ActionType.GETTING_HISTORY_OF_METER_READINGS, userId = "@userId")
+    @Auditable(actionType = ActionType.GETTING_HISTORY_OF_METER_READINGS, userId = "@userId")
     public List<MeterReading> getCurrentMeterReadings(Long userId) {
 
         List<MeterReading> meterReadings = meterReadingDAO.findAll();
@@ -68,7 +65,7 @@ public class MeterReadingServiceImpl implements MeterReadingService {
      * @param userId        the user ID
      */
     @Override
-    @Audit(actionType = ActionType.SUBMIT_METER, userId = "@userId")
+    @Auditable(actionType = ActionType.SUBMIT_METER, userId = "@userId")
     public void submitMeterReading(Integer counterNumber, Long meterTypeId, Long userId) {
 
         if (counterNumber == null || userId == null || meterTypeId == null) {
@@ -110,7 +107,7 @@ public class MeterReadingServiceImpl implements MeterReadingService {
      * @return a list of meter readings for the specified month and year
      */
     @Override
-    @Audit(actionType = ActionType.GETTING_HISTORY_OF_METER_READINGS, userId = "@userId")
+    @Auditable(actionType = ActionType.GETTING_HISTORY_OF_METER_READINGS, userId = "@userId")
     public List<MeterReading> getMeterReadingsByMonthAndYear(Integer year, Integer month, Long userId) {
         List<MeterReading> allReadings = meterReadingDAO.findAllByUserId(userId);
         List<MeterReading> currentReadings = new ArrayList<>();
@@ -135,7 +132,7 @@ public class MeterReadingServiceImpl implements MeterReadingService {
      * @return the list of all meter readings for the user
      */
     @Override
-    @Audit(actionType = ActionType.GETTING_HISTORY_OF_METER_READINGS, userId = "@userId")
+    @Auditable(actionType = ActionType.GETTING_HISTORY_OF_METER_READINGS, userId = "@userId")
     public List<MeterReading> getMeterReadingHistory(Long userId) {
         return meterReadingDAO.findAllByUserId(userId);
     }

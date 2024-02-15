@@ -20,6 +20,7 @@ import kz.baltabayev.liquibase.LiquibaseDemo;
 import kz.baltabayev.service.*;
 import kz.baltabayev.service.impl.*;
 import kz.baltabayev.util.ConnectionManager;
+import org.mapstruct.factory.Mappers;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -46,8 +47,8 @@ public class ApplicationContextListener implements ServletContextListener {
 
         ObjectMapper objectMapper = new ObjectMapper();
         servletContext.setAttribute("objectMapper", objectMapper);
-        servletContext.setAttribute("userMapper", UserMapper.INSTANCE);
-        servletContext.setAttribute("meterReadingMapper", MeterReadingMapper.INSTANCE);
+        servletContext.setAttribute("userMapper", Mappers.getMapper(UserMapper.class));
+        servletContext.setAttribute("meterReadingMapper", Mappers.getMapper(MeterReadingMapper.class));
     }
 
     @Override

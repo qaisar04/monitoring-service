@@ -1,6 +1,7 @@
 package kz.baltabayev.aspects;
 
-import kz.baltabayev.annotations.Audit;
+import kz.baltabayev.annotations.Auditable;
+import kz.baltabayev.model.Audit;
 import kz.baltabayev.model.types.ActionType;
 import kz.baltabayev.model.types.AuditType;
 import kz.baltabayev.service.AuditService;
@@ -15,15 +16,15 @@ public class AuditAspect {
 
     private final AuditService auditService;
 
-    @Pointcut("(within(@kz.baltabayev.annotations.Audit *) || execution(@kz.baltabayev.annotations.Audit * *(..))) && execution(* *(..))")
-    public void annotatedByAudit() {
+    @Pointcut("(within(@kz.baltabayev.annotations.Auditable *) || execution(@kz.baltabayev.annotations.Auditable * *(..))) && execution(* *(..))")
+    public void annotatedByAuditable() {
     }
 
-    @Around("annotatedByAudit()")
+    @Around("annotatedByAuditable()")
     public Audit audit(ProceedingJoinPoint pjp) {
         var methodSignature = (MethodSignature) pjp.getSignature();
 
-        Audit audit = methodSignature.getMethod().getAnnotation(Audit.class);
+        Auditable audit = methodSignature.getMethod().getAnnotation(Auditable.class);
         ActionType actionType = audit.actionType();
         String payload = audit.login();
         if (payload.isEmpty()) {
@@ -37,7 +38,7 @@ public class AuditAspect {
     public void auditFailure(ProceedingJoinPoint pjp) {
         var methodSignature = (MethodSignature) pjp.getSignature();
 
-        Audit audit = methodSignature.getMethod().getAnnotation(Audit.class);
+        Auditable audit = methodSignature.getMethod().getAnnotation(Auditable.class);
         ActionType actionType = audit.actionType();
         String payload = audit.login();
         if (payload.isEmpty()) {

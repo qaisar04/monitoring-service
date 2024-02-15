@@ -1,6 +1,6 @@
 package kz.baltabayev.service.impl;
 
-import kz.baltabayev.annotations.Audit;
+import kz.baltabayev.annotations.Auditable;
 import kz.baltabayev.annotations.Loggable;
 import kz.baltabayev.dao.UserDAO;
 import kz.baltabayev.dto.TokenResponse;
@@ -10,8 +10,6 @@ import kz.baltabayev.exception.RegisterException;
 import kz.baltabayev.security.JwtTokenUtils;
 import kz.baltabayev.model.User;
 import kz.baltabayev.model.types.ActionType;
-import kz.baltabayev.model.types.AuditType;
-import kz.baltabayev.service.AuditService;
 import kz.baltabayev.service.SecurityService;
 import lombok.RequiredArgsConstructor;
 
@@ -37,7 +35,7 @@ public class SecurityServiceImpl implements SecurityService {
      */
     @Override
     @Loggable
-    @Audit(actionType = ActionType.REGISTRATION, login = "@login")
+    @Auditable(actionType = ActionType.REGISTRATION, login = "@login")
     public User register(String login, String password) {
         if (login == null || password == null || login.isEmpty() || password.isEmpty() || login.isBlank() || password.isBlank()) {
             throw new NotValidArgumentException("Пароль или логин не могут быть пустыми или состоять только из пробелов.");
@@ -69,7 +67,7 @@ public class SecurityServiceImpl implements SecurityService {
      * @throws AuthorizeException if the user is not found or the password is incorrect
      */
     @Override
-    @Audit(actionType = ActionType.AUTHORIZATION, login = "@login")
+    @Auditable(actionType = ActionType.AUTHORIZATION, login = "@login")
     public TokenResponse authorize(String login, String password) {
         Optional<User> optionalUser = userDao.findByLogin(login);
         if (optionalUser.isEmpty()) {
