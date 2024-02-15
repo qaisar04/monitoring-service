@@ -1,6 +1,7 @@
 package kz.baltabayev.service.impl;
 
 import kz.baltabayev.dao.MeterTypeDAO;
+import kz.baltabayev.dto.MeterTypeRequest;
 import kz.baltabayev.model.MeterType;
 import kz.baltabayev.service.MeterTypeService;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +33,10 @@ public class MeterTypeServiceImpl implements MeterTypeService {
      * @return the saved meter type
      */
     @Override
-    public MeterType save(MeterType meterType) {
+    public MeterType save(MeterTypeRequest request) {
+        MeterType meterType = MeterType.builder().typeName(request.typeName())
+                .build();
+
         return meterTypeDAO.save(meterType);
     }
 }

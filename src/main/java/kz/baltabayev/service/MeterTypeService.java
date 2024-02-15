@@ -1,5 +1,6 @@
 package kz.baltabayev.service;
 
+import kz.baltabayev.dto.MeterTypeRequest;
 import kz.baltabayev.model.MeterType;
 
 import java.util.List;
@@ -22,5 +23,5 @@ public interface MeterTypeService {
      * @param meterType the meter type to be saved
      * @return the saved meter type
      */
-    MeterType save(MeterType meterType);
+    MeterType save(MeterTypeRequest meterType);
 }

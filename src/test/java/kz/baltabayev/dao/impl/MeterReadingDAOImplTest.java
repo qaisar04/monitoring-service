@@ -4,6 +4,7 @@ import kz.baltabayev.containers.PostgresTestContainer;
 import kz.baltabayev.liquibase.LiquibaseDemo;
 import kz.baltabayev.model.MeterReading;
 import kz.baltabayev.util.ConnectionManager;
+import kz.baltabayev.util.DateTimeUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,6 +13,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import static kz.baltabayev.util.DateTimeUtils.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("meter reading dao implementation test")
@@ -22,12 +24,11 @@ public class MeterReadingDAOImplTest extends PostgresTestContainer{
     @BeforeEach
     public void setUp() {
         ConnectionManager connectionManager = new ConnectionManager(
-                container.getJdbcUrl(),
-                container.getUsername(),
-                container.getPassword()
-        );
-        LiquibaseDemo liquibaseTest = LiquibaseDemo.getInstance();
-        liquibaseTest.runMigrations(connectionManager.getConnection());
+                container.getJdbcUrl(), container.getUsername(), container.getPassword(),
+                "org.postgresql.Driver");
+
+        LiquibaseDemo liquibaseTest = new LiquibaseDemo(connectionManager.getConnection(), "db/changelog/changelog.xml", "migration");
+        liquibaseTest.runMigrations();
 
         meterReadingDao = new MeterReadingDAOImpl(connectionManager);
     }
@@ -39,7 +40,7 @@ public class MeterReadingDAOImplTest extends PostgresTestContainer{
                 .userId(1L)
                 .typeId(1L)
                 .counterNumber(123)
-                .readingDate(LocalDate.now())
+                .readingDate(parseDate(LocalDate.now()))
                 .build();
         meterReadingDao.save(meterReading);
 
@@ -58,13 +59,13 @@ public class MeterReadingDAOImplTest extends PostgresTestContainer{
                 .userId(1L)
                 .typeId(1L)
                 .counterNumber(123)
-                .readingDate(LocalDate.now())
+                .readingDate(parseDate(LocalDate.now()))
                 .build();
         MeterReading meterReading2 = MeterReading.builder()
                 .userId(2L)
                 .typeId(2L)
                 .counterNumber(456)
-                .readingDate(LocalDate.now())
+                .readingDate(parseDate(LocalDate.now()))
                 .build();
 
         meterReadingDao.save(meterReading1);
@@ -82,7 +83,7 @@ public class MeterReadingDAOImplTest extends PostgresTestContainer{
                 .userId(1L)
                 .typeId(1L)
                 .counterNumber(123)
-                .readingDate(LocalDate.now())
+                .readingDate(parseDate(LocalDate.now()))
                 .build();
 
         MeterReading savedMeterReading = meterReadingDao.save(meterReadingToSave);
@@ -100,13 +101,13 @@ public class MeterReadingDAOImplTest extends PostgresTestContainer{
                 .userId(1L)
                 .typeId(1L)
                 .counterNumber(123)
-                .readingDate(LocalDate.now())
+                .readingDate(parseDate(LocalDate.now()))
                 .build();
         MeterReading meterReading2 = MeterReading.builder()
                 .userId(1L)
                 .typeId(2L)
                 .counterNumber(456)
-                .readingDate(LocalDate.now())
+                .readingDate(parseDate(LocalDate.now()))
                 .build();
         meterReadingDao.save(meterReading1);
         meterReadingDao.save(meterReading2);

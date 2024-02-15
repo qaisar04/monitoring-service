@@ -14,6 +14,7 @@ import java.time.temporal.ChronoField;
 public class DateTimeUtils {
 
     private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+    private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
     /**
      * Formats a {@link LocalDateTime} object to a string using the default date-time formatter.
@@ -33,6 +34,26 @@ public class DateTimeUtils {
      */
     public LocalDateTime parseDateTimeFromString(String dateTimeString) {
         return LocalDateTime.parse(dateTimeString, dateTimeFormatter);
+    }
+
+    /**
+     * Formats a {@link LocalDate} object to a string using the default date formatter.
+     *
+     * @param date the LocalDate object to be formatted
+     * @return the formatted date string
+     */
+    public String parseDate(LocalDate date) {
+        return date.format(dateFormatter);
+    }
+
+    /**
+     * Parses a date string into a {@link LocalDate} object using the default date formatter.
+     *
+     * @param dateString the date string to be parsed
+     * @return the parsed LocalDate object
+     */
+    public LocalDate parseDateFromString(String dateString) {
+        return LocalDate.parse(dateString, dateFormatter);
     }
 
     /**

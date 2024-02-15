@@ -1,7 +1,6 @@
 package kz.baltabayev.model;
 
 import kz.baltabayev.model.types.Role;
-import kz.baltabayev.util.DateTimeUtils;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 

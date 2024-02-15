@@ -1,5 +1,6 @@
 package kz.baltabayev.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -28,7 +29,7 @@ public class MeterReading {
     /**
      * The date when the meter reading was recorded.
      */
-    LocalDate readingDate;
+    String readingDate;
     /**
      * The unique identifier for the meter type associated with the reading.
      */

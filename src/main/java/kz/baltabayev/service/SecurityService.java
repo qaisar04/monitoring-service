@@ -1,5 +1,6 @@
 package kz.baltabayev.service;
 
+import kz.baltabayev.dto.TokenResponse;
 import kz.baltabayev.model.User;
 
 import java.util.Optional;
@@ -24,5 +25,5 @@ public interface SecurityService {
      * @param password the password of the user
      * @return an Optional containing the authorized user if login and password are valid, otherwise empty Optional
      */
-    Optional<User> authorize(String login, String password);
+    TokenResponse authorize(String login, String password);
 }
