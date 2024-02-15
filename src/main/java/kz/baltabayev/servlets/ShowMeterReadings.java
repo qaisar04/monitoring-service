@@ -27,7 +27,6 @@ public class ShowMeterReadings extends HttpServlet {
     private UserService userService;
     private ObjectMapper objectMapper;
 
-
     @Override
     public void init() throws ServletException {
         super.init();
