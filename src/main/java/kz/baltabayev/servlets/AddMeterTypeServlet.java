@@ -15,7 +15,7 @@ import kz.baltabayev.service.MeterTypeService;
 
 import java.io.IOException;
 
-@WebServlet("/meter-type/add")
+@WebServlet("/meter-type")
 public class AddMeterTypeServlet extends HttpServlet {
 
     private MeterTypeService meterTypeService;

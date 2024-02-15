@@ -20,7 +20,7 @@ import kz.baltabayev.service.UserService;
 
 import java.io.IOException;
 
-@WebServlet("/reading/submit")
+@WebServlet("/reading")
 public class SubmitMeterReadings extends HttpServlet {
 
     private MeterReadingService meterReadingService;
