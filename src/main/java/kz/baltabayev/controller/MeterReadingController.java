@@ -1,78 +1,78 @@
 package kz.baltabayev.controller;
 
-import kz.baltabayev.repository.UserRepository;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import kz.baltabayev.dto.MeterReadingRequest;
 import kz.baltabayev.exception.AuthorizeException;
 import kz.baltabayev.model.MeterReading;
 import kz.baltabayev.model.User;
+import kz.baltabayev.repository.UserRepository;
 import kz.baltabayev.service.MeterReadingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
 
+import static kz.baltabayev.util.SecurityUtils.isValidLogin;
+
 @RestController
+@Api(value = "Meter Reading Controller", description = "Meter reading operations")
 @RequestMapping("/meter-reading")
 @RequiredArgsConstructor
 public class MeterReadingController {
 
     private final MeterReadingService meterReadingService;
     private final UserRepository userRepository;
-    private SecurityContext securityContext;
 
     @GetMapping("/current")
+    @ApiOperation(value = "Get current meter readings", response = List.class)
     public ResponseEntity<List<MeterReading>> getCurrentMeterReadings(@RequestParam String login) {
-        if (!isValidLogin(login)) throw new RuntimeException("Incorrect login!"); //todo add advice
-
-        Optional<User> user = userRepository.findByLogin(login);
-        return ResponseEntity.ok(meterReadingService.getCurrentMeterReadings(user.get().getId()));
+        if (!isValidLogin(login)) throw new AuthorizeException("Incorrect login!");
+        Long id = getIdByLogin(login);
+        return ResponseEntity.ok(meterReadingService.getCurrentMeterReadings(id));
     }
 
     @PostMapping("/date")
+    @ApiOperation(value = "Show all meter readings by date", response = List.class)
     public ResponseEntity<?> showAllMeterReadings(
             @RequestParam Integer year,
             @RequestParam Integer month,
             @RequestParam String login
     ) {
-        if (!isValidLogin(login)) throw new RuntimeException("Incorrect login!"); //todo add advice
-        Optional<User> user = userRepository.findByLogin(login);
-
-        List<MeterReading> meterReadingsByMonthAndYear = meterReadingService.getMeterReadingsByMonthAndYear(year, month, user.get().getId());
+        if (!isValidLogin(login)) throw new AuthorizeException("Incorrect login!");
+        Long id = getIdByLogin(login);
+        List<MeterReading> meterReadingsByMonthAndYear = meterReadingService.getMeterReadingsByMonthAndYear(year, month, id);
         return ResponseEntity.ok(meterReadingsByMonthAndYear);
     }
 
     @GetMapping("/history")
+    @ApiOperation(value = "Show meter reading history", response = List.class)
     public ResponseEntity<?> showMeterReadingHistory(
             @RequestParam String login
     ) {
-        if (!isValidLogin(login)) throw new RuntimeException("Incorrect login!"); //todo add advice
-        Optional<User> user = userRepository.findByLogin(login);
-        List<MeterReading> meterReadingHistory = meterReadingService.getMeterReadingHistory(user.get().getId());
+        if (!isValidLogin(login)) throw new AuthorizeException("Incorrect login!");
+        Long id = getIdByLogin(login);
+        List<MeterReading> meterReadingHistory = meterReadingService.getMeterReadingHistory(id);
         return ResponseEntity.ok(meterReadingHistory);
     }
 
     @PostMapping("/submit")
+    @ApiOperation(value = "Submit a meter reading", response = String.class)
     public ResponseEntity<String> submitMeterReading(
             @RequestBody MeterReadingRequest request,
             @RequestParam String login
     ) {
-        if (!isValidLogin(login)) throw new RuntimeException("Incorrect login!"); //todo add advice
-        Optional<User> user = userRepository.findByLogin(login);
+        if (!isValidLogin(login)) throw new AuthorizeException("Incorrect login!");
+        Long id = getIdByLogin(login);
 
-        meterReadingService.submitMeterReading(request.counterNumber(), request.meterTypeId(), user.get().getId());
+        meterReadingService.submitMeterReading(request.counterNumber(), request.meterTypeId(), id);
         return ResponseEntity.ok("The reading was successfully saved!");
     }
 
-    private boolean isValidLogin(String login) {
-        if (securityContext.getAuthentication() == null) securityContext = SecurityContextHolder.getContext();
-        Authentication authentication = securityContext.getAuthentication();
-        if (authentication == null) throw new AuthorizeException("Unauthorized!");
-        User principal = (User) authentication.getPrincipal();
-        return principal.getLogin().equals(login);
+    private Long getIdByLogin(String login) {
+        Optional<User> user = userRepository.findByLogin(login);
+        return user.get().getId();
     }
 }
