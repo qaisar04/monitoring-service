@@ -1,21 +1,22 @@
 package kz.baltabayev.service.impl;
 
-import kz.baltabayev.dao.UserDAO;
+import kz.baltabayev.repository.UserRepository;
 import kz.baltabayev.model.User;
 import kz.baltabayev.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
 /**
  * Implementation of the {@link UserService} interface.
  */
+@Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-    private final UserDAO userDAO;
+    private final UserRepository userRepository;
 
     /**
      * Retrieves a list of all users.
@@ -24,7 +25,7 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public List<User> showAllUsers() {
-        return userDAO.findAll();
+        return userRepository.findAll();
     }
 
     /**
@@ -35,13 +36,13 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public User getUserById(Long id) {
-        return userDAO.findById(id)
+        return userRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("No user found with ID: " + id));
     }
 
     @Override
     public User getUserByLogin(String login) {
-        return userDAO.findByLogin(login)
+        return userRepository.findByLogin(login)
                 .orElseThrow(() -> new NoSuchElementException("No user found with login: " + login));
     }
 }

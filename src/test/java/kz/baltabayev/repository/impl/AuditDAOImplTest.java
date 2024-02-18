@@ -1,4 +1,4 @@
-package kz.baltabayev.dao.impl;
+package kz.baltabayev.repository.impl;
 
 import kz.baltabayev.containers.PostgresTestContainer;
 import kz.baltabayev.liquibase.LiquibaseDemo;
@@ -18,18 +18,20 @@ import static org.junit.jupiter.api.Assertions.*;
 @DisplayName("audit dao implementation test")
 public class AuditDAOImplTest extends PostgresTestContainer{
 
-    private AuditDAOImpl auditDao;
+    private AuditRepositoryImpl auditDao;
 
     @BeforeEach
     public void setUp() {
-        ConnectionManager connectionManager = new ConnectionManager(
-                container.getJdbcUrl(), container.getUsername(), container.getPassword(),
-                "org.postgresql.Driver");
+//        ConnectionManager connectionManager = new ConnectionManager(
+//                container.getJdbcUrl(), container.getUsername(), container.getPassword(),
+//                "org.postgresql.Driver");
+
+        ConnectionManager connectionManager = null;
 
         LiquibaseDemo liquibaseTest = new LiquibaseDemo(connectionManager.getConnection(), "db/changelog/changelog.xml", "migration");
         liquibaseTest.runMigrations();
 
-        auditDao = new AuditDAOImpl(connectionManager);
+        auditDao = new AuditRepositoryImpl(connectionManager);
     }
 
     @Test

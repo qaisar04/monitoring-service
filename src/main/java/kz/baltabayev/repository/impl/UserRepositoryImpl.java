@@ -1,14 +1,13 @@
-package kz.baltabayev.dao.impl;
+package kz.baltabayev.repository.impl;
 
-import kz.baltabayev.dao.UserDAO;
+import kz.baltabayev.repository.UserRepository;
 import kz.baltabayev.model.User;
 import kz.baltabayev.model.types.Role;
 import kz.baltabayev.util.ConnectionManager;
-import kz.baltabayev.util.DateTimeUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
 
 import java.sql.*;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -18,8 +17,9 @@ import java.util.Optional;
  * Provides methods for CRUD operations on User entities and initializes
  * the map with a predefined admin User entity during construction.
  */
+@Repository
 @RequiredArgsConstructor
-public class UserDAOImpl implements UserDAO {
+public class UserRepositoryImpl implements UserRepository {
 
     private final ConnectionManager connectionProvider;
 

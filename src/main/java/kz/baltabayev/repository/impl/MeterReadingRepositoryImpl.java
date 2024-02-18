@@ -1,9 +1,10 @@
-package kz.baltabayev.dao.impl;
+package kz.baltabayev.repository.impl;
 
-import kz.baltabayev.dao.MeterReadingDAO;
+import kz.baltabayev.repository.MeterReadingRepository;
 import kz.baltabayev.model.MeterReading;
 import kz.baltabayev.util.ConnectionManager;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -16,8 +17,9 @@ import java.util.Optional;
  * Provides methods for CRUD operations on MeterReading entities and additional
  * method to retrieve all MeterReadings associated with a specific user.
  */
+@Repository
 @RequiredArgsConstructor
-public class MeterReadingDAOImpl implements MeterReadingDAO {
+public class MeterReadingRepositoryImpl implements MeterReadingRepository {
 
     private final ConnectionManager connectionProvider;
 

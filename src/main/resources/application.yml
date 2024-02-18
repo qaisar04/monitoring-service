@@ -1,0 +1,12 @@
+datasource:
+  driver-class-name: org.postgresql.Driver
+  username: qaisar
+  password: qaisar
+  url: jdbc:postgresql://localhost:5432/monitoring_service_db
+liquibase:
+  enabled: true
+  change-log: db/changelog/changelog.xml
+  liquibase-schema: migration
+jwt:
+  secret: hjf203cupnacs2039r1mjkc1ascdjkfkds9sdnfasb8ica1
+  lifetime: PT30M

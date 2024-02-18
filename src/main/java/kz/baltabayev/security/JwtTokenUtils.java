@@ -1,95 +1,57 @@
 package kz.baltabayev.security;
 
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ClaimsBuilder;
-import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import kz.baltabayev.model.User;
-import kz.baltabayev.service.UserService;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
-import java.nio.file.AccessDeniedException;
 import java.time.Duration;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-/**
- * Utility class for handling JWT token operations.
- */
+@Component
 public class JwtTokenUtils {
 
-    private final String secret;
-    private final Duration jwtLifetime;
-    private final UserService userService;
+    @Value("${jwt.secret}")
+    private String secret;
 
-    /**
-     * Constructor for JwtTokenUtils.
-     *
-     * @param secret the secret key for signing JWT
-     * @param jwtLifetime the lifetime of the JWT
-     * @param userService the user service for user operations
-     */
-    public JwtTokenUtils(String secret, Duration jwtLifetime, UserService userService) {
-        this.secret = secret;
-        this.jwtLifetime = jwtLifetime;
-        this.userService = userService;
-    }
+    @Value("${jwt.lifetime}")
+    private Duration jwtLifetime;
 
-    /**
-     * Generates a JWT for the given login.
-     *
-     * @param login the login for which to generate the JWT
-     * @return the generated JWT
-     */
-    public String generateToken(String login) {
-        ClaimsBuilder claimsBuilder = Jwts.claims().subject(login);
+    public String generateToken(UserDetails userDetails) {
+        Map<String, Object> claims = new HashMap<>();
+        List<String> rolesList = userDetails.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .toList();
+        claims.put("roles", rolesList);
+
         Date issuedDate = new Date();
         Date expiredDate = new Date(issuedDate.getTime() + jwtLifetime.toMillis());
 
         return Jwts.builder()
-                .claims(claimsBuilder.build())
-                .subject(login)
+                .claims(claims)
+                .subject(userDetails.getUsername())
                 .issuedAt(issuedDate)
                 .expiration(expiredDate)
                 .signWith(signKey())
                 .compact();
     }
 
-    /**
-     * Authenticates a user based on the given JWT.
-     *
-     * @param token the JWT to authenticate
-     * @return the authentication result
-     * @throws AccessDeniedException if the JWT is invalid or the user does not exist
-     */
-    public Authentication authentication(String token) throws AccessDeniedException {
-        if (!validateToken(token)) {
-            throw new AccessDeniedException("Access denied: Invalid token");
-        }
-
-        String login = extractLogin(token);
-        User user = userService.getUserByLogin(login);
-
-        return new Authentication(login, user.getRole(), true, "Successful login");
-    }
-
-    /**
-     * Extracts the login from the given JWT.
-     *
-     * @param token the JWT from which to extract the login
-     * @return the extracted login
-     */
-    public String extractLogin(String token) {
+    public String extractUsername(String token) {
         return extractAllClaims(token).getSubject();
     }
 
-    /**
-     * Extracts all claims from the given JWT.
-     *
-     * @param token the JWT from which to extract the claims
-     * @return the extracted claims
-     */
+    public List<String> extractRoles(String token) {
+        return extractAllClaims(token).get("roles", List.class);
+    }
+
     private Claims extractAllClaims(String token) {
         return Jwts.parser()
                 .verifyWith(signKey())
@@ -98,27 +60,6 @@ public class JwtTokenUtils {
                 .getPayload();
     }
 
-    /**
-     * Validates the given JWT.
-     *
-     * @param token the JWT to validate
-     * @return true if the JWT is valid, false otherwise
-     * @throws RuntimeException if the JWT is invalid
-     */
-    public boolean validateToken(String token) throws RuntimeException {
-        Jws<Claims> claims = Jwts.parser()
-                .verifyWith(signKey())
-                .build()
-                .parseSignedClaims(token);
-
-        return !claims.getPayload().getExpiration().before(new Date());
-    }
-
-    /**
-     * Generates the secret key for signing JWT.
-     *
-     * @return the generated secret key
-     */
     private SecretKey signKey() {
         byte[] keyBytes = Decoders.BASE64.decode(secret);
         return Keys.hmacShaKeyFor(keyBytes);

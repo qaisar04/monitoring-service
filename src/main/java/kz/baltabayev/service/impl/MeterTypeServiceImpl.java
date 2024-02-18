@@ -1,20 +1,22 @@
 package kz.baltabayev.service.impl;
 
-import kz.baltabayev.dao.MeterTypeDAO;
+import kz.baltabayev.repository.MeterTypeRepository;
 import kz.baltabayev.dto.MeterTypeRequest;
 import kz.baltabayev.model.MeterType;
 import kz.baltabayev.service.MeterTypeService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 /**
  * Implementation of the {@link MeterTypeService} interface.
  */
+@Service
 @RequiredArgsConstructor
 public class MeterTypeServiceImpl implements MeterTypeService {
 
-    private final MeterTypeDAO meterTypeDAO;
+    private final MeterTypeRepository meterTypeRepository;
 
     /**
      * Retrieves a list of available meter types.
@@ -23,7 +25,7 @@ public class MeterTypeServiceImpl implements MeterTypeService {
      */
     @Override
     public List<MeterType> showAvailableMeterTypes() {
-        return meterTypeDAO.findAll();
+        return meterTypeRepository.findAll();
     }
 
     /**
@@ -37,6 +39,6 @@ public class MeterTypeServiceImpl implements MeterTypeService {
         MeterType meterType = MeterType.builder().typeName(request.typeName())
                 .build();
 
-        return meterTypeDAO.save(meterType);
+        return meterTypeRepository.save(meterType);
     }
 }

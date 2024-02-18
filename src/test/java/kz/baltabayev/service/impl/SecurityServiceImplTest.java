@@ -1,11 +1,9 @@
 package kz.baltabayev.service.impl;
 
-import kz.baltabayev.dao.UserDAO;
-import kz.baltabayev.dto.TokenResponse;
+import kz.baltabayev.repository.UserRepository;
 import kz.baltabayev.exception.AuthorizeException;
 import kz.baltabayev.exception.RegisterException;
 import kz.baltabayev.model.User;
-import kz.baltabayev.service.AuditService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -27,7 +25,7 @@ public class SecurityServiceImplTest {
     @InjectMocks
     private SecurityServiceImpl securityService;
     @Mock
-    private UserDAO userDAO;
+    private UserRepository userRepository;
 
     @Test
     @DisplayName("register success scenario test")
@@ -38,8 +36,8 @@ public class SecurityServiceImplTest {
                 .login(login)
                 .password(password)
                 .build();
-        Mockito.when(userDAO.findByLogin(login)).thenReturn(Optional.empty());
-        Mockito.when(userDAO.save(any(User.class))).thenReturn(user);
+        Mockito.when(userRepository.findByLogin(login)).thenReturn(Optional.empty());
+        Mockito.when(userRepository.save(any(User.class))).thenReturn(user);
 
         User registerUser = securityService.register(login, password);
         assertEquals(login, registerUser.getLogin());
@@ -55,7 +53,7 @@ public class SecurityServiceImplTest {
                 .login(login)
                 .password(password)
                 .build();
-        Mockito.when(userDAO.findByLogin(login)).thenReturn(Optional.of(user));
+        Mockito.when(userRepository.findByLogin(login)).thenReturn(Optional.of(user));
 
         assertThrows(RegisterException.class, () -> securityService.register(login, password));
     }
@@ -65,7 +63,7 @@ public class SecurityServiceImplTest {
     void testAuthorization_ThrowException() {
         String login = "login";
         String password = "password";
-        Mockito.when(userDAO.findByLogin(login)).thenReturn(Optional.empty());
+        Mockito.when(userRepository.findByLogin(login)).thenReturn(Optional.empty());
 
         assertThrows(AuthorizeException.class, () -> securityService.authorize(login, password));
     }

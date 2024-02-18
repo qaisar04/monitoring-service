@@ -1,12 +1,13 @@
-package kz.baltabayev.dao.impl;
+package kz.baltabayev.repository.impl;
 
-import kz.baltabayev.dao.AuditDAO;
+import kz.baltabayev.repository.AuditRepository;
 import kz.baltabayev.model.Audit;
 import kz.baltabayev.model.types.ActionType;
 import kz.baltabayev.model.types.AuditType;
 import kz.baltabayev.util.ConnectionManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Repository;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -18,8 +19,9 @@ import java.util.Optional;
  * Provides methods for CRUD operations on Audit entities.
  */
 @Slf4j
+@Repository
 @RequiredArgsConstructor
-public class AuditDAOImpl implements AuditDAO {
+public class AuditRepositoryImpl implements AuditRepository {
 
     private final ConnectionManager connectionProvider;
 

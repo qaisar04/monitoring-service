@@ -1,32 +1,39 @@
 package kz.baltabayev.util;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.SQLException;
 
 /**
  * Utility class for managing database connections using JDBC.
  */
+@Component
 public class ConnectionManager {
-    private final String URL;
-    private final String username;
-    private final String password;
 
-    public ConnectionManager(String URL, String username, String password, String driver) {
-        this.URL = URL;
-        this.username = username;
-        this.password = password;
-
-        try {
-            Class.forName(driver);
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-    }
+    @Value("${datasource.url}")
+    private String url;
+    @Value("${datasource.driver-class-name}")
+    private String driver;
+    @Value("${datasource.username}")
+    private String username;
+    @Value("${datasource.password}")
+    private String password;
 
     public Connection getConnection() {
         try {
-            return DriverManager.getConnection(URL, username, password);
-        } catch (Exception e) {
+            Class.forName(driver);
+
+            return DriverManager.getConnection(
+                    url,
+                    username,
+                    password
+            );
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to get a database connection.", e);
+        } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
     }

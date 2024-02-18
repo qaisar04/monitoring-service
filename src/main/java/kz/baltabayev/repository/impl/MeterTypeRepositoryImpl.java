@@ -1,9 +1,10 @@
-package kz.baltabayev.dao.impl;
+package kz.baltabayev.repository.impl;
 
-import kz.baltabayev.dao.MeterTypeDAO;
+import kz.baltabayev.repository.MeterTypeRepository;
 import kz.baltabayev.model.MeterType;
 import kz.baltabayev.util.ConnectionManager;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -19,8 +20,9 @@ import java.util.Optional;
  * Provides methods for CRUD operations on MeterType entities and initializes
  * the map with predefined MeterType entities during construction.
  */
+@Repository
 @RequiredArgsConstructor
-public class MeterTypeDAOImpl implements MeterTypeDAO {
+public class MeterTypeRepositoryImpl implements MeterTypeRepository {
 
     private final ConnectionManager connectionProvider;
 

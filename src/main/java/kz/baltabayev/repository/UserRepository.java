@@ -1,4 +1,4 @@
-package kz.baltabayev.dao;
+package kz.baltabayev.repository;
 
 import kz.baltabayev.model.User;
 
@@ -8,7 +8,7 @@ import java.util.Optional;
  * Data Access Object (DAO) interface for managing User entities.
  * Extends the generic MainDAO interface with specific operations for User entities.
  */
-public interface UserDAO extends MainDAO<Long, User> {
+public interface UserRepository extends MainRepository<Long, User> {
 
     /**
      * Retrieves an optional User entity based on the provided login.

@@ -1,4 +1,4 @@
-package kz.baltabayev.dao;
+package kz.baltabayev.repository;
 
 import java.util.List;
 import java.util.Optional;
@@ -9,7 +9,7 @@ import java.util.Optional;
  * @param <U> the type of the entity's identifier
  * @param <T> the type of the entity
  */
-public interface MainDAO<U, T> {
+public interface MainRepository<U, T> {
 
     /**
      * Finds an entity by its unique identifier.

@@ -1,10 +1,9 @@
-package kz.baltabayev.dao.impl;
+package kz.baltabayev.repository.impl;
 
 import kz.baltabayev.containers.PostgresTestContainer;
 import kz.baltabayev.liquibase.LiquibaseDemo;
 import kz.baltabayev.model.MeterReading;
 import kz.baltabayev.util.ConnectionManager;
-import kz.baltabayev.util.DateTimeUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,20 +16,23 @@ import static kz.baltabayev.util.DateTimeUtils.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("meter reading dao implementation test")
-public class MeterReadingDAOImplTest extends PostgresTestContainer{
+public class MeterReadingRepositoryImplTest extends PostgresTestContainer{
 
-    private MeterReadingDAOImpl meterReadingDao;
+    private MeterReadingRepositoryImpl meterReadingDao;
 
     @BeforeEach
     public void setUp() {
-        ConnectionManager connectionManager = new ConnectionManager(
-                container.getJdbcUrl(), container.getUsername(), container.getPassword(),
-                "org.postgresql.Driver");
+//        ConnectionManager connectionManager = new ConnectionManager(
+//                container.getJdbcUrl(), container.getUsername(), container.getPassword(),
+//                "org.postgresql.Driver");
+
+        ConnectionManager connectionManager = null;
+
 
         LiquibaseDemo liquibaseTest = new LiquibaseDemo(connectionManager.getConnection(), "db/changelog/changelog.xml", "migration");
         liquibaseTest.runMigrations();
 
-        meterReadingDao = new MeterReadingDAOImpl(connectionManager);
+        meterReadingDao = new MeterReadingRepositoryImpl(connectionManager);
     }
 
     @Test
