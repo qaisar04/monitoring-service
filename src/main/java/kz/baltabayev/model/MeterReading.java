@@ -1,10 +1,7 @@
 package kz.baltabayev.model;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.time.LocalDate;
 
 /**
  * Represents a meter reading entry capturing information about a user's recorded meter readings.

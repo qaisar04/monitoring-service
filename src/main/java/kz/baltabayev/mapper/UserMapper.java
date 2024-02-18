@@ -17,5 +17,4 @@ public interface UserMapper {
     @Mapping(target = "registrationDate", ignore = true)
     @Mapping(target = "password", ignore = true)
     User toEntity(UserDto userDto);
-
 }

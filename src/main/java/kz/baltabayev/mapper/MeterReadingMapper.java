@@ -14,5 +14,4 @@ public interface MeterReadingMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "userId", ignore = true)
     MeterReading toEntity(MeterReadingDto dto);
-
 }

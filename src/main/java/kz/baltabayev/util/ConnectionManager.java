@@ -1,6 +1,7 @@
 package kz.baltabayev.util;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
 import java.sql.Connection;
@@ -11,6 +12,7 @@ import java.sql.SQLException;
  * Utility class for managing database connections using JDBC.
  */
 @Component
+@PropertySource(value = "classpath:application.yml", factory = YamlPropertySourceFactory.class)
 public class ConnectionManager {
 
     @Value("${datasource.url}")

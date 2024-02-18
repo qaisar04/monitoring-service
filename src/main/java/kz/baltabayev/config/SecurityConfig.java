@@ -34,11 +34,11 @@ public class SecurityConfig {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**").permitAll()
-                        .anyRequest().authenticated())
+                        .antMatchers("/auth/**").permitAll()
+                        .anyRequest().permitAll())
                 .formLogin(AbstractAuthenticationFilterConfigurer::permitAll)
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(((request, response, authException) -> {
-                    response.sendRedirect("http://localhost:8080/auth/register"); // todo
+                    response.sendRedirect("http://localhost:8080/auth/sign-up");
                 })))
                 .sessionManagement(httpSecuritySessionManagementConfigurer ->
                         httpSecuritySessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

@@ -75,5 +75,4 @@ public class MeterReadingController {
         User principal = (User) authentication.getPrincipal();
         return principal.getLogin().equals(login);
     }
-
 }
