@@ -1,7 +1,5 @@
 package kz.baltabayev.util;
 
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
@@ -13,9 +11,6 @@ import java.sql.SQLException;
 /**
  * Utility class for managing database connections using JDBC.
  */
-@Component
-@AllArgsConstructor
-@NoArgsConstructor
 @PropertySource(value = "classpath:application.yml", factory = YamlPropertySourceFactory.class)
 public class ConnectionManager {
 

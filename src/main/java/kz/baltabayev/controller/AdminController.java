@@ -21,6 +21,9 @@ import java.util.List;
 
 import static kz.baltabayev.util.SecurityUtils.isValidLogin;
 
+/**
+ * Controller class for handling admin operations.
+ */
 @RestController
 @Api(value = "Admin Controller", description = "Admin operations")
 @RequestMapping("/admin")
@@ -30,14 +33,23 @@ public class AdminController {
     private final UserService userService;
     private final MeterTypeService meterTypeService;
 
+    /**
+     * Retrieves a list of all users.
+     * @return ResponseEntity containing a list of User objects.
+     */
     @GetMapping("/all-users")
     @ApiOperation(value = "View a list of all users", response = List.class)
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> showAllUsers() {
+    public ResponseEntity<List<User>> showAllUsers() {
         List<User> allUsers = userService.showAllUsers();
         return ResponseEntity.ok(allUsers);
     }
 
+    /**
+     * Adds a new meter type.
+     * @param request The MeterTypeRequest object containing information about the new meter type.
+     * @return ResponseEntity containing the saved MeterType object.
+     */
     @PostMapping("/meter-type")
     @ApiOperation(value = "Add a new meter type", response = MeterType.class)
     @PreAuthorize("hasRole('ADMIN')")

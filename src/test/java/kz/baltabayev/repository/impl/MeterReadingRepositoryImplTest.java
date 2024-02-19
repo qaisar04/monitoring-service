@@ -22,12 +22,10 @@ public class MeterReadingRepositoryImplTest extends PostgresTestContainer {
 
     @BeforeEach
     public void setUp() {
-        ConnectionManager connectionManager = new ConnectionManager(
+        ConnectionManager connectionManager = new ConnectionManager();
+        connectionManager.getConnection(
                 container.getJdbcUrl(), container.getUsername(), container.getPassword(),
                 "org.postgresql.Driver");
-
-        LiquibaseDemo liquibaseTest = new LiquibaseDemo(connectionManager.getConnection(), "db/changelog/changelog.xml", "migration");
-        liquibaseTest.runMigrations();
 
         meterReadingDao = new MeterReadingRepositoryImpl(connectionManager);
     }

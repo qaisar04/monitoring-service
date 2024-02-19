@@ -1,7 +1,6 @@
 package kz.baltabayev.repository.impl;
 
 import kz.baltabayev.containers.PostgresTestContainer;
-import kz.baltabayev.liquibase.LiquibaseDemo;
 import kz.baltabayev.model.MeterType;
 import kz.baltabayev.util.ConnectionManager;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,12 +19,10 @@ public class MeterTypeRepositoryImplTest extends PostgresTestContainer{
 
     @BeforeEach
     public void setUp() {
-        ConnectionManager connectionManager = new ConnectionManager(
+        ConnectionManager connectionManager = new ConnectionManager();
+        connectionManager.getConnection(
                 container.getJdbcUrl(), container.getUsername(), container.getPassword(),
                 "org.postgresql.Driver");
-
-        LiquibaseDemo liquibaseTest = new LiquibaseDemo(connectionManager.getConnection(), "db/changelog/changelog.xml", "migration");
-        liquibaseTest.runMigrations();
 
         meterTypeDao = new MeterTypeRepositoryImpl(connectionManager);
     }
