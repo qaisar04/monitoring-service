@@ -16,18 +16,15 @@ import static kz.baltabayev.util.DateTimeUtils.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("meter reading dao implementation test")
-public class MeterReadingRepositoryImplTest extends PostgresTestContainer{
+public class MeterReadingRepositoryImplTest extends PostgresTestContainer {
 
     private MeterReadingRepositoryImpl meterReadingDao;
 
     @BeforeEach
     public void setUp() {
-//        ConnectionManager connectionManager = new ConnectionManager(
-//                container.getJdbcUrl(), container.getUsername(), container.getPassword(),
-//                "org.postgresql.Driver");
-
-        ConnectionManager connectionManager = null;
-
+        ConnectionManager connectionManager = new ConnectionManager(
+                container.getJdbcUrl(), container.getUsername(), container.getPassword(),
+                "org.postgresql.Driver");
 
         LiquibaseDemo liquibaseTest = new LiquibaseDemo(connectionManager.getConnection(), "db/changelog/changelog.xml", "migration");
         liquibaseTest.runMigrations();

@@ -1,5 +1,7 @@
 package kz.baltabayev.util;
 
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
@@ -12,6 +14,8 @@ import java.sql.SQLException;
  * Utility class for managing database connections using JDBC.
  */
 @Component
+@AllArgsConstructor
+@NoArgsConstructor
 @PropertySource(value = "classpath:application.yml", factory = YamlPropertySourceFactory.class)
 public class ConnectionManager {
 
@@ -33,6 +37,17 @@ public class ConnectionManager {
                     username,
                     password
             );
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to get a database connection.", e);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public Connection getConnection(String URL, String username, String password, String driver) {
+        try {
+            Class.forName(driver);
+            return DriverManager.getConnection(URL, username, password);
         } catch (SQLException e) {
             throw new RuntimeException("Failed to get a database connection.", e);
         } catch (ClassNotFoundException e) {

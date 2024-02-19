@@ -22,12 +22,9 @@ public class UserRepositoryImplTest extends PostgresTestContainer{
 
     @BeforeEach
     public void setUp() {
-//        ConnectionManager connectionManager = new ConnectionManager(
-//                container.getJdbcUrl(), container.getUsername(), container.getPassword(),
-//                "org.postgresql.Driver");
-
-        ConnectionManager connectionManager = null;
-
+        ConnectionManager connectionManager = new ConnectionManager(
+                container.getJdbcUrl(), container.getUsername(), container.getPassword(),
+                "org.postgresql.Driver");
 
         LiquibaseDemo liquibaseTest = new LiquibaseDemo(connectionManager.getConnection(), "db/changelog/changelog.xml", "migration");
         liquibaseTest.runMigrations();
