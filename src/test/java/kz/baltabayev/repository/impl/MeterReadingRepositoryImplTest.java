@@ -1,7 +1,6 @@
 package kz.baltabayev.repository.impl;
 
 import kz.baltabayev.containers.PostgresTestContainer;
-import kz.baltabayev.liquibase.LiquibaseDemo;
 import kz.baltabayev.model.MeterReading;
 import kz.baltabayev.util.ConnectionManager;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,7 +11,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-import static kz.baltabayev.util.DateTimeUtils.*;
+import static kz.baltabayev.util.DateTimeUtils.parseDate;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("meter reading dao implementation test")
