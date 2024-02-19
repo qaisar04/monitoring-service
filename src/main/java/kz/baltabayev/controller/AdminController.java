@@ -3,23 +3,16 @@ package kz.baltabayev.controller;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import kz.baltabayev.dto.MeterTypeRequest;
-import kz.baltabayev.exception.AuthorizeException;
 import kz.baltabayev.model.MeterType;
 import kz.baltabayev.model.User;
 import kz.baltabayev.service.MeterTypeService;
 import kz.baltabayev.service.UserService;
-import kz.baltabayev.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
-import static kz.baltabayev.util.SecurityUtils.isValidLogin;
 
 /**
  * Controller class for handling admin operations.

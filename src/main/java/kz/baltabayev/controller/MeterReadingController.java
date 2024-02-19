@@ -9,14 +9,13 @@ import kz.baltabayev.model.MeterReading;
 import kz.baltabayev.model.User;
 import kz.baltabayev.repository.UserRepository;
 import kz.baltabayev.service.MeterReadingService;
+import kz.baltabayev.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
-
-import static kz.baltabayev.util.SecurityUtils.isValidLogin;
 
 /**
  * Controller class for handling meter reading operations.
@@ -39,7 +38,7 @@ public class MeterReadingController {
     @GetMapping("/current")
     @ApiOperation(value = "Get current meter readings", response = List.class)
     public ResponseEntity<List<MeterReading>> getCurrentMeterReadings(@RequestParam String login) {
-        if (!isValidLogin(login)) throw new AuthorizeException("Incorrect login!");
+        if (!SecurityUtils.isValidLogin(login)) throw new AuthorizeException("Incorrect login!");
         Long id = getIdByLogin(login);
         return ResponseEntity.ok(meterReadingService.getCurrentMeterReadings(id));
     }
@@ -59,7 +58,7 @@ public class MeterReadingController {
             @RequestParam Integer month,
             @RequestParam String login
     ) {
-        if (!isValidLogin(login)) throw new AuthorizeException("Incorrect login!");
+        if (!SecurityUtils.isValidLogin(login)) throw new AuthorizeException("Incorrect login!");
         Long id = getIdByLogin(login);
         List<MeterReading> meterReadingsByMonthAndYear = meterReadingService.getMeterReadingsByMonthAndYear(year, month, id);
         return ResponseEntity.ok(meterReadingsByMonthAndYear);
@@ -76,7 +75,7 @@ public class MeterReadingController {
     public ResponseEntity<List<MeterReading>> showMeterReadingHistory(
             @RequestParam String login
     ) {
-        if (!isValidLogin(login)) throw new AuthorizeException("Incorrect login!");
+        if (!SecurityUtils.isValidLogin(login)) throw new AuthorizeException("Incorrect login!");
         Long id = getIdByLogin(login);
         List<MeterReading> meterReadingHistory = meterReadingService.getMeterReadingHistory(id);
         return ResponseEntity.ok(meterReadingHistory);
@@ -95,7 +94,7 @@ public class MeterReadingController {
             @RequestBody MeterReadingRequest request,
             @RequestParam String login
     ) {
-        if (!isValidLogin(login)) throw new AuthorizeException("Incorrect login!");
+        if (!SecurityUtils.isValidLogin(login)) throw new AuthorizeException("Incorrect login!");
         Long id = getIdByLogin(login);
 
         meterReadingService.submitMeterReading(request.counterNumber(), request.meterTypeId(), id);
