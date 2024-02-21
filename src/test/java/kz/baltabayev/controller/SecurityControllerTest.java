@@ -28,9 +28,10 @@ public class SecurityControllerTest {
     private MockMvc mockMvc;
 
     @BeforeEach
-    public void setup() {
-        MockitoAnnotations.openMocks(this);
-        mockMvc = MockMvcBuilders.standaloneSetup(securityController).build();
+    public void setup() throws Exception {
+        try (AutoCloseable closeable = MockitoAnnotations.openMocks(this)) {
+            mockMvc = MockMvcBuilders.standaloneSetup(securityController).build();
+        }
     }
 
     @Test
