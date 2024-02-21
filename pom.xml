@@ -27,9 +27,11 @@
         <aspectj.version>1.9.21</aspectj.version>
         <junit.jupiter.version>5.10.1</junit.jupiter.version>
         <mockito.version>5.10.0</mockito.version>
-        <postgresql.version>42.7.1</postgresql.version>
+        <testcontainers.junit.version>1.19.1</testcontainers.junit.version>
+        <postgresql.version>42.7.2</postgresql.version>
         <liquibase-core.version>4.25.1</liquibase-core.version>
         <testcontainers.version>1.19.4</testcontainers.version>
+        <jsr310.version>2.16.1</jsr310.version>
     </properties>
 
     <dependencies>
@@ -87,7 +89,7 @@
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jsr310</artifactId>
-            <version>2.16.1</version> <!-- Use the version that matches your Jackson version -->
+            <version>${jsr310.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.security</groupId>
@@ -202,7 +204,7 @@
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>junit-jupiter</artifactId>
-            <version>1.19.1</version>
+            <version>${testcontainers.junit.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
