@@ -1,6 +1,5 @@
 package kz.baltabayev.service;
 
-import kz.baltabayev.annotations.Auditable;
 import kz.baltabayev.model.Audit;
 import kz.baltabayev.model.types.ActionType;
 import kz.baltabayev.model.types.AuditType;
@@ -11,6 +10,7 @@ import java.util.List;
  * The service interface for auditing functionality.
  */
 public interface AuditService {
+
     /**
      * Retrieves a list of all audit records.
      *

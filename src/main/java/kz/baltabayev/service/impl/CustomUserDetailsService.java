@@ -1,6 +1,6 @@
 package kz.baltabayev.service.impl;
 
-import kz.baltabayev.repository.UserRepository;
+import kz.baltabayev.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -11,12 +11,11 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
 
-    private final UserRepository userRepository;
+    private final UserService userService;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return (UserDetails) userRepository.findByLogin(username).orElseThrow(() -> new UsernameNotFoundException(
-                String.format("Пользователь по логину '%s' не найден", username)
-        ));
+        return userService.getUserByLogin(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
     }
 }

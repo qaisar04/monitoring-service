@@ -1,12 +1,25 @@
-datasource:
-  driver-class-name: org.postgresql.Driver
-  username: qaisar
-  password: qaisar
-  url: jdbc:postgresql://localhost:5432/monitoring_service_db
-liquibase:
-  enabled: true
-  change-log: db/changelog/changelog.xml
-  liquibase-schema: migration
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    username: qaisar
+    password: qaisar
+    url: jdbc:postgresql://localhost:5432/monitoring_service_db
+  liquibase:
+    enabled: false
+    change-log: db/changelog/changelog.xml
+#    liquibase-schema: migration
+  jpa:
+    hibernate:
+      ddl-auto: create
+    show-sql: true
 jwt:
   secret: hjf203cupnacs2039r1mjkc1ascdjkfkds9sdnfasb8ica1
   lifetime: PT30M
+springdoc:
+  api-docs:
+    enabled: true
+    path: /swagger-ui.html
+app:
+  common:
+    logging:
+      enabled: true

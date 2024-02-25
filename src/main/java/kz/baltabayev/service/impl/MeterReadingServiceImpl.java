@@ -1,12 +1,12 @@
 package kz.baltabayev.service.impl;
 
-import kz.baltabayev.annotations.Auditable;
+import kz.baltabayev.exception.UserNotFoundException;
+import kz.baltabayev.model.User;
 import kz.baltabayev.repository.MeterReadingRepository;
 import kz.baltabayev.exception.DuplicateRecordException;
 import kz.baltabayev.exception.NotValidArgumentException;
 import kz.baltabayev.model.MeterReading;
 import kz.baltabayev.model.MeterType;
-import kz.baltabayev.model.types.ActionType;
 import kz.baltabayev.service.MeterReadingService;
 import kz.baltabayev.service.MeterTypeService;
 import kz.baltabayev.service.UserService;
@@ -19,11 +19,9 @@ import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
-/**
- * Implementation of the {@link MeterReadingService} interface.
- */
 @Service
 @RequiredArgsConstructor
 public class MeterReadingServiceImpl implements MeterReadingService {
@@ -32,17 +30,9 @@ public class MeterReadingServiceImpl implements MeterReadingService {
     private final UserService userService;
     private final MeterTypeService meterTypeService;
 
-    /**
-     * Retrieves the current meter readings for a given user.
-     *
-     * @param userId the ID of the user
-     * @return a list of the current meter readings
-     */
     @Override
-    @Auditable(actionType = ActionType.GETTING_HISTORY_OF_METER_READINGS, userId = "@userId")
-    public List<MeterReading> getCurrentMeterReadings(Long userId) {
-
-        List<MeterReading> meterReadings = meterReadingRepository.findAll();
+    public List<MeterReading> getCurrentMeterReadings(String login) {
+        List<MeterReading> meterReadings = meterReadingRepository.findAllByUserId(getIdByLogin(login));
 
         Map<Long, List<MeterReading>> readingsByType = meterReadings.stream()
                 .collect(Collectors.groupingBy(MeterReading::getTypeId));
@@ -59,18 +49,10 @@ public class MeterReadingServiceImpl implements MeterReadingService {
         return lastReadings;
     }
 
-    /**
-     * Submits a new meter reading for a user.
-     *
-     * @param counterNumber the counter number
-     * @param meterTypeId   the meter type ID
-     * @param userId        the user ID
-     */
     @Override
-    @Auditable(actionType = ActionType.SUBMIT_METER, userId = "@userId")
-    public void submitMeterReading(Integer counterNumber, Long meterTypeId, Long userId) {
+    public MeterReading submitMeterReading(Integer counterNumber, Long meterTypeId, String login) {
 
-        if (counterNumber == null || userId == null || meterTypeId == null) {
+        if (counterNumber == null || login == null || meterTypeId == null) {
             throw new NotValidArgumentException("Пожалуйста, заполните все пустые поля.");
         }
 
@@ -79,8 +61,9 @@ public class MeterReadingServiceImpl implements MeterReadingService {
             throw new NotValidArgumentException("Пожалуйста, введите корректный тип показаний.");
         }
 
+        Long id = getIdByLogin(login);
         LocalDate now = LocalDate.now();
-        List<MeterReading> existingReadings = meterReadingRepository.findAllByUserId(userId);
+        List<MeterReading> existingReadings = meterReadingRepository.findAllByUserId(id);
 
         boolean alreadyExists = existingReadings.stream()
                 .anyMatch(reading -> reading.getTypeId().equals(meterTypeId) &&
@@ -94,24 +77,15 @@ public class MeterReadingServiceImpl implements MeterReadingService {
                 .counterNumber(counterNumber)
                 .typeId(meterTypeId)
                 .readingDate(DateTimeUtils.parseDate(LocalDate.now()))
-                .userId(userId)
+                .userId(id)
                 .build();
 
-        meterReadingRepository.save(meterReading);
+        return meterReadingRepository.save(meterReading);
     }
 
-    /**
-     * Retrieves meter readings for a specific month and year for a given user.
-     *
-     * @param year   the year
-     * @param month  the month
-     * @param userId the user ID
-     * @return a list of meter readings for the specified month and year
-     */
     @Override
-    @Auditable(actionType = ActionType.GETTING_HISTORY_OF_METER_READINGS, userId = "@userId")
-    public List<MeterReading> getMeterReadingsByMonthAndYear(Integer year, Integer month, Long userId) {
-        List<MeterReading> allReadings = meterReadingRepository.findAllByUserId(userId);
+    public List<MeterReading> getMeterReadingsByMonthAndYear(Integer year, Integer month, String login) {
+        List<MeterReading> allReadings = meterReadingRepository.findAllByUserId(getIdByLogin(login));
         List<MeterReading> currentReadings = new ArrayList<>();
         YearMonth filterFromUser = YearMonth.of(year, month);
 
@@ -127,23 +101,20 @@ public class MeterReadingServiceImpl implements MeterReadingService {
         return currentReadings;
     }
 
-    /**
-     * Retrieves the entire history of meter readings for a given user.
-     *
-     * @param userId the user ID
-     * @return the list of all meter readings for the user
-     */
     @Override
-    @Auditable(actionType = ActionType.GETTING_HISTORY_OF_METER_READINGS, userId = "@userId")
-    public List<MeterReading> getMeterReadingHistory(Long userId) {
-        return meterReadingRepository.findAllByUserId(userId);
+    public List<MeterReading> getMeterReadingHistory(String login) {
+        return meterReadingRepository.findAllByUserId(getIdByLogin(login));
     }
 
-    /**
-     * Retrieves the entire history of all meter readings.
-     *
-     * @return the list of all meter readings
-     */
+    private Long getIdByLogin(String login) {
+        Optional<User> userOptional = userService.getUserByLogin(login);
+        if (userOptional.isPresent()) {
+            return userOptional.get().getId();
+        } else {
+            throw new UserNotFoundException("User not found for login: " + login);
+        }
+    }
+
     public List<MeterReading> getAllMeterReadingHistory() {
         return meterReadingRepository.findAll();
     }

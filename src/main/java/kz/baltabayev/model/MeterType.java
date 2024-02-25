@@ -1,5 +1,9 @@
 package kz.baltabayev.model;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -9,17 +13,14 @@ import lombok.experimental.FieldDefaults;
  * @author qaisar
  */
 @Data
+@Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class MeterType {
-    /**
-     * The unique identifier for the meter type.
-     */
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
-    /**
-     * The name associated with the meter type.
-     */
     String typeName;
 }

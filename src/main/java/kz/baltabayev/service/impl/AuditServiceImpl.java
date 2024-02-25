@@ -17,7 +17,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AuditServiceImpl implements AuditService {
 
-    private final AuditRepository auditDAO;
+    private final AuditRepository auditRepository;
 
     /**
      * Saves an audit record.
@@ -26,7 +26,7 @@ public class AuditServiceImpl implements AuditService {
      * @return the saved audit record
      */
     public Audit save(Audit audit) {
-        return auditDAO.save(audit);
+        return auditRepository.save(audit);
     }
 
     /**
@@ -36,7 +36,7 @@ public class AuditServiceImpl implements AuditService {
      */
     @Override
     public List<Audit> showAllAudits() {
-        return auditDAO.findAll();
+        return auditRepository.findAll();
     }
 
     /**

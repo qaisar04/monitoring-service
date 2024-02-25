@@ -4,12 +4,12 @@ import kz.baltabayev.dto.MeterReadingDto;
 import kz.baltabayev.model.MeterReading;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.factory.Mappers;
+import org.mapstruct.MappingConstants;
 
 /**
  * Mapper interface for converting between MeterReading and MeterReadingDto objects.
  */
-@Mapper
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface MeterReadingMapper {
 
     /**

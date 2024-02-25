@@ -1,7 +1,5 @@
 package kz.baltabayev.controller;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import kz.baltabayev.dto.MeterTypeRequest;
 import kz.baltabayev.model.MeterType;
 import kz.baltabayev.model.User;
@@ -14,11 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-/**
- * Controller class for handling admin operations.
- */
 @RestController
-@Api(value = "Admin Controller", description = "Admin operations")
 @RequestMapping("/admin")
 @RequiredArgsConstructor
 public class AdminController {
@@ -31,7 +25,6 @@ public class AdminController {
      * @return ResponseEntity containing a list of User objects.
      */
     @GetMapping("/all-users")
-    @ApiOperation(value = "View a list of all users", response = List.class)
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<User>> showAllUsers() {
         List<User> allUsers = userService.showAllUsers();
@@ -44,7 +37,6 @@ public class AdminController {
      * @return ResponseEntity containing the saved MeterType object.
      */
     @PostMapping("/meter-type")
-    @ApiOperation(value = "Add a new meter type", response = MeterType.class)
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<MeterType> addMeterType(@RequestBody MeterTypeRequest request) {
         MeterType savedType = meterTypeService.save(request);

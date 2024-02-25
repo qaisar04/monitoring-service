@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 /**
  * Implementation of the {@link UserService} interface.
@@ -41,8 +42,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUserByLogin(String login) {
-        return userRepository.findByLogin(login)
-                .orElseThrow(() -> new NoSuchElementException("No user found with login: " + login));
+    public Optional<User> getUserByLogin(String login) {
+        return userRepository.findByLogin(login);
+    }
+
+    @Override
+    public User save(User user) {
+        return userRepository.save(user);
     }
 }

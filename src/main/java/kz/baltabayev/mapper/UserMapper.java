@@ -4,12 +4,13 @@ import kz.baltabayev.dto.UserDto;
 import kz.baltabayev.model.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingConstants;
 import org.mapstruct.factory.Mappers;
 
 /**
  * Mapper interface for converting between User and UserDto objects.
  */
-@Mapper
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface UserMapper {
 
     /**

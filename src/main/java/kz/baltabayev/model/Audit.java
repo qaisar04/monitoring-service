@@ -1,5 +1,7 @@
 package kz.baltabayev.model;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.*;
 import kz.baltabayev.model.types.ActionType;
 import kz.baltabayev.model.types.AuditType;
 import lombok.*;
@@ -12,25 +14,19 @@ import lombok.experimental.FieldDefaults;
  * @author qaisar
  */
 @Data
+@Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Audit {
-    /**
-     * The unique identifier for the audit entry.
-     */
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "audit_id_seq")
+    @SequenceGenerator(name = "audit_id_seq", sequenceName = "develop.audit_id_seq", allocationSize = 1)
     Long id;
-    /**
-     * The login of the user associated with the audit entry.
-     */
     String login;
-    /**
-     * The type of audit, indicating the success or failure of an action.
-     */
+    @Enumerated(EnumType.STRING)
     AuditType auditType;
-    /**
-     * The type of action performed by the user.
-     */
+    @Enumerated(EnumType.STRING)
     ActionType actionType;
 }
