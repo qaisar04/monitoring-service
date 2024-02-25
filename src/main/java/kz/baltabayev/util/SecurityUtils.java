@@ -14,7 +14,9 @@ public class SecurityUtils {
     private SecurityContext securityContext;
 
     public boolean isValidLogin(String login) {
-        if (securityContext.getAuthentication() == null) securityContext = SecurityContextHolder.getContext();
+        if (securityContext.getAuthentication() == null) {
+            securityContext = SecurityContextHolder.getContext();
+        }
         Authentication authentication = securityContext.getAuthentication();
         if (authentication == null) throw new AuthorizeException("Unauthorized!");
         User principal = (User) authentication.getPrincipal();

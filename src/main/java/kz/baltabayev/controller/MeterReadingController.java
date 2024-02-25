@@ -96,16 +96,11 @@ public class MeterReadingController {
     ) {
         if (!SecurityUtils.isValidLogin(login)) throw new AuthorizeException("Incorrect login!");
         Long id = getIdByLogin(login);
-
         meterReadingService.submitMeterReading(request.counterNumber(), request.meterTypeId(), id);
         return ResponseEntity.ok("The reading was successfully saved!");
     }
 
-    /**
-     * Retrieves the user ID by login.
-     * @param login The user's login.
-     * @return The user's ID.
-     */
+
     private Long getIdByLogin(String login) {
         Optional<User> userOptional = userRepository.findByLogin(login);
         if (userOptional.isPresent()) {
