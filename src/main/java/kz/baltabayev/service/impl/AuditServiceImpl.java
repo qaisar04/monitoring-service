@@ -1,21 +1,23 @@
 package kz.baltabayev.service.impl;
 
-import kz.baltabayev.dao.AuditDAO;
+import kz.baltabayev.repository.AuditRepository;
 import kz.baltabayev.model.Audit;
 import kz.baltabayev.model.types.ActionType;
 import kz.baltabayev.model.types.AuditType;
 import kz.baltabayev.service.AuditService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 /**
  * Implementation of the {@link AuditService} interface.
  */
+@Service
 @RequiredArgsConstructor
 public class AuditServiceImpl implements AuditService {
 
-    private final AuditDAO auditDAO;
+    private final AuditRepository auditDAO;
 
     /**
      * Saves an audit record.

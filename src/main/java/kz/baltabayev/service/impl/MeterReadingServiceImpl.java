@@ -1,7 +1,7 @@
 package kz.baltabayev.service.impl;
 
 import kz.baltabayev.annotations.Auditable;
-import kz.baltabayev.dao.MeterReadingDAO;
+import kz.baltabayev.repository.MeterReadingRepository;
 import kz.baltabayev.exception.DuplicateRecordException;
 import kz.baltabayev.exception.NotValidArgumentException;
 import kz.baltabayev.model.MeterReading;
@@ -12,6 +12,7 @@ import kz.baltabayev.service.MeterTypeService;
 import kz.baltabayev.service.UserService;
 import kz.baltabayev.util.DateTimeUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
@@ -23,10 +24,11 @@ import java.util.stream.Collectors;
 /**
  * Implementation of the {@link MeterReadingService} interface.
  */
+@Service
 @RequiredArgsConstructor
 public class MeterReadingServiceImpl implements MeterReadingService {
 
-    private final MeterReadingDAO meterReadingDAO;
+    private final MeterReadingRepository meterReadingRepository;
     private final UserService userService;
     private final MeterTypeService meterTypeService;
 
@@ -40,7 +42,7 @@ public class MeterReadingServiceImpl implements MeterReadingService {
     @Auditable(actionType = ActionType.GETTING_HISTORY_OF_METER_READINGS, userId = "@userId")
     public List<MeterReading> getCurrentMeterReadings(Long userId) {
 
-        List<MeterReading> meterReadings = meterReadingDAO.findAll();
+        List<MeterReading> meterReadings = meterReadingRepository.findAll();
 
         Map<Long, List<MeterReading>> readingsByType = meterReadings.stream()
                 .collect(Collectors.groupingBy(MeterReading::getTypeId));
@@ -78,7 +80,7 @@ public class MeterReadingServiceImpl implements MeterReadingService {
         }
 
         LocalDate now = LocalDate.now();
-        List<MeterReading> existingReadings = meterReadingDAO.findAllByUserId(userId);
+        List<MeterReading> existingReadings = meterReadingRepository.findAllByUserId(userId);
 
         boolean alreadyExists = existingReadings.stream()
                 .anyMatch(reading -> reading.getTypeId().equals(meterTypeId) &&
@@ -95,7 +97,7 @@ public class MeterReadingServiceImpl implements MeterReadingService {
                 .userId(userId)
                 .build();
 
-        meterReadingDAO.save(meterReading);
+        meterReadingRepository.save(meterReading);
     }
 
     /**
@@ -109,7 +111,7 @@ public class MeterReadingServiceImpl implements MeterReadingService {
     @Override
     @Auditable(actionType = ActionType.GETTING_HISTORY_OF_METER_READINGS, userId = "@userId")
     public List<MeterReading> getMeterReadingsByMonthAndYear(Integer year, Integer month, Long userId) {
-        List<MeterReading> allReadings = meterReadingDAO.findAllByUserId(userId);
+        List<MeterReading> allReadings = meterReadingRepository.findAllByUserId(userId);
         List<MeterReading> currentReadings = new ArrayList<>();
         YearMonth filterFromUser = YearMonth.of(year, month);
 
@@ -134,7 +136,7 @@ public class MeterReadingServiceImpl implements MeterReadingService {
     @Override
     @Auditable(actionType = ActionType.GETTING_HISTORY_OF_METER_READINGS, userId = "@userId")
     public List<MeterReading> getMeterReadingHistory(Long userId) {
-        return meterReadingDAO.findAllByUserId(userId);
+        return meterReadingRepository.findAllByUserId(userId);
     }
 
     /**
@@ -143,6 +145,6 @@ public class MeterReadingServiceImpl implements MeterReadingService {
      * @return the list of all meter readings
      */
     public List<MeterReading> getAllMeterReadingHistory() {
-        return meterReadingDAO.findAll();
+        return meterReadingRepository.findAll();
     }
 }

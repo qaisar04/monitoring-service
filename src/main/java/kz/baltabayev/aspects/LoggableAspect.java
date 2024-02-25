@@ -8,13 +8,25 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 
+/**
+ * Aspect for logging method execution time.
+ */
 @Aspect
 @Slf4j
 public class LoggableAspect {
 
+    /**
+     * Pointcut for methods annotated with @Loggable.
+     */
     @Pointcut("within(@kz.baltabayev.annotations.Loggable *) && execution(* *(..))")
     public void annotatedByLoggable() { }
 
+    /**
+     * Advice to log method execution time for methods annotated with @Loggable.
+     * @param proceedingJoinPoint The ProceedingJoinPoint representing the method being logged.
+     * @return The result of the method execution.
+     * @throws Throwable If an error occurs during method execution.
+     */
     @Around("annotatedByLoggable()")
     public Object logging(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
         MethodSignature methodSignature = (MethodSignature) proceedingJoinPoint.getSignature();
@@ -33,4 +45,3 @@ public class LoggableAspect {
         return result;
     }
 }
-

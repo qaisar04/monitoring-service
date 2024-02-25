@@ -2,7 +2,9 @@ package kz.baltabayev.service.impl;
 
 import kz.baltabayev.annotations.Auditable;
 import kz.baltabayev.annotations.Loggable;
-import kz.baltabayev.dao.UserDAO;
+import kz.baltabayev.exception.InvalidCredentialsException;
+import kz.baltabayev.model.types.Role;
+import kz.baltabayev.repository.UserRepository;
 import kz.baltabayev.dto.TokenResponse;
 import kz.baltabayev.exception.AuthorizeException;
 import kz.baltabayev.exception.NotValidArgumentException;
@@ -12,16 +14,26 @@ import kz.baltabayev.model.User;
 import kz.baltabayev.model.types.ActionType;
 import kz.baltabayev.service.SecurityService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 /**
  * Implementation of the {@link SecurityService} interface.
  */
+@Service
 @RequiredArgsConstructor
 public class SecurityServiceImpl implements SecurityService {
 
-    private final UserDAO userDao;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final CustomUserDetailsService userDetailsService;
+    private final AuthenticationManager authenticationManager;
     private final JwtTokenUtils jwtTokenUtils;
 
     /**
@@ -45,17 +57,18 @@ public class SecurityServiceImpl implements SecurityService {
             throw new NotValidArgumentException("Длина пароля должна составлять от 5 до 30 символов.");
         }
 
-        Optional<User> optionalUser = userDao.findByLogin(login);
+        Optional<User> optionalUser = userRepository.findByLogin(login);
         if (optionalUser.isPresent()) {
             throw new RegisterException("Пользователь с таким логином уже существует.");
         }
 
         User newUser = User.builder()
                 .login(login)
-                .password(password)
+                .role(Role.USER)
+                .password(passwordEncoder.encode(password))
                 .build();
 
-        return userDao.save(newUser);
+        return userRepository.save(newUser);
     }
 
     /**
@@ -69,16 +82,17 @@ public class SecurityServiceImpl implements SecurityService {
     @Override
     @Auditable(actionType = ActionType.AUTHORIZATION, login = "@login")
     public TokenResponse authorize(String login, String password) {
-        Optional<User> optionalUser = userDao.findByLogin(login);
-        if (optionalUser.isEmpty()) {
-            throw new AuthorizeException("Пользователь с данным логином отсутствует в базе данных.");
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(login, password)
+            );
+        } catch (BadCredentialsException e) {
+            throw new InvalidCredentialsException("Invalid username or password");
         }
 
-        if (!optionalUser.get().getPassword().equals(password)) {
-            throw new AuthorizeException("Неверный пароль.");
-        }
+        UserDetails userDetails = userDetailsService.loadUserByUsername(login);
+        String token = jwtTokenUtils.generateToken(userDetails);
 
-        String token = jwtTokenUtils.generateToken(login);
         return new TokenResponse(token);
     }
 }

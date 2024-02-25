@@ -1,14 +1,11 @@
 package kz.baltabayev.service.impl;
 
-import kz.baltabayev.dao.MeterReadingDAO;
+import kz.baltabayev.repository.MeterReadingRepository;
 import kz.baltabayev.exception.DuplicateRecordException;
 import kz.baltabayev.exception.NotValidArgumentException;
 import kz.baltabayev.model.MeterReading;
 import kz.baltabayev.model.MeterType;
 import kz.baltabayev.model.User;
-import kz.baltabayev.model.types.ActionType;
-import kz.baltabayev.model.types.AuditType;
-import kz.baltabayev.service.AuditService;
 import kz.baltabayev.service.MeterTypeService;
 import kz.baltabayev.service.UserService;
 import kz.baltabayev.util.DateTimeUtils;
@@ -23,12 +20,10 @@ import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 import static kz.baltabayev.util.DateTimeUtils.parseDate;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -39,7 +34,7 @@ class MeterReadingServiceImplTest {
     private MeterReadingServiceImpl meterReadingService;
 
     @Mock
-    private MeterReadingDAO meterReadingDAO;
+    private MeterReadingRepository meterReadingRepository;
 
     @Mock
     private UserService userService;
@@ -59,7 +54,7 @@ class MeterReadingServiceImplTest {
                 .build();
 
         List<MeterReading> meterReadings = Collections.singletonList(meterReading);
-        lenient().when(meterReadingDAO.findAll()).thenReturn(meterReadings);
+        lenient().when(meterReadingRepository.findAll()).thenReturn(meterReadings);
 
         List<MeterReading> result = meterReadingService.getCurrentMeterReadings(1L);
 
@@ -81,7 +76,7 @@ class MeterReadingServiceImplTest {
                 () -> meterReadingService.submitMeterReading(100, 2L, 1L));
 
         assertEquals("Пожалуйста, введите корректный тип показаний.", exception.getMessage());
-        verify(meterReadingDAO, never()).save(any());
+        verify(meterReadingRepository, never()).save(any());
     }
 
     @Test
@@ -93,7 +88,7 @@ class MeterReadingServiceImplTest {
         List<MeterType> allTypes = Collections.singletonList(MeterType.builder().id(1L).typeName("Electricity").build());
         lenient().when(meterTypeService.showAvailableMeterTypes()).thenReturn(allTypes);
 
-        lenient().when(meterReadingDAO.findAllByUserId(anyLong())).thenReturn(Collections.singletonList(
+        lenient().when(meterReadingRepository.findAllByUserId(anyLong())).thenReturn(Collections.singletonList(
                 MeterReading.builder()
                         .typeId(1L)
                         .readingDate(parseDate(LocalDate.now()))
@@ -104,7 +99,7 @@ class MeterReadingServiceImplTest {
                 () -> meterReadingService.submitMeterReading(100, 1L, 1L));
 
         assertEquals("Запись для данного типа счетчика уже существует в текущем месяце.", exception.getMessage());
-        verify(meterReadingDAO, never()).save(any());
+        verify(meterReadingRepository, never()).save(any());
     }
 
     @Test
@@ -118,7 +113,7 @@ class MeterReadingServiceImplTest {
                 .build();
 
         lenient().when(userService.getUserById(userId)).thenReturn(testUser);
-        lenient().when(meterReadingDAO.findAllByUserId(userId)).thenReturn(Arrays.asList(
+        lenient().when(meterReadingRepository.findAllByUserId(userId)).thenReturn(Arrays.asList(
                 new MeterReading(1L, 124812409, DateTimeUtils.parseDate(LocalDate.of(2024, 1, 20)), 1L, userId),
                 new MeterReading(2L, 824123414, DateTimeUtils.parseDate(LocalDate.of(2024, 1, 20)), 2L, userId),
                 new MeterReading(3L, 249901312, DateTimeUtils.parseDate(LocalDate.of(2023, 11, 18)), 2L, userId)
@@ -140,7 +135,7 @@ class MeterReadingServiceImplTest {
                 .build();
 
         lenient().when(userService.getUserById(userId)).thenReturn(testUser);
-        lenient().when(meterReadingDAO.findAllByUserId(userId)).thenReturn(Arrays.asList(
+        lenient().when(meterReadingRepository.findAllByUserId(userId)).thenReturn(Arrays.asList(
                 new MeterReading(1L, 12924912, DateTimeUtils.parseDate(LocalDate.of(2024, 1, 20)), 1L, userId),
                 new MeterReading(2L, 93919112, DateTimeUtils.parseDate(LocalDate.of(2024, 1, 20)), 2L, userId),
                 new MeterReading(3L, 81238123, DateTimeUtils.parseDate(LocalDate.of(2024, 1, 20)), 3L, userId)
