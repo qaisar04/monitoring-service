@@ -1,9 +1,6 @@
 package kz.baltabayev.model.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -14,13 +11,14 @@ import lombok.experimental.FieldDefaults;
  */
 @Data
 @Entity
+@Builder
+@Table(name = "meter_type", schema = "develop")
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-@FieldDefaults(level = AccessLevel.PRIVATE)
 public class MeterType {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
-    String typeName;
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "meter_type_id_seq")
+    @SequenceGenerator(name = "meter_type_id_seq", sequenceName = "develop.meter_type_id_seq", allocationSize = 1)
+    private Long id;
+    private String typeName;
 }

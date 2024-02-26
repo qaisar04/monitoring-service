@@ -68,25 +68,4 @@
         <sql>COMMENT ON COLUMN develop.meter_reading.user_id IS 'this is user id';</sql>
     </changeSet>
 
-    <changeSet id="4" author="qaisar">
-        <createTable schemaName="develop" tableName="audit">
-            <column name="id" type="bigint" defaultValueComputed="nextval('develop.audit_id_seq')">
-                <constraints primaryKey="true" primaryKeyName="audit_pkey" nullable="false"/>
-            </column>
-            <column name="login" type="varchar(255)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="audit_type" type="varchar(255)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="action_type" type="varchar(255)">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
-        <sql>COMMENT ON COLUMN develop.audit.id IS 'this is audit id';</sql>
-        <sql>COMMENT ON COLUMN develop.audit.login IS 'this is login';</sql>
-        <sql>COMMENT ON COLUMN develop.audit.audit_type IS 'this is audit type';</sql>
-        <sql>COMMENT ON COLUMN develop.audit.action_type IS 'this is action type';</sql>
-    </changeSet>
-
 </databaseChangeLog>

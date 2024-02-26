@@ -14,22 +14,22 @@ import java.util.List;
 
 @Data
 @Entity
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-@Table(name = "users")
-@FieldDefaults(level = AccessLevel.PRIVATE)
+@Table(name = "users", schema = "develop")
 public class User implements UserDetails {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
-    String login;
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_id_seq")
+    @SequenceGenerator(name = "user_id_seq", sequenceName = "develop.user_id_seq", allocationSize = 1)
+    private Long id;
+    private String login;
     @Builder.Default
-    LocalDateTime registrationDate = LocalDateTime.now();
-    String password;
+    private LocalDateTime registrationDate = LocalDateTime.now();
+    private String password;
     @Enumerated(EnumType.STRING)
     @Builder.Default
-    Role role = Role.USER;
+    private Role role = Role.USER;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

@@ -5,12 +5,12 @@ spring:
     password: qaisar
     url: jdbc:postgresql://localhost:5432/monitoring_service_db
   liquibase:
-    enabled: false
+    enabled: true
     change-log: db/changelog/changelog.xml
-#    liquibase-schema: migration
+    default-schema: migration
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: validate
     show-sql: true
 jwt:
   secret: hjf203cupnacs2039r1mjkc1ascdjkfkds9sdnfasb8ica1

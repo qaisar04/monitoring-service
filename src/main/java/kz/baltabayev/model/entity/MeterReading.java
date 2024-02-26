@@ -1,9 +1,6 @@
 package kz.baltabayev.model.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -15,16 +12,17 @@ import lombok.experimental.FieldDefaults;
  */
 @Data
 @Entity
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-@FieldDefaults(level = AccessLevel.PRIVATE)
+@Table(name = "meter_reading", schema = "develop")
 public class MeterReading {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
-    Integer counterNumber;
-    String readingDate;
-    Long typeId;
-    Long userId;
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "meter_reading_id_seq")
+    @SequenceGenerator(name = "meter_reading_id_seq", sequenceName = "develop.meter_reading_id_seq", allocationSize = 1)
+    private Long id;
+    private Integer counterNumber;
+    private String readingDate;
+    private Long typeId;
+    private Long userId;
 }
