@@ -1,5 +1,7 @@
 package kz.baltabayev.service.impl;
 
+import kz.baltabayev.loggingstarter.annotations.LoggableInfo;
+import kz.baltabayev.loggingstarter.annotations.LoggableTime;
 import kz.baltabayev.repository.MeterTypeRepository;
 import kz.baltabayev.dto.MeterTypeRequest;
 import kz.baltabayev.model.MeterType;
@@ -13,28 +15,19 @@ import java.util.List;
  * Implementation of the {@link MeterTypeService} interface.
  */
 @Service
+@LoggableInfo
 @RequiredArgsConstructor
 public class MeterTypeServiceImpl implements MeterTypeService {
 
     private final MeterTypeRepository meterTypeRepository;
 
-    /**
-     * Retrieves a list of available meter types.
-     *
-     * @return a list of available meter types
-     */
     @Override
     public List<MeterType> showAvailableMeterTypes() {
         return meterTypeRepository.findAll();
     }
 
-    /**
-     * Saves a new meter type.
-     *
-     * @param meterType the meter type to be saved
-     * @return the saved meter type
-     */
     @Override
+    @LoggableTime
     public MeterType save(MeterTypeRequest request) {
         MeterType meterType = MeterType.builder().typeName(request.typeName())
                 .build();

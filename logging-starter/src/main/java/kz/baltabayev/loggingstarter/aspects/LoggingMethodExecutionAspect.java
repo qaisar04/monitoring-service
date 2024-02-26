@@ -10,32 +10,28 @@ import org.springframework.util.StopWatch;
 import kz.baltabayev.loggingstarter.annotations.LoggableInfo;
 
 /**
- * The {@code LoggingMethodExecutionAspect} class is an AspectJ aspect responsible for logging method executions
- * in the classes annotated with {@code @LoggableInfo}. It logs information about the start and end of method execution,
- * along with the execution time in milliseconds.
- *
- * <p>This aspect is designed to work in conjunction with the {@code @LoggableInfo} annotation, providing a convenient
- * way to log method execution details for the specified classes or methods.
- *
- * <p>Example usage:
- * <pre>
- * // Apply the @LoggableInfo annotation to classes or methods you want to log
- * {@literal @}LoggableInfo
- * public class ExampleClass {
- *     public void exampleMethod() {
- *         // code
- *     }
- * }
- * </pre>
+ * This aspect logs the execution of methods annotated with @LoggableInfo.
+ * It logs the start and end of the method execution, as well as the execution time.
  */
 @Aspect
 @Slf4j
 public class LoggingMethodExecutionAspect {
 
+    /**
+     * Pointcut that matches methods annotated with @LoggableInfo.
+     */
     @Pointcut("(within(@kz.baltabayev.loggingstarter.annotations.LoggableInfo *) || execution(@kz.baltabayev.loggingstarter.annotations.LoggableInfo * *(..))) && execution(* *(..))")
     public void annotatedByLoggable() {
     }
 
+    /**
+     * Advice that wraps around the methods matched by the pointcut.
+     * It logs the start and end of the method execution, as well as the execution time.
+     *
+     * @param pjp the proceeding join point
+     * @return the result of the method execution
+     * @throws Throwable if an error occurs during the method execution
+     */
     @Around("annotatedByLoggable()")
     public Object logMethodExecution(ProceedingJoinPoint pjp) throws Throwable {
         var methodSignature = (MethodSignature) pjp.getSignature();

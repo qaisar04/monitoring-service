@@ -1,13 +1,15 @@
 package kz.baltabayev.service.impl;
 
+import kz.baltabayev.auditstarter.annotation.Auditable;
 import kz.baltabayev.dto.TokenResponse;
 import kz.baltabayev.exception.AuthorizeException;
 import kz.baltabayev.exception.InvalidCredentialsException;
 import kz.baltabayev.exception.NotValidArgumentException;
 import kz.baltabayev.exception.RegisterException;
+import kz.baltabayev.loggingstarter.annotations.LoggableInfo;
+import kz.baltabayev.loggingstarter.annotations.LoggableTime;
 import kz.baltabayev.model.User;
 import kz.baltabayev.model.types.Role;
-import kz.baltabayev.repository.UserRepository;
 import kz.baltabayev.security.JwtTokenUtils;
 import kz.baltabayev.service.SecurityService;
 import kz.baltabayev.service.UserService;
@@ -19,12 +21,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 /**
  * Implementation of the {@link SecurityService} interface.
  */
 @Service
+@LoggableTime
+@LoggableInfo(name = "class - SecurityServiceImpl")
 @RequiredArgsConstructor
 public class SecurityServiceImpl implements SecurityService {
 
@@ -44,6 +46,7 @@ public class SecurityServiceImpl implements SecurityService {
      * @throws RegisterException         if a user with the same login already exists
      */
     @Override
+    @Auditable
     public User register(String login, String password) {
         if (login == null || password == null || login.isEmpty() || password.isEmpty() || login.isBlank() || password.isBlank()) {
             throw new NotValidArgumentException("Пароль или логин не могут быть пустыми или состоять только из пробелов.");
@@ -75,6 +78,7 @@ public class SecurityServiceImpl implements SecurityService {
      * @throws AuthorizeException if the user is not found or the password is incorrect
      */
     @Override
+    @Auditable
     public TokenResponse authorize(String login, String password) {
         try {
             authenticationManager.authenticate(

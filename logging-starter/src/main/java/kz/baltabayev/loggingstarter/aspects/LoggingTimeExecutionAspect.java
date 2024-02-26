@@ -12,33 +12,28 @@ import org.aspectj.lang.reflect.MethodSignature;
 import java.util.concurrent.TimeUnit;
 
 /**
- * The {@code LoggingTimeExecutionAspect} class is an AspectJ aspect responsible for logging method execution time
- * in the classes or methods annotated with {@code @LoggableTime}. It logs information about the execution time
- * in milliseconds.
- *
- * <p>This aspect is designed to work in conjunction with the {@code @LoggableTime} annotation, providing a convenient
- * way to log method execution time for the specified classes or methods.
- *
- * <p>Example usage:
- * <pre>
- * // Apply the @LoggableTime annotation to classes or methods you want to log execution time
- * {@literal @}LoggableTime
- * public class ExampleClass {
- *     {@literal @}LoggableTime
- *     public void exampleMethod() {
- *         // code
- *     }
- * }
- * </pre>
+ * This aspect logs the execution time of methods annotated with @LoggableTime.
+ * It logs the start and end of the method execution, as well as the execution time.
  */
 @Aspect
 @Slf4j
 public class LoggingTimeExecutionAspect {
 
+    /**
+     * Pointcut that matches methods annotated with @LoggableTime.
+     */
     @Pointcut("(within(@kz.baltabayev.loggingstarter.annotations.LoggableTime *) || execution(@kz.baltabayev.loggingstarter.annotations.LoggableTime * *(..))) && execution(* *(..))")
     public void annotatedByLoggableTime() {
     }
 
+    /**
+     * Advice that wraps around the methods matched by the pointcut.
+     * It logs the start and end of the method execution, as well as the execution time.
+     *
+     * @param pjp the proceeding join point
+     * @return the result of the method execution
+     * @throws Throwable if an error occurs during the method execution
+     */
     @Around("annotatedByLoggableTime()")
     public Object logMethodExecutionTime(ProceedingJoinPoint pjp) throws Throwable {
         MethodSignature methodSignature = (MethodSignature) pjp.getSignature();
@@ -67,4 +62,3 @@ public class LoggingTimeExecutionAspect {
         return result;
     }
 }
-

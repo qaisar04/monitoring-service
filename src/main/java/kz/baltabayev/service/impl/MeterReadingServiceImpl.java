@@ -1,6 +1,8 @@
 package kz.baltabayev.service.impl;
 
 import kz.baltabayev.exception.UserNotFoundException;
+import kz.baltabayev.loggingstarter.annotations.LoggableInfo;
+import kz.baltabayev.loggingstarter.annotations.LoggableTime;
 import kz.baltabayev.model.User;
 import kz.baltabayev.repository.MeterReadingRepository;
 import kz.baltabayev.exception.DuplicateRecordException;
@@ -23,6 +25,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@LoggableInfo
+@LoggableTime
 @RequiredArgsConstructor
 public class MeterReadingServiceImpl implements MeterReadingService {
 

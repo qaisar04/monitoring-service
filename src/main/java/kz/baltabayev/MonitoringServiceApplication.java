@@ -1,9 +1,10 @@
 package kz.baltabayev;
 
+import kz.baltabayev.auditstarter.annotation.EnableAudit;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
 
+@EnableAudit
 @SpringBootApplication
 public class MonitoringServiceApplication {
     public static void main(String[] args) {
