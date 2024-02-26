@@ -1,7 +1,7 @@
 package kz.baltabayev.mapper;
 
 import kz.baltabayev.dto.MeterReadingDto;
-import kz.baltabayev.model.MeterReading;
+import kz.baltabayev.model.entity.MeterReading;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;

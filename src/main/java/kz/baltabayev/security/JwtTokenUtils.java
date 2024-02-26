@@ -16,6 +16,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * This class is responsible for handling JWT tokens.
+ * It can generate a token, extract the username and roles from a token, and extract all claims from a token.
+ */
 @Component
 public class JwtTokenUtils {
 
@@ -25,6 +29,12 @@ public class JwtTokenUtils {
     @Value("${jwt.lifetime}")
     private Duration jwtLifetime;
 
+    /**
+     * Generates a JWT token for a user.
+     *
+     * @param userDetails the user details
+     * @return the JWT token
+     */
     public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
         List<String> rolesList = userDetails.getAuthorities().stream()
@@ -44,14 +54,32 @@ public class JwtTokenUtils {
                 .compact();
     }
 
+    /**
+     * Extracts the username from a JWT token.
+     *
+     * @param token the JWT token
+     * @return the username
+     */
     public String extractUsername(String token) {
         return extractAllClaims(token).getSubject();
     }
 
+    /**
+     * Extracts the roles from a JWT token.
+     *
+     * @param token the JWT token
+     * @return the roles
+     */
     public List<String> extractRoles(String token) {
         return extractAllClaims(token).get("roles", List.class);
     }
 
+    /**
+     * Extracts all claims from a JWT token.
+     *
+     * @param token the JWT token
+     * @return the claims
+     */
     private Claims extractAllClaims(String token) {
         return Jwts.parser()
                 .verifyWith(signKey())
@@ -60,6 +88,11 @@ public class JwtTokenUtils {
                 .getPayload();
     }
 
+    /**
+     * Returns the signing key for the JWT tokens.
+     *
+     * @return the signing key
+     */
     private SecretKey signKey() {
         byte[] keyBytes = Decoders.BASE64.decode(secret);
         return Keys.hmacShaKeyFor(keyBytes);

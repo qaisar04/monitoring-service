@@ -1,6 +1,6 @@
 package kz.baltabayev.repository;
 
-import kz.baltabayev.model.MeterReading;
+import kz.baltabayev.model.entity.MeterReading;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -12,6 +12,5 @@ import java.util.List;
  */
 @Repository
 public interface MeterReadingRepository extends JpaRepository<MeterReading, Long> {
-
     List<MeterReading> findAllByUserId(Long userId);
 }

@@ -1,4 +1,4 @@
-package kz.baltabayev.model;
+package kz.baltabayev.model.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -8,8 +8,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 /**
- * Represents a meter reading entry capturing information about a user's recorded meter readings.
- * Each meter reading entry includes a unique identifier, counter number, reading date, meter type ID, and user ID.
+ * Represents a meter type with information such as a unique identifier and the type name.
  *
  * @author qaisar
  */
@@ -19,12 +18,9 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class MeterReading {
+public class MeterType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
-    Integer counterNumber;
-    String readingDate;
-    Long typeId;
-    Long userId;
+    String typeName;
 }

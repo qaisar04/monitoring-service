@@ -1,7 +1,7 @@
 package kz.baltabayev.service.impl;
 
 import kz.baltabayev.repository.UserRepository;
-import kz.baltabayev.model.User;
+import kz.baltabayev.model.entity.User;
 import kz.baltabayev.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

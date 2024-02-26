@@ -1,7 +1,7 @@
 package kz.baltabayev.service;
 
 import kz.baltabayev.dto.MeterTypeRequest;
-import kz.baltabayev.model.MeterType;
+import kz.baltabayev.model.entity.MeterType;
 
 import java.util.List;
 

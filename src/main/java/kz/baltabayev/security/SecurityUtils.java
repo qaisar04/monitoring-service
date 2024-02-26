@@ -1,12 +1,10 @@
-package kz.baltabayev.util;
+package kz.baltabayev.security;
 
-import kz.baltabayev.exception.AuthorizeException;
-import kz.baltabayev.model.User;
+import kz.baltabayev.model.entity.User;
 import lombok.experimental.UtilityClass;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Component;
 
 @UtilityClass
 public class SecurityUtils {
@@ -18,8 +16,8 @@ public class SecurityUtils {
             securityContext = SecurityContextHolder.getContext();
         }
         Authentication authentication = securityContext.getAuthentication();
-        if (authentication == null) throw new AuthorizeException("Unauthorized!");
+        if (authentication == null) throw new SecurityException("Unauthorized!");
         User principal = (User) authentication.getPrincipal();
-        return principal.getLogin().equals(login);
+        return !principal.getLogin().equals(login);
     }
 }

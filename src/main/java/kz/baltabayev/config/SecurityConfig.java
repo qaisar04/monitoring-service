@@ -20,6 +20,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+/**
+ * This class is responsible for the security configuration of the application.
+ * It defines the security filter chain, the authentication provider, the authentication manager and the password encoder.
+ */
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -29,6 +33,14 @@ public class SecurityConfig {
     private final CustomUserDetailsService customUserDetailsService;
     private final JwtTokenFilter jwtFilter;
 
+    /**
+     * Defines the security filter chain.
+     * It configures the HTTP security, the session management and adds the JWT filter.
+     *
+     * @param http the HTTP security
+     * @return the security filter chain
+     * @throws Exception if an error occurs during the configuration
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
@@ -40,7 +52,7 @@ public class SecurityConfig {
                                 "/v3/api-docs/**",
                                 "/auth/**"
                         ).permitAll()
-                        .anyRequest().permitAll())
+                        .anyRequest().authenticated())
                 .formLogin(AbstractAuthenticationFilterConfigurer::permitAll)
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(((request, response, authException) -> {
                     response.sendRedirect("http://localhost:8080/auth/sign-in");
@@ -51,6 +63,12 @@ public class SecurityConfig {
                 .build();
     }
 
+    /**
+     * Defines the authentication provider.
+     * It sets the user details service and the password encoder.
+     *
+     * @return the authentication provider
+     */
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
@@ -59,11 +77,23 @@ public class SecurityConfig {
         return provider;
     }
 
+    /**
+     * Defines the authentication manager.
+     *
+     * @param authenticationConfiguration the authentication configuration
+     * @return the authentication manager
+     * @throws Exception if an error occurs during the configuration
+     */
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
+    /**
+     * Defines the password encoder.
+     *
+     * @return the password encoder
+     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

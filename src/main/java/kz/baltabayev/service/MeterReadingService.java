@@ -1,6 +1,6 @@
 package kz.baltabayev.service;
 
-import kz.baltabayev.model.MeterReading;
+import kz.baltabayev.model.entity.MeterReading;
 
 import java.util.List;
 

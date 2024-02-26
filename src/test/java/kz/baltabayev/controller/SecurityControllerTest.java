@@ -1,7 +1,7 @@
 package kz.baltabayev.controller;
 
 import kz.baltabayev.dto.TokenResponse;
-import kz.baltabayev.model.User;
+import kz.baltabayev.model.entity.User;
 import kz.baltabayev.service.SecurityService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

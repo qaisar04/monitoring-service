@@ -4,7 +4,7 @@ import kz.baltabayev.loggingstarter.annotations.LoggableInfo;
 import kz.baltabayev.loggingstarter.annotations.LoggableTime;
 import kz.baltabayev.repository.MeterTypeRepository;
 import kz.baltabayev.dto.MeterTypeRequest;
-import kz.baltabayev.model.MeterType;
+import kz.baltabayev.model.entity.MeterType;
 import kz.baltabayev.service.MeterTypeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

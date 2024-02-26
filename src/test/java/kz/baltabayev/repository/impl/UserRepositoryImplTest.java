@@ -1,7 +1,7 @@
 package kz.baltabayev.repository.impl;
 
 import kz.baltabayev.containers.PostgresTestContainer;
-import kz.baltabayev.model.User;
+import kz.baltabayev.model.entity.User;
 import kz.baltabayev.model.types.Role;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

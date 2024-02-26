@@ -1,14 +1,14 @@
 package kz.baltabayev.service.impl;
 
+import kz.baltabayev.exception.InvalidCredentialsException;
 import kz.baltabayev.exception.UserNotFoundException;
 import kz.baltabayev.loggingstarter.annotations.LoggableInfo;
 import kz.baltabayev.loggingstarter.annotations.LoggableTime;
-import kz.baltabayev.model.User;
+import kz.baltabayev.model.entity.User;
 import kz.baltabayev.repository.MeterReadingRepository;
-import kz.baltabayev.exception.DuplicateRecordException;
 import kz.baltabayev.exception.NotValidArgumentException;
-import kz.baltabayev.model.MeterReading;
-import kz.baltabayev.model.MeterType;
+import kz.baltabayev.model.entity.MeterReading;
+import kz.baltabayev.model.entity.MeterType;
 import kz.baltabayev.service.MeterReadingService;
 import kz.baltabayev.service.MeterTypeService;
 import kz.baltabayev.service.UserService;
@@ -74,7 +74,7 @@ public class MeterReadingServiceImpl implements MeterReadingService {
                                      DateTimeUtils.isSameMonth(DateTimeUtils.parseDateFromString(reading.getReadingDate()), now));
 
         if (alreadyExists) {
-            throw new DuplicateRecordException("Запись для данного типа счетчика уже существует в текущем месяце.");
+            throw new InvalidCredentialsException("Запись для данного типа счетчика уже существует в текущем месяце.");
         }
 
         MeterReading meterReading = MeterReading.builder()
@@ -117,9 +117,5 @@ public class MeterReadingServiceImpl implements MeterReadingService {
         } else {
             throw new UserNotFoundException("User not found for login: " + login);
         }
-    }
-
-    public List<MeterReading> getAllMeterReadingHistory() {
-        return meterReadingRepository.findAll();
     }
 }

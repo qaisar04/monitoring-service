@@ -1,4 +1,4 @@
-package kz.baltabayev.model;
+package kz.baltabayev.model.entity;
 
 import jakarta.persistence.*;
 import kz.baltabayev.model.types.Role;

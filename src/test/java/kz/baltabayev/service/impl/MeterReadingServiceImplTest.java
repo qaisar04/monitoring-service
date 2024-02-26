@@ -1,11 +1,10 @@
 package kz.baltabayev.service.impl;
 
 import kz.baltabayev.repository.MeterReadingRepository;
-import kz.baltabayev.exception.DuplicateRecordException;
 import kz.baltabayev.exception.NotValidArgumentException;
-import kz.baltabayev.model.MeterReading;
-import kz.baltabayev.model.MeterType;
-import kz.baltabayev.model.User;
+import kz.baltabayev.model.entity.MeterReading;
+import kz.baltabayev.model.entity.MeterType;
+import kz.baltabayev.model.entity.User;
 import kz.baltabayev.service.MeterTypeService;
 import kz.baltabayev.service.UserService;
 import kz.baltabayev.util.DateTimeUtils;

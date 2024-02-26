@@ -2,13 +2,12 @@ package kz.baltabayev.service.impl;
 
 import kz.baltabayev.auditstarter.annotation.Auditable;
 import kz.baltabayev.dto.TokenResponse;
-import kz.baltabayev.exception.AuthorizeException;
 import kz.baltabayev.exception.InvalidCredentialsException;
 import kz.baltabayev.exception.NotValidArgumentException;
-import kz.baltabayev.exception.RegisterException;
+import kz.baltabayev.exception.SecurityException;
 import kz.baltabayev.loggingstarter.annotations.LoggableInfo;
 import kz.baltabayev.loggingstarter.annotations.LoggableTime;
-import kz.baltabayev.model.User;
+import kz.baltabayev.model.entity.User;
 import kz.baltabayev.model.types.Role;
 import kz.baltabayev.security.JwtTokenUtils;
 import kz.baltabayev.service.SecurityService;
@@ -43,7 +42,7 @@ public class SecurityServiceImpl implements SecurityService {
      * @param password the user's password
      * @return the registered user
      * @throws NotValidArgumentException if login or password is empty, blank, or does not meet length requirements
-     * @throws RegisterException         if a user with the same login already exists
+     * @throws SecurityException         if a user with the same login already exists
      */
     @Override
     @Auditable
@@ -57,7 +56,7 @@ public class SecurityServiceImpl implements SecurityService {
         }
 
         if (userService.getUserByLogin(login).isPresent()) {
-            throw new RegisterException("User with this login already exists");
+            throw new SecurityException("User with this login already exists");
         }
 
         User newUser = User.builder()
@@ -75,7 +74,7 @@ public class SecurityServiceImpl implements SecurityService {
      * @param login    the user's login
      * @param password the user's password
      * @return an optional containing the authorized user, or empty if authorization fails
-     * @throws AuthorizeException if the user is not found or the password is incorrect
+     * @throws SecurityException if the user is not found or the password is incorrect
      */
     @Override
     @Auditable

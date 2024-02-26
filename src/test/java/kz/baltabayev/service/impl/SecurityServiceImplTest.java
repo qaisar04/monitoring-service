@@ -2,8 +2,7 @@ package kz.baltabayev.service.impl;
 
 import kz.baltabayev.repository.UserRepository;
 import kz.baltabayev.exception.AuthorizeException;
-import kz.baltabayev.exception.RegisterException;
-import kz.baltabayev.model.User;
+import kz.baltabayev.model.entity.User;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

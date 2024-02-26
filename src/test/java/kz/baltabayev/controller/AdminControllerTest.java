@@ -1,8 +1,8 @@
 package kz.baltabayev.controller;
 
 import kz.baltabayev.dto.MeterTypeRequest;
-import kz.baltabayev.model.MeterType;
-import kz.baltabayev.model.User;
+import kz.baltabayev.model.entity.MeterType;
+import kz.baltabayev.model.entity.User;
 import kz.baltabayev.service.MeterTypeService;
 import kz.baltabayev.service.UserService;
 import org.junit.jupiter.api.BeforeEach;

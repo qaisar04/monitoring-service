@@ -1,9 +1,7 @@
 package kz.baltabayev.service;
 
 import kz.baltabayev.dto.TokenResponse;
-import kz.baltabayev.model.User;
-
-import java.util.Optional;
+import kz.baltabayev.model.entity.User;
 
 /**
  * The service interface for security-related functionality.

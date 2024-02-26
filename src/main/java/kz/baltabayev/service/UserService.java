@@ -1,6 +1,6 @@
 package kz.baltabayev.service;
 
-import kz.baltabayev.model.User;
+import kz.baltabayev.model.entity.User;
 
 import java.util.List;
 import java.util.Optional;

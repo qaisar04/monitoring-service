@@ -1,10 +1,9 @@
 package kz.baltabayev.controller;
 
 import kz.baltabayev.dto.MeterReadingRequest;
-import kz.baltabayev.exception.AuthorizeException;
-import kz.baltabayev.model.MeterReading;
+import kz.baltabayev.model.entity.MeterReading;
+import kz.baltabayev.security.SecurityUtils;
 import kz.baltabayev.service.MeterReadingService;
-import kz.baltabayev.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,12 +25,12 @@ public class MeterReadingController {
      *
      * @param login The user's login.
      * @return ResponseEntity containing a list of MeterReading objects.
-     * @throws AuthorizeException If the login is not valid.
+     * @throws SecurityException If the login is not valid.
      */
     @GetMapping("/current")
     public ResponseEntity<List<MeterReading>> getCurrentMeterReadings(@RequestParam String login) {
-        if (!SecurityUtils.isValidLogin(login)) {
-            throw new AuthorizeException("Incorrect login!");
+        if (SecurityUtils.isValidLogin(login)) {
+            throw new SecurityException("Incorrect login!");
         }
         return ResponseEntity.ok(meterReadingService.getCurrentMeterReadings(login));
     }
@@ -43,7 +42,7 @@ public class MeterReadingController {
      * @param month The month.
      * @param login The user's login.
      * @return ResponseEntity containing a list of MeterReading objects.
-     * @throws AuthorizeException If the login is not valid.
+     * @throws SecurityException If the login is not valid.
      */
     @GetMapping("/date")
     public ResponseEntity<List<MeterReading>> showAllMeterReadings(
@@ -51,8 +50,8 @@ public class MeterReadingController {
             @RequestParam Integer month,
             @RequestParam String login
     ) {
-        if (!SecurityUtils.isValidLogin(login)) {
-            throw new AuthorizeException("Incorrect login!");
+        if (SecurityUtils.isValidLogin(login)) {
+            throw new SecurityException("Incorrect login!");
         }
         List<MeterReading> meterReadingsByMonthAndYear = meterReadingService.getMeterReadingsByMonthAndYear(year, month, login);
         return ResponseEntity.ok(meterReadingsByMonthAndYear);
@@ -63,13 +62,13 @@ public class MeterReadingController {
      *
      * @param login The user's login.
      * @return ResponseEntity containing a list of MeterReading objects.
-     * @throws AuthorizeException If the login is not valid.
+     * @throws SecurityException If the login is not valid.
      */
     @GetMapping("/history")
     public ResponseEntity<List<MeterReading>> showMeterReadingHistory(
             @RequestParam String login
     ) {
-        if (!SecurityUtils.isValidLogin(login)) throw new AuthorizeException("Incorrect login!");
+        if (SecurityUtils.isValidLogin(login)) throw new SecurityException("Incorrect login!");
         List<MeterReading> meterReadingHistory = meterReadingService.getMeterReadingHistory(login);
         return ResponseEntity.ok(meterReadingHistory);
     }
@@ -80,15 +79,15 @@ public class MeterReadingController {
      * @param request The MeterReadingRequest object containing information about the meter reading.
      * @param login   The user's login.
      * @return ResponseEntity indicating the success of the operation.
-     * @throws AuthorizeException If the login is not valid.
+     * @throws SecurityException If the login is not valid.
      */
     @PostMapping("/submit")
     public ResponseEntity<MeterReading> submitMeterReading(
             @RequestBody MeterReadingRequest request,
             @RequestParam String login
     ) {
-        if (!SecurityUtils.isValidLogin(login)) {
-            throw new AuthorizeException("Incorrect login!");
+        if (SecurityUtils.isValidLogin(login)) {
+            throw new SecurityException("Incorrect login!");
         }
         MeterReading reading = meterReadingService.submitMeterReading(request.counterNumber(), request.meterTypeId(), login);
         return ResponseEntity.ok(reading);
