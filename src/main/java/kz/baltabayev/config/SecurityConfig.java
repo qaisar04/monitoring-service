@@ -3,6 +3,7 @@ package kz.baltabayev.config;
 import kz.baltabayev.security.JwtTokenFilter;
 import kz.baltabayev.service.impl.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -33,6 +34,9 @@ public class SecurityConfig {
     private final CustomUserDetailsService customUserDetailsService;
     private final JwtTokenFilter jwtFilter;
 
+    @Value("${security.redirect.url}")
+    private String redirectUrl;
+
     /**
      * Defines the security filter chain.
      * It configures the HTTP security, the session management and adds the JWT filter.
@@ -55,7 +59,7 @@ public class SecurityConfig {
                         .anyRequest().authenticated())
                 .formLogin(AbstractAuthenticationFilterConfigurer::permitAll)
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(((request, response, authException) -> {
-                    response.sendRedirect("http://localhost:8080/auth/sign-in");
+                    response.sendRedirect(redirectUrl);
                 })))
                 .sessionManagement(httpSecuritySessionManagementConfigurer ->
                         httpSecuritySessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

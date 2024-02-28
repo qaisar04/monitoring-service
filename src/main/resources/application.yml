@@ -23,3 +23,6 @@ app:
   common:
     logging:
       enabled: true
+security:
+  redirect:
+    url: http://localhost:8080/auth/sign-in

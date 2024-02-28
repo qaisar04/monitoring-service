@@ -1,8 +1,10 @@
 package kz.baltabayev.model.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
-import lombok.experimental.FieldDefaults;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * Represents a meter type with information such as a unique identifier and the type name.

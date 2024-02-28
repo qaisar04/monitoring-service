@@ -1,8 +1,10 @@
 package kz.baltabayev.model.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
-import lombok.experimental.FieldDefaults;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * Represents a meter reading entry capturing information about a user's recorded meter readings.
