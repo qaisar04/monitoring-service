@@ -21,14 +21,14 @@
 
 ## API Endpoints
 
-- `POST /auth/registration`: Регистрация нового пользователя.
+- `POST /auth/sign-up`: Регистрация нового пользователя.
 ```json
 {
   "login": "login",
   "password": "password"
 }
 ```
-- `POST /auth`: Авторизация пользователя.
+- `POST /auth/sign-in`: Авторизация пользователя.
 ```json
 {
   "login": "login",
@@ -36,24 +36,24 @@
 }
 ```
 
-- `GET /reading/history`: Получение всех показаний счетчиков.
-- `GET /reading/current`: Получение актуальных показаний счетчиков.
-- `POST /reading/submit`: Подача новых показаний счетчика.
+- `GET /meter-reading/history`: Получение всех показаний счетчиков.
+- `GET /meter-reading/current`: Получение актуальных показаний счетчиков.
+- `POST /meter-reading/submit`: Подача новых показаний счетчика.
 ```json
 {
   "counterNumber": 192101,
   "meterTypeId": 1
 }
 ```
-- `GET /reading/date`: Получение показаний счетчика по определенному сроку.
+- `GET /meter-reading/date`: Получение показаний счетчика по определенному сроку.
 ```json
 {
   "month": 1,
   "year": 2024
 }
 ```
-- `GET /user/all`: Получение всех зарегистрированных пользователей.
-- `GET /meter-type/add`: Добавление нового типа счетчика.
+- `GET /admin/all-users`: Получение всех зарегистрированных пользователей.
+- `GET /admin/meter-type`: Добавление нового типа счетчика.
 ```json
 {
   "name": "SOME_NAME"
