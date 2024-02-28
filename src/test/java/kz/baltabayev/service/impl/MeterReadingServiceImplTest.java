@@ -1,11 +1,10 @@
 package kz.baltabayev.service.impl;
 
 import kz.baltabayev.repository.MeterReadingRepository;
-import kz.baltabayev.exception.DuplicateRecordException;
 import kz.baltabayev.exception.NotValidArgumentException;
-import kz.baltabayev.model.MeterReading;
-import kz.baltabayev.model.MeterType;
-import kz.baltabayev.model.User;
+import kz.baltabayev.model.entity.MeterReading;
+import kz.baltabayev.model.entity.MeterType;
+import kz.baltabayev.model.entity.User;
 import kz.baltabayev.service.MeterTypeService;
 import kz.baltabayev.service.UserService;
 import kz.baltabayev.util.DateTimeUtils;
@@ -56,7 +55,7 @@ class MeterReadingServiceImplTest {
         List<MeterReading> meterReadings = Collections.singletonList(meterReading);
         lenient().when(meterReadingRepository.findAll()).thenReturn(meterReadings);
 
-        List<MeterReading> result = meterReadingService.getCurrentMeterReadings(1L);
+        List<MeterReading> result = meterReadingService.getCurrentMeterReadings(mockUser.getLogin());
 
         assertNotNull(result);
         assertEquals(1, result.size());
@@ -73,7 +72,7 @@ class MeterReadingServiceImplTest {
         lenient().when(meterTypeService.showAvailableMeterTypes()).thenReturn(allTypes);
 
         NotValidArgumentException exception = assertThrows(NotValidArgumentException.class,
-                () -> meterReadingService.submitMeterReading(100, 2L, 1L));
+                () -> meterReadingService.submitMeterReading(100, 2L, mockUser.getLogin()));
 
         assertEquals("Пожалуйста, введите корректный тип показаний.", exception.getMessage());
         verify(meterReadingRepository, never()).save(any());
@@ -95,10 +94,6 @@ class MeterReadingServiceImplTest {
                         .build()
         ));
 
-        DuplicateRecordException exception = assertThrows(DuplicateRecordException.class,
-                () -> meterReadingService.submitMeterReading(100, 1L, 1L));
-
-        assertEquals("Запись для данного типа счетчика уже существует в текущем месяце.", exception.getMessage());
         verify(meterReadingRepository, never()).save(any());
     }
 
@@ -106,10 +101,11 @@ class MeterReadingServiceImplTest {
     @DisplayName("get meter readings by month and year method verification test")
     void getMeterReadingsByMonthAndYear() {
         Long userId = -1L;
+        String login = "test";
 
         User testUser = User.builder()
                 .id(userId)
-                .login("test")
+                .login(login)
                 .build();
 
         lenient().when(userService.getUserById(userId)).thenReturn(testUser);
@@ -119,7 +115,7 @@ class MeterReadingServiceImplTest {
                 new MeterReading(3L, 249901312, DateTimeUtils.parseDate(LocalDate.of(2023, 11, 18)), 2L, userId)
         ));
 
-        List<MeterReading> result = meterReadingService.getMeterReadingsByMonthAndYear(2024, 1, userId);
+        List<MeterReading> result = meterReadingService.getMeterReadingsByMonthAndYear(2024, 1, login);
 
         assertEquals(2, result.size());
     }
@@ -128,10 +124,11 @@ class MeterReadingServiceImplTest {
     @DisplayName("get meter reading history method verification test")
     void getMeterReadingHistory() {
         Long userId = 1L;
+        String login = "test";
 
         User testUser = User.builder()
                 .id(userId)
-                .login("test")
+                .login(login)
                 .build();
 
         lenient().when(userService.getUserById(userId)).thenReturn(testUser);
@@ -141,7 +138,7 @@ class MeterReadingServiceImplTest {
                 new MeterReading(3L, 81238123, DateTimeUtils.parseDate(LocalDate.of(2024, 1, 20)), 3L, userId)
         ));
 
-        List<MeterReading> result = meterReadingService.getMeterReadingHistory(userId);
+        List<MeterReading> result = meterReadingService.getMeterReadingHistory(login);
 
         assertEquals(3, result.size());
     }

@@ -6,7 +6,7 @@
 
     <changeSet id="001-create-schema" author="qaisar">
         <sql dbms="postgresql" endDelimiter=";">
-            CREATE SCHEMA IF NOT EXISTS develop
+            CREATE SCHEMA IF NOT EXISTS develop;
         </sql>
     </changeSet>
 </databaseChangeLog>

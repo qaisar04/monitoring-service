@@ -1,18 +1,17 @@
 package kz.baltabayev.service.impl;
 
-import kz.baltabayev.annotations.Auditable;
-import kz.baltabayev.annotations.Loggable;
-import kz.baltabayev.exception.InvalidCredentialsException;
-import kz.baltabayev.model.types.Role;
-import kz.baltabayev.repository.UserRepository;
+import kz.baltabayev.auditstarter.annotation.Auditable;
 import kz.baltabayev.dto.TokenResponse;
-import kz.baltabayev.exception.AuthorizeException;
+import kz.baltabayev.exception.InvalidCredentialsException;
 import kz.baltabayev.exception.NotValidArgumentException;
-import kz.baltabayev.exception.RegisterException;
+import kz.baltabayev.exception.SecurityException;
+import kz.baltabayev.loggingstarter.annotations.LoggableInfo;
+import kz.baltabayev.loggingstarter.annotations.LoggableTime;
+import kz.baltabayev.model.entity.User;
+import kz.baltabayev.model.types.Role;
 import kz.baltabayev.security.JwtTokenUtils;
-import kz.baltabayev.model.User;
-import kz.baltabayev.model.types.ActionType;
 import kz.baltabayev.service.SecurityService;
+import kz.baltabayev.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -21,16 +20,16 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 /**
  * Implementation of the {@link SecurityService} interface.
  */
 @Service
+@LoggableTime
+@LoggableInfo(name = "class - SecurityServiceImpl")
 @RequiredArgsConstructor
 public class SecurityServiceImpl implements SecurityService {
 
-    private final UserRepository userRepository;
+    private final UserService userService;
     private final PasswordEncoder passwordEncoder;
     private final CustomUserDetailsService userDetailsService;
     private final AuthenticationManager authenticationManager;
@@ -43,11 +42,10 @@ public class SecurityServiceImpl implements SecurityService {
      * @param password the user's password
      * @return the registered user
      * @throws NotValidArgumentException if login or password is empty, blank, or does not meet length requirements
-     * @throws RegisterException         if a user with the same login already exists
+     * @throws SecurityException         if a user with the same login already exists
      */
     @Override
-    @Loggable
-    @Auditable(actionType = ActionType.REGISTRATION, login = "@login")
+    @Auditable
     public User register(String login, String password) {
         if (login == null || password == null || login.isEmpty() || password.isEmpty() || login.isBlank() || password.isBlank()) {
             throw new NotValidArgumentException("Пароль или логин не могут быть пустыми или состоять только из пробелов.");
@@ -57,9 +55,8 @@ public class SecurityServiceImpl implements SecurityService {
             throw new NotValidArgumentException("Длина пароля должна составлять от 5 до 30 символов.");
         }
 
-        Optional<User> optionalUser = userRepository.findByLogin(login);
-        if (optionalUser.isPresent()) {
-            throw new RegisterException("Пользователь с таким логином уже существует.");
+        if (userService.getUserByLogin(login).isPresent()) {
+            throw new SecurityException("User with this login already exists");
         }
 
         User newUser = User.builder()
@@ -68,7 +65,7 @@ public class SecurityServiceImpl implements SecurityService {
                 .password(passwordEncoder.encode(password))
                 .build();
 
-        return userRepository.save(newUser);
+        return userService.save(newUser);
     }
 
     /**
@@ -77,10 +74,10 @@ public class SecurityServiceImpl implements SecurityService {
      * @param login    the user's login
      * @param password the user's password
      * @return an optional containing the authorized user, or empty if authorization fails
-     * @throws AuthorizeException if the user is not found or the password is incorrect
+     * @throws SecurityException if the user is not found or the password is incorrect
      */
     @Override
-    @Auditable(actionType = ActionType.AUTHORIZATION, login = "@login")
+    @Auditable
     public TokenResponse authorize(String login, String password) {
         try {
             authenticationManager.authenticate(

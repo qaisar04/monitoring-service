@@ -1,9 +1,7 @@
 package kz.baltabayev.service.impl;
 
 import kz.baltabayev.repository.UserRepository;
-import kz.baltabayev.exception.AuthorizeException;
-import kz.baltabayev.exception.RegisterException;
-import kz.baltabayev.model.User;
+import kz.baltabayev.model.entity.User;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -55,7 +53,7 @@ public class SecurityServiceImplTest {
                 .build();
         Mockito.when(userRepository.findByLogin(login)).thenReturn(Optional.of(user));
 
-        assertThrows(RegisterException.class, () -> securityService.register(login, password));
+        assertThrows(SecurityException.class, () -> securityService.register(login, password));
     }
 
     @Test
@@ -65,6 +63,6 @@ public class SecurityServiceImplTest {
         String password = "password";
         Mockito.when(userRepository.findByLogin(login)).thenReturn(Optional.empty());
 
-        assertThrows(AuthorizeException.class, () -> securityService.authorize(login, password));
+        assertThrows(SecurityException.class, () -> securityService.authorize(login, password));
     }
 }

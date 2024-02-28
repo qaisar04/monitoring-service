@@ -3,12 +3,14 @@ package kz.baltabayev.config;
 import kz.baltabayev.security.JwtTokenFilter;
 import kz.baltabayev.service.impl.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractAuthenticationFilterConfigurer;
@@ -20,32 +22,44 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
- * Configuration class for security-related beans and settings.
+ * This class is responsible for the security configuration of the application.
+ * It defines the security filter chain, the authentication provider, the authentication manager and the password encoder.
  */
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
     private final CustomUserDetailsService customUserDetailsService;
     private final JwtTokenFilter jwtFilter;
 
+    @Value("${security.redirect.url}")
+    private String redirectUrl;
+
     /**
      * Defines the security filter chain.
-     * @param http The HttpSecurity object to configure security settings.
-     * @return The configured SecurityFilterChain.
-     * @throws Exception If an error occurs during configuration.
+     * It configures the HTTP security, the session management and adds the JWT filter.
+     *
+     * @param http the HTTP security
+     * @return the security filter chain
+     * @throws Exception if an error occurs during the configuration
      */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .antMatchers("/auth/**").permitAll()
-                        .anyRequest().permitAll())
+                        .requestMatchers(
+                                "/swagger-ui.html",
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**",
+                                "/auth/**"
+                        ).permitAll()
+                        .anyRequest().authenticated())
                 .formLogin(AbstractAuthenticationFilterConfigurer::permitAll)
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(((request, response, authException) -> {
-                    response.sendRedirect("http://localhost:8080/auth/sign-up");
+                    response.sendRedirect(redirectUrl);
                 })))
                 .sessionManagement(httpSecuritySessionManagementConfigurer ->
                         httpSecuritySessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -54,8 +68,10 @@ public class SecurityConfig {
     }
 
     /**
-     * Provides the authentication provider for DAO authentication.
-     * @return The configured AuthenticationProvider.
+     * Defines the authentication provider.
+     * It sets the user details service and the password encoder.
+     *
+     * @return the authentication provider
      */
     @Bean
     public AuthenticationProvider authenticationProvider() {
@@ -66,10 +82,11 @@ public class SecurityConfig {
     }
 
     /**
-     * Provides the AuthenticationManager bean.
-     * @param authenticationConfiguration The AuthenticationConfiguration object for obtaining the AuthenticationManager.
-     * @return The configured AuthenticationManager.
-     * @throws Exception If an error occurs while obtaining the AuthenticationManager.
+     * Defines the authentication manager.
+     *
+     * @param authenticationConfiguration the authentication configuration
+     * @return the authentication manager
+     * @throws Exception if an error occurs during the configuration
      */
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
@@ -77,8 +94,9 @@ public class SecurityConfig {
     }
 
     /**
-     * Provides the PasswordEncoder bean for encoding and verifying passwords.
-     * @return The configured PasswordEncoder.
+     * Defines the password encoder.
+     *
+     * @return the password encoder
      */
     @Bean
     public PasswordEncoder passwordEncoder() {

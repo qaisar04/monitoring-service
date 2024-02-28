@@ -1,6 +1,8 @@
 package kz.baltabayev.repository;
 
-import kz.baltabayev.model.User;
+import kz.baltabayev.model.entity.User;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
@@ -8,21 +10,7 @@ import java.util.Optional;
  * Data Access Object (DAO) interface for managing User entities.
  * Extends the generic MainDAO interface with specific operations for User entities.
  */
-public interface UserRepository extends MainRepository<Long, User> {
-
-    /**
-     * Retrieves an optional User entity based on the provided login.
-     *
-     * @param login The login associated with the User entity.
-     * @return An optional containing the User entity if found, otherwise an empty optional.
-     */
+@Repository
+public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByLogin(String login);
-
-    /**
-     * Updates the provided User entity.
-     *
-     * @param user The User entity to be updated.
-     * @return The updated User entity.
-     */
-    User update(User user);
 }
