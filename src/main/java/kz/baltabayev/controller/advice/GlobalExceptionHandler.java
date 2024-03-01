@@ -16,13 +16,8 @@ public class GlobalExceptionHandler {
         return ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, exception.getMessage());
     }
 
-    @ExceptionHandler(InvalidCredentialsException.class)
-    ProblemDetail handleInvalidCredentialsException(InvalidCredentialsException exception) {
-        return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, exception.getMessage());
-    }
-
-    @ExceptionHandler(NotValidArgumentException.class)
-    ProblemDetail handleNotValidArgumentException(NotValidArgumentException exception) {
+    @ExceptionHandler({InvalidCredentialsException.class, NotValidArgumentException.class})
+    ProblemDetail handleInvalidCredentialsException(RuntimeException exception) {
         return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, exception.getMessage());
     }
 
